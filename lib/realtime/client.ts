@@ -212,11 +212,15 @@ export class RealtimeClient extends EventEmitter {
       this.emit('error', error);
     };
 
-    this.ws.onclose = () => {
+    this.ws.onclose = (event) => {
       console.log('WebSocket disconnected');
       this.isConnected = false;
       this.emit('disconnected');
-      this.attemptReconnect();
+
+      // Only attempt reconnect if this wasn't a manual disconnect
+      if (this.isConnected !== false && event.code !== 1000) {
+        this.attemptReconnect();
+      }
     };
   }
 
@@ -1390,20 +1394,22 @@ export class RealtimeClient extends EventEmitter {
     if (this.ws) {
       try {
         console.log(`WebSocket state before close: ${this.ws.readyState} (0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED)`);
-        
+
+        const currentWs = this.ws;
+        // Set to null FIRST to prevent any event handlers from firing
+        this.ws = null;
+
         // IMPORTANT: Remove all event handlers BEFORE closing to prevent reconnection
-        this.ws.onopen = null;
-        this.ws.onmessage = null;
-        this.ws.onerror = null;
-        this.ws.onclose = null;
-        
-        if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
-          this.ws.close();
+        currentWs.onopen = null;
+        currentWs.onmessage = null;
+        currentWs.onerror = null;
+        currentWs.onclose = null;
+
+        if (currentWs.readyState === WebSocket.OPEN || currentWs.readyState === WebSocket.CONNECTING) {
+          currentWs.close(1000, 'Client disconnect');
           console.log('✓ WebSocket close() called');
         }
-        
-        // Force set to null immediately to prevent any lingering references
-        this.ws = null;
+
         console.log('✓ WebSocket reference cleared');
       } catch (e) {
         console.error('Error closing WebSocket:', e);

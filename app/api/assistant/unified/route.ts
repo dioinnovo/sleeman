@@ -26,6 +26,66 @@ import {
 import { generateHealthcarePolicyPDF } from '@/lib/utils/healthcare-pdf-generator';
 import { generateHealthPolicyAnalysis } from '@/lib/ai/health-policy-analysis';
 
+/**
+ * Detect if a message is asking for SQL/analytics data
+ * Returns the detected response mode ('quick' or 'pro') or null if not an SQL question
+ *
+ * Matches queries about: customers, shipments, carriers, routes, partner courses
+ */
+function detectSqlQuestion(message: string): 'quick' | 'pro' | null {
+  const msgLower = message.toLowerCase();
+
+  // SQL keywords that indicate data queries
+  const sqlKeywords = [
+    'show', 'show me', 'what are', 'what is', 'how many', 'top', 'bottom', 'list', 'count',
+    'average', 'sum', 'total', 'calculate', 'breakdown', 'comparison', 'compare',
+    'analyze', 'identify', 'which', 'what percentage', 'get', 'find', 'display'
+  ];
+
+  // Ship Sticks business entities (tables with data)
+  const businessEntities = [
+    // Customers
+    'customer', 'customers', 'lifetime value', 'ltv', 'acquisition', 'channel', 'channels', 'segment', 'segments',
+    // Shipments & Routes
+    'shipment', 'shipments', 'route', 'routes', 'delivery', 'deliveries', 'tracking', 'delay', 'delays',
+    // Carriers & Performance
+    'carrier', 'carriers', 'fedex', 'ups', 'dhl', 'usps', 'performance', 'on-time', 'success rate',
+    // Financial Metrics
+    'revenue', 'profit', 'margin', 'margins', 'cost', 'price', 'pricing', 'roi', 'financial',
+    // Partners & Destinations
+    'partner', 'partners', 'course', 'courses', 'golf', 'destination', 'destinations',
+    // Operations & Quality
+    'failure', 'failures', 'damage', 'claim', 'claims', 'insurance', 'coverage',
+    // Marketing & Sales
+    'campaign', 'campaigns', 'marketing', 'conversion', 'conversions', 'quote', 'quotes', 'booking', 'bookings',
+    // Customer Service
+    'service', 'ticket', 'tickets', 'nps', 'satisfaction', 'rating', 'ratings', 'issue', 'issues',
+    // Time-based metrics
+    'monthly', 'seasonal', 'trend', 'trends', 'pattern', 'patterns', 'recurring', 'membership', 'memberships'
+  ];
+
+  // Check for SQL keywords + business entities
+  const hasSqlKeyword = sqlKeywords.some(keyword => msgLower.includes(keyword));
+  const hasBusinessEntity = businessEntities.some(entity => msgLower.includes(entity));
+
+  // MUST have both a SQL keyword AND a business entity
+  if (!hasSqlKeyword || !hasBusinessEntity) {
+    return null; // Not an SQL question
+  }
+
+  // Determine if it's a complex question (pro mode) or simple (quick mode)
+  const complexIndicators = [
+    'comprehensive', 'detailed', 'in-depth', 'analysis', 'breakdown',
+    'compare', 'comparison', 'trend', 'over time', 'by month', 'by quarter', 'by year',
+    'why', 'estimate', 'impact', 'gap', 'cost impact', 'annual cost',
+    'detailed breakdown', 'show me a detailed', 'resolution time'
+  ];
+
+  const isComplex = complexIndicators.some(indicator => msgLower.includes(indicator));
+
+  return isComplex ? 'pro' : 'quick';
+}
+
 // Request validation schema
 const RequestSchema = z.object({
   messages: z.array(z.object({
@@ -389,6 +449,72 @@ I've completed a thorough analysis of your client's policy and identified **sign
       }
     }
 
+    // Check if this is an SQL/analytics question
+    const sqlMode = detectSqlQuestion(lastMessage);
+
+    if (sqlMode) {
+      // Map the model selection to responseMode
+      // 'quick' model → 'quick' response mode
+      // 'arthur-pro' model → 'pro' response mode (comprehensive analysis)
+      // 'scotty-pro' model → auto-detect based on query complexity
+      let responseMode: 'quick' | 'pro';
+
+      if (model === 'quick') {
+        responseMode = 'quick';
+        console.log(`SQL question detected, using QUICK mode (user selected quick model)`);
+      } else if (model === 'arthur-pro') {
+        responseMode = 'pro';
+        console.log(`SQL question detected, using PRO mode (user selected arthur-pro model)`);
+      } else {
+        // scotty-pro: use auto-detected complexity
+        responseMode = sqlMode;
+        console.log(`SQL question detected, auto-detected ${sqlMode.toUpperCase()} mode`);
+      }
+
+      try {
+        // Call the SQL agent API
+        const sqlAgentUrl = `${request.nextUrl.origin}/api/sql-agent`;
+        const sqlResponse = await fetch(sqlAgentUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question: lastMessage,
+            responseMode,
+          }),
+        });
+
+        if (!sqlResponse.ok) {
+          throw new Error(`SQL agent returned ${sqlResponse.status}`);
+        }
+
+        const sqlData = await sqlResponse.json();
+
+        // Format response for the assistant UI
+        return NextResponse.json({
+          response: sqlData.response,
+          suggestions: generateSqlSuggestions(sqlData.sqlQuery, sqlData.queryResults),
+          provider: 'sql-agent',
+          sqlQuery: sqlData.sqlQuery,
+          queryResults: sqlData.queryResults,
+          chartData: sqlData.chartData,
+          sources: sqlData.queryResults ? [{
+            name: 'Ship Sticks Database',
+            snippet: `Query returned ${sqlData.queryResults.rows.length} results`,
+            metadata: {
+              tables: extractTablesFromSql(sqlData.sqlQuery || ''),
+              rows: sqlData.queryResults.rows.length,
+              confidence: 100
+            }
+          }] : [],
+        });
+      } catch (sqlError) {
+        console.error('SQL agent routing error:', sqlError);
+        // Fall through to normal assistant handling if SQL agent fails
+      }
+    }
+
     // Handle Qlik separately since it doesn't use AI SDK provider interface
     if (model === 'quick') {
       // Demo mode - return mock response
@@ -566,6 +692,94 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+/**
+ * Generate contextual suggestions for SQL query results
+ */
+function generateSqlSuggestions(sqlQuery: string | null, queryResults: any): string[] {
+  if (!queryResults || !queryResults.rows || queryResults.rows.length === 0) {
+    return [
+      'Show me the top customers by revenue',
+      'What are the most profitable routes?',
+      'Analyze shipment failure rates by carrier',
+      'Customer acquisition channel performance'
+    ];
+  }
+
+  // Extract what was queried to suggest related questions
+  const suggestions: string[] = [];
+  const queryLower = sqlQuery?.toLowerCase() || '';
+
+  if (queryLower.includes('customer')) {
+    suggestions.push(
+      'Show customer lifetime value by channel',
+      'Analyze customer retention trends',
+      'Top customers by shipment volume'
+    );
+  }
+
+  if (queryLower.includes('route') || queryLower.includes('shipment')) {
+    suggestions.push(
+      'Show route failure rates',
+      'Analyze delivery times by carrier',
+      'Revenue breakdown by route'
+    );
+  }
+
+  if (queryLower.includes('revenue') || queryLower.includes('margin')) {
+    suggestions.push(
+      'Show profit margins by carrier',
+      'Analyze revenue trends over time',
+      'Top revenue-generating customers'
+    );
+  }
+
+  if (queryLower.includes('channel') || queryLower.includes('campaign')) {
+    suggestions.push(
+      'Marketing ROI by channel',
+      'Campaign performance analysis',
+      'Customer acquisition cost breakdown'
+    );
+  }
+
+  // Default suggestions if no specific ones matched
+  if (suggestions.length === 0) {
+    return [
+      'Show me more details',
+      'Analyze this data by month',
+      'Compare with previous period',
+      'Break down by category'
+    ];
+  }
+
+  return suggestions.slice(0, 4);
+}
+
+/**
+ * Extract table names from SQL query for metadata
+ */
+function extractTablesFromSql(sql: string): string[] {
+  const fromMatch = sql.match(/FROM\s+(\w+)/gi);
+  const joinMatch = sql.match(/JOIN\s+(\w+)/gi);
+
+  const tables = new Set<string>();
+
+  if (fromMatch) {
+    fromMatch.forEach(match => {
+      const table = match.replace(/FROM\s+/i, '').trim();
+      tables.add(table);
+    });
+  }
+
+  if (joinMatch) {
+    joinMatch.forEach(match => {
+      const table = match.replace(/JOIN\s+/i, '').trim();
+      tables.add(table);
+    });
+  }
+
+  return Array.from(tables);
 }
 
 /**

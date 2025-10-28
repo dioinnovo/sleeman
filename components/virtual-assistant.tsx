@@ -25,7 +25,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
   apiEndpoint = process.env.NEXT_PUBLIC_AI_API_ENDPOINT || "/api/scotty-leads/chat",
   apiKey = process.env.NEXT_PUBLIC_AI_API_KEY,
   model = process.env.NEXT_PUBLIC_AI_MODEL || "gpt-4o-mini",
-  systemPrompt = "You are Scotty, the elite Lead Generation Specialist for Scotty Adjusting. Your PRIMARY mission is to identify property owners who have been lowballed, denied, or delayed by their insurance company and convert them into clients. You work for a company that fights insurance companies to get people every dollar they deserve. Always focus on: 1) Identifying if they have an active claim, 2) Uncovering how their insurance company is screwing them, 3) Creating urgency around getting professional help, 4) Scheduling a free claim review. You only get paid when clients get more money - NO WIN, NO FEE. Be empathetic but results-focused, and always position Scotty as the solution to insurance company abuse.",
+  systemPrompt = "You are Sticks, the friendly and knowledgeable travel assistant for Ship Sticks - the leading golf equipment and luggage shipping service. Your PRIMARY mission is to help golfers ship their clubs hassle-free to any golf course or resort worldwide. Always focus on: 1) Providing quick shipping quotes, 2) Recommending partner golf courses and resorts, 3) Tracking shipment status and delivery timelines, 4) Optimizing travel planning and cost savings. You're upbeat, golf-savvy, and make shipping equipment effortless. Use golf terminology naturally and help golfers focus on their game, not logistics.",
   useCallbackAgent = false
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -178,7 +178,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
         setTimeout(() => {
           setShowTypingIndicator(false)
           setMessages([{
-            text: "Hi! I'm Scotty from Scotty Adjusting. I help property owners who are getting lowballed, delayed, or denied by their insurance companies. If you have an active claim or recent property damage, I can tell you right now if your insurance company is trying to screw you over. What's going on with your claim?",
+            text: "Hey there! I'm Sticks, your Ship Sticks travel assistant. I help golfers ship their clubs and gear to courses and resorts worldwide - so you can fly hassle-free and focus on your game. Planning a golf trip? Need a shipping quote? Want to track your clubs? I've got you covered!",
             isUser: false,
             timestamp: new Date()
           }])
@@ -700,7 +700,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
             />
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Scotty Assistant
+                Sticks
               </h3>
               <div className="flex items-center gap-2">
                 <div className="relative flex items-center">
@@ -767,24 +767,24 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
               const actions = [];
               
               // Check for common patterns and suggest relevant actions
-              if (text.includes('claim') || text.includes('insurance')) {
-                actions.push('File a Claim', 'Check Claim Status', 'Upload Documents');
+              if (text.includes('ship') || text.includes('quote')) {
+                actions.push('Get Shipping Quote', 'Track Shipment', 'View Pricing');
               }
-              if (text.includes('damage') || text.includes('assessment')) {
-                actions.push('Schedule Inspection', 'Get Estimate', 'View Coverage');
+              if (text.includes('course') || text.includes('resort')) {
+                actions.push('Find Golf Courses', 'View Partner Resorts', 'Plan Trip');
               }
               if (text.includes('help') || text.includes('assist')) {
-                actions.push('Talk to Expert', 'View FAQ', 'Get Started');
+                actions.push('Get Shipping Quote', 'Track My Clubs', 'Learn More');
               }
               if (text.includes('contact') || text.includes('reach')) {
-                actions.push('Call Now', 'Schedule Meeting', 'Email Us');
+                actions.push('Call Support', 'Live Chat', 'Email Us');
               }
-              if (text.includes('document') || text.includes('upload')) {
-                actions.push('Upload Photos', 'Submit Policy', 'View Requirements');
+              if (text.includes('track') || text.includes('delivery')) {
+                actions.push('Track Shipment', 'Delivery Status', 'Contact Support');
               }
               if (index === 0 || (index === 1 && messages[0].isUser)) {
                 // First assistant message - show general options
-                actions.push('File a Claim', 'Get Free Analysis', 'Learn More');
+                actions.push('Get Quote', 'Track Clubs', 'Find Courses');
               }
               
               return actions.slice(0, 3); // Limit to 3 suggestions
@@ -973,7 +973,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
                     }
                   }
                 }}
-                placeholder={isLoading ? "Processing your request..." : (hasEngaged ? "Ask about your claim..." : "How can I help with your insurance claim?")}
+                placeholder={isLoading ? "Processing your request..." : (hasEngaged ? "Ask about your shipment..." : "Where are you teeing off? Let's ship your clubs!")}
                 disabled={isLoading}
                 rows={1}
                 className="w-full pl-5 pr-14 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300 disabled:opacity-50 focus:bg-white dark:focus:bg-gray-700 focus:border-scc-red dark:focus:border-scc-red focus:outline-none focus:ring-1 focus:ring-scc-red/20 resize-none overflow-hidden"

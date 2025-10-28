@@ -11,218 +11,240 @@ import {
 import Link from 'next/link'
 import { PageHeader } from '@/components/ui/page-header'
 
-interface Referral {
+interface Partner {
   id: string
-  patientId: string
-  patientName: string
-  dateOfBirth: string
-  mrn: string // Medical Record Number
-  referralType: 'routine' | 'urgent' | 'emergent' | 'consultation' | 'followUp'
-  specialty: string
-  referringProvider: string
-  referringFacility: string
-  reasonForReferral: string
-  clinicalNotes?: string
-  icd10Codes: string[]
-  status: 'pending' | 'triaged' | 'scheduled' | 'in-progress' | 'completed' | 'cancelled'
+  courseId: string
+  courseName: string
+  location: string
+  region: string // Geographic region
+  partnershipType: 'premier' | 'standard' | 'trial' | 'preferred' | 'exclusive'
+  courseType: string
+  contactPerson: string
+  contactFacility: string
+  deliveryNotes: string
+  specialInstructions?: string
+  serviceFeatures: string[]
+  status: 'pending' | 'active' | 'onboarding' | 'partnership-review' | 'inactive' | 'paused'
   priority: 'low' | 'medium' | 'high' | 'critical'
-  createdDate: string
-  scheduledDate?: string
-  completedDate?: string
-  assignedProvider?: string
-  assignedFacility?: string
-  insurance: {
-    plan: string
-    memberId: string
-    authorizationRequired: boolean
-    authorizationStatus?: 'pending' | 'approved' | 'denied'
+  partnershipStartDate: string
+  lastDeliveryDate?: string
+  totalDeliveries?: number
+  preferredCarrier?: string
+  deliveryZone?: string
+  performanceMetrics: {
+    deliverySuccess: number
+    avgDeliveryTime: string
+    customerSatisfaction: number
+    monthlyVolume: number
   }
-  clinicalData?: {
-    vitalSigns?: any
-    medications?: string[]
-    allergies?: string[]
-    recentLabs?: any[]
-    riskScore?: number
+  logistics?: {
+    storageAvailable?: boolean
+    proShopAccess?: boolean
+    signatureRequired?: boolean
+    performanceScore?: number
   }
   timeline?: {
     created: string
-    triaged?: string
-    scheduled?: string
-    seen?: string
-    reportSent?: string
+    activated?: string
+    lastDelivery?: string
+    lastReview?: string
   }
 }
 
-export default function ReferralManagementPage() {
+export default function PartnerManagementPage() {
   const router = useRouter()
-  const [referrals, setReferrals] = useState<Referral[]>([])
+  const [partners, setPartners] = useState<Partner[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedSpecialty, setSelectedSpecialty] = useState('all')
+  const [selectedRegion, setSelectedRegion] = useState('all')
 
   // Mock data for demo
   useEffect(() => {
-    const mockReferrals: Referral[] = [
+    const mockPartners: Partner[] = [
       {
-        id: 'REF-2024-001',
-        patientId: 'P-12847',
-        patientName: 'James Mitchell',
-        dateOfBirth: '1965-03-15',
-        mrn: 'MRN-45678',
-        referralType: 'urgent',
-        specialty: 'Cardiology',
-        referringProvider: 'Dr. Sarah Chen',
-        referringFacility: 'Primary Care Associates',
-        reasonForReferral: 'Chest pain, abnormal EKG, elevated troponins',
-        clinicalNotes: 'Patient presents with unstable angina, needs urgent cardiac evaluation',
-        icd10Codes: ['I20.0', 'R07.9', 'R94.31'],
-        status: 'triaged',
+        id: 'PRT-2024-001',
+        courseId: 'COURSE-12847',
+        courseName: 'Pebble Beach Golf Links',
+        location: 'Pebble Beach, CA',
+        region: 'West Coast',
+        partnershipType: 'premier',
+        courseType: 'Championship Resort',
+        contactPerson: 'Michael Stevens',
+        contactFacility: 'Pebble Beach Pro Shop',
+        deliveryNotes: 'Direct delivery to pro shop, climate-controlled storage available',
+        specialInstructions: 'High-value equipment requires signature and photo confirmation',
+        serviceFeatures: ['Climate Storage', 'Club Cleaning', 'Same-Day Delivery', '24/7 Access'],
+        status: 'active',
         priority: 'high',
-        createdDate: '2024-03-18',
-        scheduledDate: '2024-03-19',
-        assignedProvider: 'Dr. Michael Roberts',
-        assignedFacility: 'Cardiac Care Center',
-        insurance: {
-          plan: 'Medicare Advantage',
-          memberId: 'MA123456789',
-          authorizationRequired: true,
-          authorizationStatus: 'approved'
+        partnershipStartDate: '2023-01-15',
+        lastDeliveryDate: '2024-10-18',
+        totalDeliveries: 847,
+        preferredCarrier: 'Local Courier',
+        deliveryZone: 'Zone A - Priority',
+        performanceMetrics: {
+          deliverySuccess: 98,
+          avgDeliveryTime: '4.2 hours',
+          customerSatisfaction: 97,
+          monthlyVolume: 65
         },
-        clinicalData: {
-          riskScore: 78
+        logistics: {
+          storageAvailable: true,
+          proShopAccess: true,
+          signatureRequired: true,
+          performanceScore: 96
         }
       },
       {
-        id: 'REF-2024-002',
-        patientId: 'P-98234',
-        patientName: 'Margaret Thompson',
-        dateOfBirth: '1952-07-22',
-        mrn: 'MRN-67890',
-        referralType: 'routine',
-        specialty: 'Orthopedics',
-        referringProvider: 'Dr. Robert Wilson',
-        referringFacility: 'Valley Medical Group',
-        reasonForReferral: 'Chronic knee pain, osteoarthritis, considering joint replacement',
-        icd10Codes: ['M17.11', 'M25.561'],
-        status: 'scheduled',
-        priority: 'medium',
-        createdDate: '2024-03-15',
-        scheduledDate: '2024-03-28',
-        assignedProvider: 'Dr. Jennifer Lee',
-        insurance: {
-          plan: 'Commercial PPO',
-          memberId: 'PPO987654321',
-          authorizationRequired: true,
-          authorizationStatus: 'pending'
+        id: 'PRT-2024-002',
+        courseId: 'COURSE-98234',
+        courseName: 'Augusta National Golf Club',
+        location: 'Augusta, GA',
+        region: 'Southeast',
+        partnershipType: 'exclusive',
+        courseType: 'Private Championship',
+        contactPerson: 'Jennifer Park',
+        contactFacility: 'Tournament Operations',
+        deliveryNotes: 'Tournament deliveries require 48-hour advance notice and security clearance',
+        serviceFeatures: ['White Glove', 'Security Clearance', 'Tournament Priority', 'Climate Storage'],
+        status: 'active',
+        priority: 'critical',
+        partnershipStartDate: '2022-03-01',
+        lastDeliveryDate: '2024-10-15',
+        totalDeliveries: 342,
+        preferredCarrier: 'FedEx Priority',
+        deliveryZone: 'Zone S - Special Events',
+        performanceMetrics: {
+          deliverySuccess: 100,
+          avgDeliveryTime: '24 hours',
+          customerSatisfaction: 99,
+          monthlyVolume: 28
         },
-        clinicalData: {
-          riskScore: 45
+        logistics: {
+          storageAvailable: true,
+          proShopAccess: true,
+          signatureRequired: true,
+          performanceScore: 99
         }
       },
       {
-        id: 'REF-2024-003',
-        patientId: 'P-45678',
-        patientName: 'Robert Davis',
-        dateOfBirth: '1948-11-30',
-        mrn: 'MRN-34567',
-        referralType: 'consultation',
-        specialty: 'Endocrinology',
-        referringProvider: 'Dr. Emily Johnson',
-        referringFacility: 'Community Health Center',
-        reasonForReferral: 'Uncontrolled diabetes, HbA1c 11.2%, insulin adjustment needed',
-        icd10Codes: ['E11.65', 'E11.9'],
-        status: 'in-progress',
+        id: 'PRT-2024-003',
+        courseId: 'COURSE-45678',
+        courseName: 'TPC Scottsdale',
+        location: 'Scottsdale, AZ',
+        region: 'Southwest',
+        partnershipType: 'preferred',
+        courseType: 'TPC Tournament Course',
+        contactPerson: 'Lisa Wong',
+        contactFacility: 'Stadium Course Pro Shop',
+        deliveryNotes: 'Seasonal storage partner for snowbird customers',
+        serviceFeatures: ['30-Day Storage', 'Group Discounts', 'Event Coordination'],
+        status: 'onboarding',
         priority: 'high',
-        createdDate: '2024-03-10',
-        scheduledDate: '2024-03-17',
-        assignedProvider: 'Dr. David Kim',
-        insurance: {
-          plan: 'Medicare',
-          memberId: 'MED456789123',
-          authorizationRequired: false
+        partnershipStartDate: '2024-09-01',
+        totalDeliveries: 45,
+        preferredCarrier: 'UPS Ground',
+        deliveryZone: 'Zone B - Standard',
+        performanceMetrics: {
+          deliverySuccess: 94,
+          avgDeliveryTime: '3.1 days',
+          customerSatisfaction: 92,
+          monthlyVolume: 15
         },
-        clinicalData: {
-          riskScore: 82
+        logistics: {
+          storageAvailable: true,
+          proShopAccess: true,
+          signatureRequired: false,
+          performanceScore: 88
         }
       },
       {
-        id: 'REF-2024-004',
-        patientId: 'P-67890',
-        patientName: 'Lisa Anderson',
-        dateOfBirth: '1978-05-18',
-        mrn: 'MRN-78901',
-        referralType: 'routine',
-        specialty: 'Behavioral Health',
-        referringProvider: 'Dr. Mark Thompson',
-        referringFacility: 'Family Medicine Practice',
-        reasonForReferral: 'Depression, anxiety, requesting therapy services',
-        icd10Codes: ['F32.1', 'F41.1'],
+        id: 'PRT-2024-004',
+        courseId: 'COURSE-67890',
+        courseName: 'St. Andrews Old Course',
+        location: 'St Andrews, Scotland',
+        region: 'International',
+        partnershipType: 'premier',
+        courseType: 'Historic Links Course',
+        contactPerson: 'David McGregor',
+        contactFacility: 'Links Trust Operations',
+        deliveryNotes: 'International customs coordination, direct hotel delivery preferred',
+        serviceFeatures: ['Customs Support', 'Hotel Delivery', 'Caddie Coordination'],
         status: 'pending',
         priority: 'medium',
-        createdDate: '2024-03-18',
-        insurance: {
-          plan: 'Commercial HMO',
-          memberId: 'HMO111222333',
-          authorizationRequired: true,
-          authorizationStatus: 'pending'
+        partnershipStartDate: '2024-10-01',
+        deliveryZone: 'Zone I - International',
+        performanceMetrics: {
+          deliverySuccess: 0,
+          avgDeliveryTime: 'N/A',
+          customerSatisfaction: 0,
+          monthlyVolume: 0
         },
-        clinicalData: {
-          riskScore: 62
+        logistics: {
+          storageAvailable: false,
+          proShopAccess: true,
+          signatureRequired: true,
+          performanceScore: 0
         }
       },
       {
-        id: 'REF-2024-005',
-        patientId: 'P-34567',
-        patientName: 'William Brown',
-        dateOfBirth: '1970-09-05',
-        mrn: 'MRN-23456',
-        referralType: 'emergent',
-        specialty: 'Neurology',
-        referringProvider: 'Dr. Patricia White',
-        referringFacility: 'Emergency Department',
-        reasonForReferral: 'Acute stroke symptoms, needs immediate evaluation',
-        icd10Codes: ['I63.9', 'G45.9'],
-        status: 'completed',
-        priority: 'critical',
-        createdDate: '2024-03-17',
-        scheduledDate: '2024-03-17',
-        completedDate: '2024-03-17',
-        assignedProvider: 'Dr. Steven Chang',
-        insurance: {
-          plan: 'Medicare',
-          memberId: 'MED999888777',
-          authorizationRequired: false
+        id: 'PRT-2024-005',
+        courseId: 'COURSE-34567',
+        courseName: 'Bandon Dunes Golf Resort',
+        location: 'Bandon, OR',
+        region: 'Pacific Northwest',
+        partnershipType: 'exclusive',
+        courseType: 'Destination Resort',
+        contactPerson: 'Rachel Stevens',
+        contactFacility: 'Resort Concierge',
+        deliveryNotes: 'Multi-course resort with 5 championship courses, centralized receiving',
+        serviceFeatures: ['Resort Concierge', 'Multi-Course Access', 'Weather Protection', 'Storage'],
+        status: 'active',
+        priority: 'high',
+        partnershipStartDate: '2023-06-15',
+        lastDeliveryDate: '2024-10-17',
+        totalDeliveries: 623,
+        preferredCarrier: 'FedEx Priority',
+        deliveryZone: 'Zone A - Priority',
+        performanceMetrics: {
+          deliverySuccess: 99,
+          avgDeliveryTime: '2.8 days',
+          customerSatisfaction: 98,
+          monthlyVolume: 52
         },
-        clinicalData: {
-          riskScore: 95
+        logistics: {
+          storageAvailable: true,
+          proShopAccess: true,
+          signatureRequired: true,
+          performanceScore: 97
         }
       }
     ]
 
     setTimeout(() => {
-      setReferrals(mockReferrals)
+      setPartners(mockPartners)
       setLoading(false)
     }, 500)
   }, [])
 
   // Statistics
   const stats = {
-    total: referrals.length,
-    pending: referrals.filter(r => r.status === 'pending').length,
-    urgent: referrals.filter(r => r.priority === 'high' || r.priority === 'critical').length,
-    scheduled: referrals.filter(r => r.status === 'scheduled').length,
-    avgResponseTime: '2.3 hours',
-    completionRate: '94%'
+    total: partners.length,
+    pending: partners.filter(r => r.status === 'pending').length,
+    urgent: partners.filter(r => r.priority === 'high' || r.priority === 'critical').length,
+    active: partners.filter(r => r.status === 'active').length,
+    avgDeliverySuccess: '97%',
+    avgSatisfaction: '96%'
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-      case 'in-progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
-      case 'scheduled': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
-      case 'triaged': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+      case 'onboarding': return 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
+      case 'partnership-review': return 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400'
+      case 'paused': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
       case 'pending': return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+      case 'inactive': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
       default: return 'bg-gray-100 text-gray-800'
     }
   }
@@ -236,38 +258,38 @@ export default function ReferralManagementPage() {
     }
   }
 
-  const getSpecialtyIcon = (specialty: string) => {
-    switch (specialty) {
-      case 'Cardiology': return <Heart className="w-5 h-5" />
-      case 'Neurology': return <Brain className="w-5 h-5" />
-      case 'Behavioral Health': return <Brain className="w-5 h-5" />
-      case 'Endocrinology': return <Activity className="w-5 h-5" />
-      default: return <Stethoscope className="w-5 h-5" />
+  const getPartnershipIcon = (partnershipType: string) => {
+    switch (partnershipType) {
+      case 'exclusive': return <Heart className="w-5 h-5" />
+      case 'premier': return <Activity className="w-5 h-5" />
+      case 'preferred': return <Users className="w-5 h-5" />
+      case 'standard': return <MapPin className="w-5 h-5" />
+      default: return <MapPin className="w-5 h-5" />
     }
   }
 
-  // Filter referrals
-  const filteredReferrals = referrals.filter(referral => {
-    const matchesSearch = referral.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         referral.mrn.includes(searchTerm) ||
-                         referral.id.includes(searchTerm)
-    const matchesFilter = filter === 'all' || referral.status === filter
-    const matchesSpecialty = selectedSpecialty === 'all' || referral.specialty === selectedSpecialty
-    return matchesSearch && matchesFilter && matchesSpecialty
+  // Filter partners
+  const filteredPartners = partners.filter(partner => {
+    const matchesSearch = partner.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         partner.location.includes(searchTerm) ||
+                         partner.id.includes(searchTerm)
+    const matchesFilter = filter === 'all' || partner.status === filter
+    const matchesRegion = selectedRegion === 'all' || partner.region === selectedRegion
+    return matchesSearch && matchesFilter && matchesRegion
   })
 
   return (
     <div className="space-y-6 w-full">
       <PageHeader
-        title="Referral Management"
-        description="Intelligent routing and tracking for patient referrals"
+        title="Partner Network"
+        description="Golf course partnerships and delivery network management"
         action={
           <button
             onClick={() => router.push('/dashboard/referrals/new')}
             className="h-12 px-6 bg-arthur-blue text-white rounded-full hover:bg-arthur-blue-dark flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto transition-colors"
           >
             <Plus size={20} />
-            <span className="font-medium">New Referral</span>
+            <span className="font-medium">New Partner</span>
           </button>
         }
       />
@@ -281,7 +303,7 @@ export default function ReferralManagementPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.total}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Total Referrals</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Total Partners</p>
             </div>
           </div>
         </div>
@@ -293,7 +315,7 @@ export default function ReferralManagementPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.pending}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Pending Triage</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Pending Setup</p>
             </div>
           </div>
         </div>
@@ -305,19 +327,7 @@ export default function ReferralManagementPage() {
             </div>
             <div>
               <p className="text-2xl font-bold">{stats.urgent}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Urgent/Critical</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
-              <Calendar className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{stats.scheduled}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Scheduled</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">High Priority</p>
             </div>
           </div>
         </div>
@@ -325,11 +335,23 @@ export default function ReferralManagementPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
-              <Timer className="w-5 h-5 text-green-600" />
+              <CheckCircle className="w-5 h-5 text-green-600" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{stats.avgResponseTime}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Avg Response</p>
+              <p className="text-2xl font-bold">{stats.active}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Active Partners</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{stats.avgDeliverySuccess}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Delivery Success</p>
             </div>
           </div>
         </div>
@@ -337,11 +359,11 @@ export default function ReferralManagementPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-arthur-care/10 rounded-lg">
-              <CheckCircle className="w-5 h-5 text-arthur-care" />
+              <Heart className="w-5 h-5 text-arthur-care" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{stats.completionRate}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Completion Rate</p>
+              <p className="text-2xl font-bold">{stats.avgSatisfaction}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">Satisfaction</p>
             </div>
           </div>
         </div>
@@ -355,7 +377,7 @@ export default function ReferralManagementPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="Search by patient name, MRN, or referral ID..."
+                placeholder="Search by course name, location, or partner ID..."
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -370,23 +392,24 @@ export default function ReferralManagementPage() {
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
-            <option value="triaged">Triaged</option>
-            <option value="scheduled">Scheduled</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
+            <option value="onboarding">Onboarding</option>
+            <option value="active">Active</option>
+            <option value="partnership-review">Review</option>
+            <option value="paused">Paused</option>
+            <option value="inactive">Inactive</option>
           </select>
 
           <select
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
-            value={selectedSpecialty}
-            onChange={(e) => setSelectedSpecialty(e.target.value)}
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
           >
-            <option value="all">All Specialties</option>
-            <option value="Cardiology">Cardiology</option>
-            <option value="Orthopedics">Orthopedics</option>
-            <option value="Endocrinology">Endocrinology</option>
-            <option value="Neurology">Neurology</option>
-            <option value="Behavioral Health">Behavioral Health</option>
+            <option value="all">All Regions</option>
+            <option value="West Coast">West Coast</option>
+            <option value="Southeast">Southeast</option>
+            <option value="Southwest">Southwest</option>
+            <option value="Pacific Northwest">Pacific Northwest</option>
+            <option value="International">International</option>
           </select>
 
           <button className="px-4 py-2 bg-arthur-blue text-white rounded-lg hover:bg-arthur-blue-hover flex items-center gap-2">
@@ -396,7 +419,7 @@ export default function ReferralManagementPage() {
         </div>
       </div>
 
-      {/* Referrals List */}
+      {/* Partners List */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-arthur-blue"></div>
@@ -408,56 +431,56 @@ export default function ReferralManagementPage() {
               <thead className="bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Priority</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Referral ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Patient</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Specialty</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Referring Provider</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Partner ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Golf Course</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Partnership</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Contact Person</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Created</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Started</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredReferrals.map((referral) => (
-                  <tr key={referral.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                {filteredPartners.map((partner) => (
+                  <tr key={partner.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-4 py-4">
-                      {getPriorityIcon(referral.priority)}
+                      {getPriorityIcon(partner.priority)}
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{referral.id}</div>
-                      <div className="text-xs text-gray-500">{referral.referralType}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{partner.id}</div>
+                      <div className="text-xs text-gray-500">{partner.partnershipType}</div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{referral.patientName}</div>
-                      <div className="text-xs text-gray-500">MRN: {referral.mrn}</div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{partner.courseName}</div>
+                      <div className="text-xs text-gray-500">{partner.location}</div>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="text-arthur-blue">{getSpecialtyIcon(referral.specialty)}</div>
-                        <span className="text-sm">{referral.specialty}</span>
+                        <div className="text-arthur-blue">{getPartnershipIcon(partner.partnershipType)}</div>
+                        <span className="text-sm">{partner.courseType}</span>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <div className="text-sm">{referral.referringProvider}</div>
-                      <div className="text-xs text-gray-500">{referral.referringFacility}</div>
+                      <div className="text-sm">{partner.contactPerson}</div>
+                      <div className="text-xs text-gray-500">{partner.contactFacility}</div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(referral.status)}`}>
-                        {referral.status}
+                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(partner.status)}`}>
+                        {partner.status}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-500">
-                      {referral.createdDate}
+                      {partner.partnershipStartDate}
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
                         <Link
-                          href={`/dashboard/referrals/${referral.id}`}
+                          href={`/dashboard/referrals/${partner.id}`}
                           className="text-arthur-blue hover:text-arthur-blue-hover"
                         >
                           <Eye size={18} />
                         </Link>
-                        {referral.status === 'pending' && (
+                        {partner.status === 'pending' && (
                           <button className="text-green-600 hover:text-green-700">
                             <UserCheck size={18} />
                           </button>

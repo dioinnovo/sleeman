@@ -49,116 +49,116 @@ export default function ShipmentsPage() {
 
   const activeShipments: Shipment[] = [
     {
-      id: 'CS-001',
-      patientName: 'Margaret Thompson',
-      mrn: 'MRN-784512',
-      sessionType: 'Diabetes Management Check-in',
-      status: 'active',
-      startDate: '2024-02-15',
-      nextMilestone: 'Endocrinology Follow-up',
-      progress: 72,
-      careManager: 'Sarah Chen, RN',
-      riskScore: 'High',
+      id: 'SS-001',
+      customerName: 'Tom Bradley',
+      trackingNumber: 'SS-2024-M845',
+      shipmentType: 'Tournament Delivery - White Glove',
+      status: 'in-transit',
+      shipDate: '2024-10-14',
+      nextMilestone: 'Arrival at Augusta Pro Shop',
+      progress: 75,
+      coordinator: 'Mike Stevens, Logistics',
+      priority: 'High',
       outcomes: {
-        adherence: 88,
-        qualityScore: 92,
-        costSavings: 24500
+        onTimeDelivery: 98,
+        serviceScore: 96,
+        costSavings: 12500
       },
-      voiceNote: 'Patient reports consistent BG monitoring 4x daily. A1C down from 9.2% to 7.8%. Experiencing some dawn phenomenon - coordinating with endocrinologist for basal insulin adjustment. Diet adherence excellent, walking 30 min daily. No hypoglycemic episodes this month.',
-      clinicalNotes: 'Follow-up visit completed. Patient demonstrates good understanding of carb counting and insulin dosing. Foot exam WNL, no neuropathy signs. Retinal screening scheduled next week. Continue current medication regimen, increase metformin to 1000mg BID.',
-      vitalSigns: {
-        bloodPressure: '128/82',
-        heartRate: 76,
-        temperature: 98.4,
-        weight: 182,
-        oxygenSaturation: 98
+      customerNote: 'Professional golfer shipping equipment for Masters qualifying. Clubs must arrive 48 hours before tee time. Custom fitted Titleist T350 irons and TSR3 driver - handle with extreme care. Temperature-controlled transport required.',
+      handlingNotes: 'White-glove pickup completed from Ponte Vedra residence. Equipment inspected and photographed. All 14 clubs accounted for including T350 iron set (4-PW), TSR3 driver, TSR2 fairway woods, and Vokey SM10 wedges. Tour bag in excellent condition. GPS tracker activated. Estimated delivery Oct 16 at 2 PM.',
+      packageDetails: {
+        weight: '52 lbs',
+        dimensions: '52x15x12 inches',
+        carrier: 'FedEx Priority',
+        insurance: 8500,
+        temperature: 68
       },
-      medicationCount: 6,
-      appointmentsScheduled: 3
+      itemCount: 14,
+      deliveryWindowScheduled: 48
     },
     {
-      id: 'CS-002',
-      patientName: 'James Mitchell',
-      mrn: 'MRN-784513',
-      sessionType: 'Post-Discharge Follow-up',
+      id: 'SS-002',
+      customerName: 'Sarah Martinez',
+      trackingNumber: 'SS-2024-PB392',
+      shipmentType: 'Resort Package - Express',
       status: 'active',
-      startDate: '2024-02-20',
-      nextMilestone: 'Home Health Coordination',
+      shipDate: '2024-10-15',
+      nextMilestone: 'Pro Shop Coordination',
       progress: 45,
-      careManager: 'Michael Davis, RN',
-      riskScore: 'Medium',
+      coordinator: 'Jennifer Park, Customer Success',
+      priority: 'Medium',
       outcomes: {
-        adherence: 75,
-        qualityScore: 85,
+        onTimeDelivery: 95,
+        serviceScore: 92,
+        costSavings: 8900
+      },
+      customerNote: 'Weekend getaway to Pebble Beach with spouse. First time using Ship Sticks. Callaway cart bag with 12 clubs plus push cart. Would like complimentary club cleaning if available.',
+      handlingNotes: 'Same-day pickup from San Francisco residence. Customer very friendly, excited about trip. Push cart disassembled and secured properly. Pro shop notified of arrival. Customer opted for text notifications.',
+      packageDetails: {
+        weight: '45 lbs',
+        dimensions: '48x14x11 inches',
+        carrier: 'Local Courier',
+        insurance: 2800,
+        temperature: 72
+      },
+      itemCount: 12,
+      deliveryWindowScheduled: 24
+    },
+    {
+      id: 'SS-003',
+      customerName: 'David Thompson',
+      trackingNumber: 'SS-2024-KI441',
+      shipmentType: 'International - Customs Cleared',
+      status: 'active',
+      shipDate: '2024-10-10',
+      nextMilestone: 'Final UK Customs Clearance',
+      progress: 85,
+      coordinator: 'Rachel Chen, International',
+      priority: 'High',
+      outcomes: {
+        onTimeDelivery: 94,
+        serviceScore: 97,
         costSavings: 15200
       },
-      voiceNote: 'Post-op day 14 from total hip replacement. Patient ambulating well with walker, pain controlled with oral meds. Incision healing appropriately, no signs of infection. PT 3x weekly going well. Family support strong, spouse assisting with ADLs.',
-      clinicalNotes: 'Home visit conducted. Surgical site clean, dry, intact. ROM improving, able to perform prescribed exercises independently. Discussed fall prevention strategies. DME setup complete including raised toilet seat, shower chair. Next wound check in 1 week.',
-      vitalSigns: {
-        bloodPressure: '132/78',
-        heartRate: 68,
-        temperature: 98.6,
-        weight: 195,
-        oxygenSaturation: 97
+      customerNote: 'Once-in-lifetime trip to St. Andrews Old Course. Custom fitted Mizuno irons. All customs paperwork completed online. Need delivery directly to hotel - Rusacks St Andrews.',
+      handlingNotes: 'International shipment processed through Heathrow. All customs declarations filed. Equipment value declared at $5,200. Links caddie master coordinated for hotel delivery. Customer very engaged, sending daily check-ins.',
+      packageDetails: {
+        weight: '50 lbs',
+        dimensions: '50x14x12 inches',
+        carrier: 'DHL International Express',
+        insurance: 5200,
+        temperature: 65
       },
-      medicationCount: 4,
-      appointmentsScheduled: 5
+      itemCount: 13,
+      deliveryWindowScheduled: 72
     },
     {
-      id: 'CS-003',
-      patientName: 'Robert Chen',
-      mrn: 'MRN-784514',
-      sessionType: 'Chronic Care Management',
-      status: 'monitoring',
-      startDate: '2024-03-01',
-      nextMilestone: 'Wound Check',
-      progress: 90,
-      careManager: 'Jennifer Park, MSW',
-      riskScore: 'Low',
-      outcomes: {
-        adherence: 95,
-        qualityScore: 98,
-        costSavings: 32000
-      },
-      voiceNote: 'Venous stasis ulcer showing excellent healing progress. Wound size decreased from 3.2cm to 0.8cm diameter. Patient compliant with compression therapy and leg elevation. No signs of infection. Teaching reinforced re: proper wound care technique. Ready to transition to monthly monitoring.',
-      clinicalNotes: 'Wound assessment completed. Granulation tissue present, minimal drainage. Periwound skin intact. Patient verbalizes understanding of warning signs. Photos documented in EHR. Continue current wound care regimen with weekly dressing changes. Nutrition consult completed, protein intake optimized.',
-      vitalSigns: {
-        bloodPressure: '118/72',
-        heartRate: 72,
-        temperature: 98.2,
-        weight: 178,
-        oxygenSaturation: 99
-      },
-      medicationCount: 5,
-      appointmentsScheduled: 2
-    },
-    {
-      id: 'CS-004',
-      patientName: 'James Wilson',
-      mrn: 'MRN-784515',
-      sessionType: 'Diabetes Management',
+      id: 'SS-004',
+      customerName: 'Michael Chen',
+      trackingNumber: 'SS-2024-SC128',
+      shipmentType: 'Seasonal Snowbird - Standard',
       status: 'scheduled',
-      startDate: '2024-03-25',
-      nextMilestone: 'Initial Assessment',
-      progress: 0,
-      careManager: 'Lisa Wong, RN',
-      riskScore: 'High',
+      shipDate: '2024-10-18',
+      nextMilestone: 'Pickup Confirmation',
+      progress: 5,
+      coordinator: 'Lisa Wong, Seasonal',
+      priority: 'Low',
       outcomes: {
-        adherence: 0,
-        qualityScore: 0,
+        onTimeDelivery: 0,
+        serviceScore: 0,
         costSavings: 0
       },
-      voiceNote: 'New patient enrollment for comprehensive diabetes management. Recent A1C 10.2%, on oral agents only. History of poor adherence due to cost barriers and health literacy. Social work consult for medication assistance programs. Will need extensive education on self-monitoring and diet.',
-      clinicalNotes: 'Initial intake assessment scheduled. Chart review shows uncontrolled T2DM with multiple gaps in care. No retinal exam in 3 years, foot exam overdue. Will coordinate comprehensive workup including labs, referrals. Patient expressed motivation for improved control after recent hospitalization.',
-      vitalSigns: {
-        bloodPressure: '142/88',
-        heartRate: 82,
-        temperature: 98.6,
-        weight: 225,
-        oxygenSaturation: 96
+      customerNote: 'Annual winter migration from Minneapolis to Scottsdale. Regular customer, 3rd year using Ship Sticks. TaylorMade cart bag, clubs in good condition. Flexible on delivery dates.',
+      handlingNotes: 'Pickup scheduled for Oct 18. Customer utilizing off-season discount (40% savings). Has requested 30-day complimentary storage at Scottsdale facility. Will coordinate with TPC Scottsdale for eventual delivery.',
+      packageDetails: {
+        weight: '42 lbs',
+        dimensions: '46x13x11 inches',
+        carrier: 'UPS Ground',
+        insurance: 2200,
+        temperature: 70
       },
-      medicationCount: 3,
-      appointmentsScheduled: 4
+      itemCount: 11,
+      deliveryWindowScheduled: 96
     }
   ]
 
@@ -185,9 +185,9 @@ export default function ShipmentsPage() {
 
   const filteredShipments = activeShipments.filter(shipment => {
     const matchesSearch =
-      shipment.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.trackingNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      shipment.shipmentType.toLowerCase().includes(searchTerm.toLowerCase())
+      (shipment.customerName?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (shipment.trackingNumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (shipment.shipmentType?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     const matchesStatus = filterStatus === 'all' || shipment.status === filterStatus
     const matchesSession = filterPathway === 'all' || shipment.shipmentType === filterPathway
     return matchesSearch && matchesStatus && matchesSession
@@ -201,6 +201,7 @@ export default function ShipmentsPage() {
         description="Active shipments and delivery tracking"
         action={
           <button
+            onClick={() => router.push('/dashboard/shipments/new')}
             className="h-12 px-6 bg-arthur-blue text-white rounded-full hover:bg-arthur-blue-dark flex items-center justify-center gap-2 w-full sm:w-auto transition-colors font-medium"
           >
             <Plus size={20} />
@@ -256,9 +257,9 @@ export default function ShipmentsPage() {
           const Icon = getPathwayIcon(shipment.shipmentType)
           return (
             <div
-              key={session.id}
+              key={shipment.id}
               className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-all cursor-pointer"
-              onClick={() => router.push(`/dashboard/care-sessions/${session.id}/areas`)}
+              onClick={() => router.push(`/dashboard/care-sessions/${shipment.id}`)}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -267,35 +268,35 @@ export default function ShipmentsPage() {
                     <Icon className="text-arthur-blue" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-gray-100">{session.patientName}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{session.mrn}</p>
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100">{shipment.customerName}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{shipment.trackingNumber}</p>
                   </div>
                 </div>
                 <div className="flex flex-col items-end gap-2">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(session.status)}`}>
-                    {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(shipment.status)}`}>
+                    {shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                   </span>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                    session.riskScore === 'High' ? 'bg-red-100 text-red-700' :
-                    session.riskScore === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                    shipment.priority === 'High' ? 'bg-red-100 text-red-700' :
+                    shipment.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
                     'bg-green-100 text-green-700'
                   }`}>
-                    {session.riskScore} Risk
+                    {shipment.priority} Priority
                   </span>
                 </div>
               </div>
 
-              {/* Session Info */}
+              {/* Shipment Info */}
               <div className="mb-4">
-                <p className="text-sm font-semibold text-arthur-blue mb-1">{session.sessionType}</p>
+                <p className="text-sm font-semibold text-arthur-blue mb-1">{shipment.shipmentType}</p>
                 <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                   <span className="flex items-center gap-1">
                     <Calendar size={12} />
-                    Started {session.startDate}
+                    Shipped {shipment.shipDate}
                   </span>
                   <span className="flex items-center gap-1">
                     <Users size={12} />
-                    {session.careManager}
+                    {shipment.coordinator}
                   </span>
                 </div>
               </div>
@@ -303,13 +304,13 @@ export default function ShipmentsPage() {
               {/* Progress Bar */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Session Progress</span>
-                  <span className="text-xs font-bold text-arthur-blue">{session.progress}%</span>
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Shipment Progress</span>
+                  <span className="text-xs font-bold text-arthur-blue">{shipment.progress}%</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div
                     className="bg-arthur-blue h-2 rounded-full transition-all"
-                    style={{ width: `${session.progress}%` }}
+                    style={{ width: `${shipment.progress}%` }}
                   />
                 </div>
               </div>
@@ -319,7 +320,7 @@ export default function ShipmentsPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Next Milestone</p>
-                    <p className="text-sm font-semibold text-arthur-blue">{session.nextMilestone}</p>
+                    <p className="text-sm font-semibold text-arthur-blue">{shipment.nextMilestone}</p>
                   </div>
                   <Target className="text-arthur-blue" size={20} />
                 </div>
@@ -328,93 +329,93 @@ export default function ShipmentsPage() {
               {/* Outcomes Metrics */}
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Adherence</p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{session.outcomes.adherence}%</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">On-Time</p>
+                  <p className="text-lg font-bold text-gray-900 dark:text-gray-100">{shipment.outcomes.onTimeDelivery}%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Quality</p>
-                  <p className="text-lg font-bold text-green-600">{session.outcomes.qualityScore}%</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Service</p>
+                  <p className="text-lg font-bold text-green-600">{shipment.outcomes.serviceScore}%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Treatment Cost</p>
-                  <p className="text-lg font-bold text-blue-600">${(session.outcomes.costSavings / 1000).toFixed(0)}k</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Cost Savings</p>
+                  <p className="text-lg font-bold text-blue-600">${(shipment.outcomes.costSavings / 1000).toFixed(0)}k</p>
                 </div>
               </div>
 
-              {/* Voice Note */}
-              {session.voiceNote && (
+              {/* Customer Note */}
+              {shipment.customerNote && (
                 <div className="mb-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
                   <div className="flex items-start gap-2">
                     <Mic className="text-arthur-blue flex-shrink-0 mt-0.5" size={14} />
                     <div className="flex-1">
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Voice Note</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">{session.voiceNote}</p>
+                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Customer Note</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3">{shipment.customerNote}</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Clinical Notes */}
-              {session.clinicalNotes && (
+              {/* Handling Notes */}
+              {shipment.handlingNotes && (
                 <div className="mb-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
                   <div className="flex items-start gap-2">
                     <FileText className="text-purple-600 flex-shrink-0 mt-0.5" size={14} />
                     <div className="flex-1">
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Clinical Notes</p>
-                      <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2">{session.clinicalNotes}</p>
+                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Handling Notes</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2">{shipment.handlingNotes}</p>
                     </div>
                   </div>
                 </div>
               )}
 
-              {/* Vital Signs & Quick Stats */}
-              {session.vitalSigns && (
+              {/* Package Details */}
+              {shipment.packageDetails && (
                 <div className="mb-3 bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
                   <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 flex items-center gap-1">
                     <Thermometer size={14} className="text-green-600" />
-                    Latest Vitals
+                    Package Details
                   </p>
                   <div className="grid grid-cols-3 gap-2 text-xs">
-                    {session.vitalSigns.bloodPressure && (
+                    {shipment.packageDetails.weight && (
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">BP</p>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">{session.vitalSigns.bloodPressure}</p>
+                        <p className="text-gray-500 dark:text-gray-400">Weight</p>
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{shipment.packageDetails.weight}</p>
                       </div>
                     )}
-                    {session.vitalSigns.heartRate && (
+                    {shipment.packageDetails.carrier && (
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">HR</p>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">{session.vitalSigns.heartRate} bpm</p>
+                        <p className="text-gray-500 dark:text-gray-400">Carrier</p>
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{shipment.packageDetails.carrier.split(' ')[0]}</p>
                       </div>
                     )}
-                    {session.vitalSigns.oxygenSaturation && (
+                    {shipment.packageDetails.temperature && (
                       <div>
-                        <p className="text-gray-500 dark:text-gray-400">SpO2</p>
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">{session.vitalSigns.oxygenSaturation}%</p>
+                        <p className="text-gray-500 dark:text-gray-400">Temp</p>
+                        <p className="font-semibold text-gray-900 dark:text-gray-100">{shipment.packageDetails.temperature}°F</p>
                       </div>
                     )}
                   </div>
                 </div>
               )}
 
-              {/* Medications & Appointments */}
+              {/* Items & Delivery Window */}
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {session.medicationCount !== undefined && (
+                {shipment.itemCount !== undefined && (
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
                     <div className="flex items-center gap-1 mb-1">
                       <Pill size={12} className="text-orange-500" />
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Medications</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Items</p>
                     </div>
-                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{session.medicationCount} active</p>
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{shipment.itemCount} clubs</p>
                   </div>
                 )}
-                {session.appointmentsScheduled !== undefined && (
+                {shipment.deliveryWindowScheduled !== undefined && (
                   <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
                     <div className="flex items-center gap-1 mb-1">
                       <CalendarCheck size={12} className="text-blue-500" />
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Appointments</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Delivery Window</p>
                     </div>
-                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{session.appointmentsScheduled} scheduled</p>
+                    <p className="text-sm font-bold text-gray-900 dark:text-gray-100">{shipment.deliveryWindowScheduled}h window</p>
                   </div>
                 )}
               </div>

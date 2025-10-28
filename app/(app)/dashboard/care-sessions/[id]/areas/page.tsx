@@ -101,7 +101,7 @@ export default function CareSessionAreasPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-arthur-blue mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading assessment categories...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading shipment details...</p>
         </div>
       </div>
     )
@@ -111,12 +111,12 @@ export default function CareSessionAreasPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <p className="text-red-600 mb-4">{error || 'Failed to load care session data'}</p>
+          <p className="text-red-600 mb-4">{error || 'Failed to load shipment data'}</p>
           <button
             onClick={() => router.push('/dashboard/care-sessions')}
             className="px-4 py-2 bg-arthur-blue text-white rounded-lg hover:bg-arthur-blue-dark"
           >
-            Back to Care Coordination
+            Back to Shipments
           </button>
         </div>
       </div>

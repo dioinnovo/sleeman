@@ -587,7 +587,7 @@ export default function CareSessionReportPage() {
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-300"
               >
                 <ArrowLeft size={20} />
-                Back to Care Coordination
+                Back to Shipments
               </Link>
             </div>
 

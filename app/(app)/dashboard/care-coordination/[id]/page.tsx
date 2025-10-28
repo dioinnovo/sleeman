@@ -272,7 +272,7 @@ export default function CareCoordinationDetailPage() {
             className="text-gray-600 hover:text-gray-900 dark:text-gray-100"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">Back to Care Coordination</span>
+            <span className="text-sm">Back to Shipments</span>
           </Button>
           <div className="flex items-center gap-2">
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(patient.status)}`}>

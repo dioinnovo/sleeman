@@ -439,8 +439,9 @@ export class HumeEVIVoiceProvider extends IVoiceProvider {
       console.log('Hume EVI Provider: WebSocket disconnected:', event.code, event.reason);
       this.updateConnectionState({ isConnected: false });
       this.emit('disconnected');
-      
-      if (event.code !== 1000) { // Not a normal closure
+
+      // Only attempt reconnect if this wasn't a manual disconnect and we still have a ws reference
+      if (this.ws && event.code !== 1000) {
         this.attemptReconnect();
       }
     };
@@ -1205,16 +1206,23 @@ export class HumeEVIVoiceProvider extends IVoiceProvider {
 
   private cleanupWebSocket(): void {
     if (this.ws) {
-      this.ws.onopen = null;
-      this.ws.onmessage = null;
-      this.ws.onerror = null;
-      this.ws.onclose = null;
-      
-      if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
-        this.ws.close(1000, 'Normal closure');
-      }
-      
+      const currentWs = this.ws;
+      // Set to null FIRST to prevent event handlers from firing
       this.ws = null;
+
+      // Remove all event handlers BEFORE closing
+      currentWs.onopen = null;
+      currentWs.onmessage = null;
+      currentWs.onerror = null;
+      currentWs.onclose = null;
+
+      if (currentWs.readyState === WebSocket.OPEN || currentWs.readyState === WebSocket.CONNECTING) {
+        try {
+          currentWs.close(1000, 'Normal closure');
+        } catch (e) {
+          console.error('Error closing Hume WebSocket:', e);
+        }
+      }
     }
   }
 

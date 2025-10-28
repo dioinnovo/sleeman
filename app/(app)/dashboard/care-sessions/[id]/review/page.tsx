@@ -622,7 +622,7 @@ export default function CareSessionReviewPage() {
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900 dark:text-gray-100 cursor-pointer w-fit"
             >
               <ArrowLeft size={20} />
-              Back to Care Coordination
+              Back to Shipments
             </Link>
 
             {/* Title Section */}

@@ -25,21 +25,25 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Arthur Health - CareNexus Platform',
-  description: 'Empowering High-Value Coordinated Healthcare',
-  keywords: 'healthcare, care coordination, value-based care, AI, patient management, clinical workflows',
-  authors: [{ name: 'Arthur Health' }],
+  title: 'Ship Sticks - Golf Equipment Shipping',
+  description: 'Ship your golf clubs anywhere with ease - Trusted golf equipment shipping for travelers worldwide',
+  keywords: 'golf shipping, golf clubs, golf equipment, travel, golf vacation, ship golf clubs, golf logistics',
+  authors: [{ name: 'Ship Sticks' }],
   icons: {
-    icon: '/favicon.ico',
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
+      { url: '/favicon_io/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon_io/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/favicon_io/apple-touch-icon.png',
     shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
   },
   openGraph: {
-    title: 'Arthur Health - CareNexus Platform',
-    description: 'Transform care delivery with AI-driven insights and seamless coordination',
+    title: 'Ship Sticks - Golf Equipment Shipping',
+    description: 'Ship your golf clubs anywhere with ease - Trusted by golfers worldwide for hassle-free equipment shipping',
     type: 'website',
     locale: 'en_US',
-    siteName: 'Arthur Health CareNexus',
+    siteName: 'Ship Sticks',
   },
 }
 

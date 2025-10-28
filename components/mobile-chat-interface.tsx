@@ -27,9 +27,13 @@ import SiriOrb from '@/components/ui/siri-orb'
 import SourcesSection from '@/components/ui/sources-section'
 import SimpleMarkdownMessage from '@/components/ui/simple-markdown-message'
 import { generateHealthcarePolicyPDF } from '@/lib/utils/healthcare-pdf-generator'
-import { mockPatients, getPatientData } from '@/lib/ai/mock-patient-data'
+import { mockShipments, getShipmentData } from '@/lib/ai/mock-shipment-data'
+import { SqlQueryDisplay } from '@/components/assistant/SqlQueryDisplay'
+import { ChartDisplay } from '@/components/assistant/ChartDisplay'
+import { DataTableDisplay } from '@/components/assistant/DataTableDisplay'
+import { ExcelDownloadButton } from '@/components/assistant/ExcelDownloadButton'
 import { cn } from '@/lib/utils'
-import PatientSelectorModal from '@/components/assistant/PatientSelectorModal'
+import ShipmentSelectorModal from '@/components/assistant/ShipmentSelectorModal'
 import ChatHistoryPanel from '@/components/assistant/ChatHistoryPanel'
 
 // Custom Microphone SVG Component
@@ -77,6 +81,11 @@ interface Message {
   downloadFilename?: string
   isPolicyAnalysis?: boolean
   isStreaming?: boolean
+  // SQL Agent fields
+  sqlQuery?: string
+  queryResults?: { columns: string[]; rows: any[][] }
+  chartData?: any
+  provider?: string
 }
 
 interface Chat {
@@ -118,8 +127,8 @@ export default function MobileChatInterface() {
   const [searchQuery, setSearchQuery] = useState('')
   const [needsContext, setNeedsContext] = useState(false)
   const [pendingQuestion, setPendingQuestion] = useState<string | null>(null)
-  const [selectedPatient, setSelectedPatient] = useState<string | null>(null)
-  const [showPatientSelector, setShowPatientSelector] = useState(false)
+  const [selectedShipment, setSelectedShipment] = useState<string | null>(null)
+  const [showShipmentSelector, setShowShipmentSelector] = useState(false)
   const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<'gapIdentification' | 'relationshipDiscovery' | 'roiBusinessImpact'>('gapIdentification')
   const [userScrolledUp, setUserScrolledUp] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -155,29 +164,29 @@ export default function MobileChatInterface() {
 
   // Model options with provider indicators
   const modelOptions = [
-    { value: 'quick', label: 'Arthur Quick', description: 'Care coordination & referral management' },
-    { value: 'arthur-pro', label: 'Arthur Pro', description: 'Advanced analytics - Knowledge graph insights' }
+    { value: 'quick', label: 'Sticks Quick', description: 'Concise answers & quick data summaries' },
+    { value: 'arthur-pro', label: 'Sticks Pro', description: 'Comprehensive analysis with detailed insights' }
   ]
 
-  // Complex analytical questions for Arthur Pro (knowledge graph powered)
-  const arthurProQuestions = {
+  // Complex analytical questions for Sticks Pro (comprehensive SQL analysis)
+  const shipSticksProQuestions = {
     gapIdentification: [
-      "Which treatment combinations are underutilized despite better outcomes?",
-      "What patient factors predict higher readmission risk across departments?",
-      "Which high-cost treatments show poor outcome correlation?",
-      "Which denied claims should have been approved based on policy coverage?"
+      "Which routes have the highest failure rates and what is the cost impact?",
+      "Show me the insurance coverage gap by route and estimate potential losses",
+      "What percentage of shipments have tracking delays and which carriers are responsible?",
+      "Which marketing campaigns had the highest ROI and why?"
     ],
     relationshipDiscovery: [
-      "What hidden patterns exist between patient demographics and treatment success?",
-      "Which doctors consistently exceed expected outcomes for complex cases?",
-      "What operational bottlenecks impact patient flow between departments?",
-      "Which social factors most influence treatment adherence?"
+      "Analyze customer acquisition cost vs lifetime value trends",
+      "Show me NPS scores by customer segment and service tier",
+      "Compare carrier performance by success rate and profit margin",
+      "Analyze our revenue by month and identify seasonal patterns"
     ],
     roiBusinessImpact: [
-      "Where can we reduce costs without impacting outcomes?",
-      "Which protocols could prevent the most readmissions?",
-      "What capacity optimizations would increase revenue?",
-      "Which quality improvements drive highest reimbursement?"
+      "What is our customer lifetime value by acquisition channel?",
+      "Compare our profit margins across different service tiers",
+      "Show me conversion rates from quote to booking by customer segment",
+      "Which routes have the highest failure rates and why? Show me a detailed breakdown by carrier, time of year, and estimated annual cost"
     ]
   }
 
@@ -201,15 +210,17 @@ export default function MobileChatInterface() {
     // Only scroll if user hasn't manually scrolled up
     if (userScrolledUp) return
 
-    // Find the latest assistant message
+    const container = messagesContainerRef.current
+    if (!container) return
+
+    // Scroll to bottom of container to show new messages
     const lastMessage = messages[messages.length - 1]
-    if (lastMessage?.role === 'assistant' && latestAssistantMessageRef.current) {
+    if (lastMessage) {
       // Small delay to ensure message is rendered and DOM is updated
       setTimeout(() => {
-        latestAssistantMessageRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start', // Scroll to TOP of assistant's message
-          inline: 'nearest'
+        container.scrollTo({
+          top: container.scrollHeight,
+          behavior: 'smooth'
         })
       }, 100)
     }
@@ -327,19 +338,27 @@ export default function MobileChatInterface() {
       ))
     }
 
-    // Check if this is a name submission for policy analysis (not the initial request)
-    const previousMessage = messages.length > 0 ? messages[messages.length - 1]?.content?.toLowerCase() : ''
-    const isNameSubmission = previousMessage.includes('perform comprehensive policy review') ||
-                            previousMessage.includes('comprehensive policy review') ||
-                            previousMessage.includes('please provide the policyholder')
+    // Set typing indicator
+    setIsTyping(true)
 
-    if (isNameSubmission && !messageText.toLowerCase().includes('comprehensive policy review')) {
-      setIsAnalyzing(true)
-      // Add a 3-second delay to simulate policy analysis
-      await new Promise(resolve => setTimeout(resolve, 3000))
-    } else {
-      setIsTyping(true)
+    // Create placeholder assistant message for streaming
+    const assistantMessageId = (Date.now() + 1).toString()
+    const placeholderMessage: Message = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date(),
+      isStreaming: true,
     }
+
+    // Add placeholder to UI immediately
+    const messagesWithPlaceholder = [...newMessages, placeholderMessage]
+    setMessages(messagesWithPlaceholder)
+    setChats(prev => prev.map(chat =>
+      chat.id === currentChatId
+        ? { ...chat, messages: messagesWithPlaceholder }
+        : chat
+    ))
 
     // Call the unified API with selected model
     try {
@@ -353,8 +372,8 @@ export default function MobileChatInterface() {
             role: msg.role,
             content: msg.content
           })),
-          model: selectedModel, // 'quick' for Qlik, 'scotty-pro' for Azure
-          stream: false, // Start with non-streaming for simplicity
+          model: selectedModel, // 'quick' for Sticks Quick, 'arthur-pro' for Sticks Pro
+          stream: true, // Enable streaming for progressive rendering
           generateTitle: messages.length === 0, // Generate title for first message
           resetThread: messages.length === 0, // Reset thread for new conversations
           conversationId: currentChatId, // Pass conversation ID for context tracking
@@ -365,6 +384,109 @@ export default function MobileChatInterface() {
         throw new Error('Failed to get response')
       }
 
+      // Check if response is streaming
+      const contentType = response.headers.get('content-type')
+      const isStreamingResponse = contentType?.includes('text/plain') || contentType?.includes('text/event-stream')
+
+      if (isStreamingResponse && response.body) {
+        // Handle streaming response
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder()
+        let accumulatedContent = ''
+        let metadata: any = {}
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+
+          const chunk = decoder.decode(value, { stream: true })
+          const lines = chunk.split('\n')
+
+          for (const line of lines) {
+            if (line.startsWith('0:')) {
+              // Text content chunk
+              const content = line.substring(2).replace(/^"(.+)"$/, '$1')
+              accumulatedContent += content
+
+              // Update message in real-time
+              setMessages(prev => prev.map(msg =>
+                msg.id === assistantMessageId
+                  ? { ...msg, content: accumulatedContent }
+                  : msg
+              ))
+              setChats(prev => prev.map(chat =>
+                chat.id === currentChatId
+                  ? {
+                      ...chat,
+                      messages: chat.messages.map(msg =>
+                        msg.id === assistantMessageId
+                          ? { ...msg, content: accumulatedContent }
+                          : msg
+                      )
+                    }
+                  : chat
+              ))
+            } else if (line.startsWith('d:')) {
+              // Metadata chunk (suggestions, sources, etc.)
+              try {
+                const jsonData = JSON.parse(line.substring(2))
+                metadata = { ...metadata, ...jsonData }
+              } catch (e) {
+                // Ignore parse errors
+              }
+            }
+          }
+        }
+
+        // Finalize message with metadata
+        setMessages(prev => prev.map(msg =>
+          msg.id === assistantMessageId
+            ? {
+                ...msg,
+                content: accumulatedContent,
+                suggestions: metadata.suggestions || [],
+                sources: metadata.sources || [],
+                metrics: metadata.metrics || [],
+                downloadable: metadata.downloadable,
+                downloadContent: metadata.downloadContent,
+                downloadFilename: metadata.downloadFilename,
+                isPolicyAnalysis: metadata.downloadable || false,
+                isStreaming: false,
+                sqlQuery: metadata.sqlQuery,
+                queryResults: metadata.queryResults,
+                chartData: metadata.chartData,
+                provider: metadata.provider
+              }
+            : msg
+        ))
+        setChats(prev => prev.map(chat =>
+          chat.id === currentChatId
+            ? {
+                ...chat,
+                messages: chat.messages.map(msg =>
+                  msg.id === assistantMessageId
+                    ? {
+                        ...msg,
+                        content: accumulatedContent,
+                        suggestions: metadata.suggestions || [],
+                        sources: metadata.sources || [],
+                        isStreaming: false,
+                        sqlQuery: metadata.sqlQuery,
+                        queryResults: metadata.queryResults,
+                        chartData: metadata.chartData,
+                        provider: metadata.provider
+                      }
+                    : msg
+                )
+              }
+            : chat
+        ))
+
+        setIsTyping(false)
+        return
+      }
+
+      // Fallback to non-streaming response (for SQL agent or error cases)
       const data = await response.json()
 
       // Check if context is needed (for Qlik)
@@ -373,7 +495,16 @@ export default function MobileChatInterface() {
         if (data.pendingQuestion) {
           setPendingQuestion(data.pendingQuestion)
         }
-        setShowPatientSelector(true)
+        setShowShipmentSelector(true)
+        // Remove placeholder message
+        setMessages(newMessages)
+        setChats(prev => prev.map(chat =>
+          chat.id === currentChatId
+            ? { ...chat, messages: newMessages }
+            : chat
+        ))
+        setIsTyping(false)
+        return
       }
 
       // Update chat title if generated
@@ -385,61 +516,83 @@ export default function MobileChatInterface() {
         ))
       }
 
-      // Check if this is a comprehensive policy review
-      const isPolicyReview = data.downloadable ||
-                            data.response.includes('Comprehensive Healthcare Policy Analysis') ||
-                            data.response.includes('# Comprehensive Healthcare Policy Analysis')
-
-      // Add a "thinking" delay for all responses to make it feel more authentic
-      // Longer delay for comprehensive reviews, shorter for quick answers
-      const thinkingDelay = isPolicyReview ? 1800 : 800
-      await new Promise(resolve => setTimeout(resolve, thinkingDelay))
-
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: data.response,
-        timestamp: new Date(),
-        suggestions: data.suggestions || [],
-        sources: data.sources || [],
-        metrics: data.metrics || [],
-        downloadable: data.downloadable,
-        downloadContent: data.downloadContent,
-        downloadFilename: data.downloadFilename,
-        isPolicyAnalysis: data.downloadable || false,
-        isStreaming: true
-      }
-
-      const updatedMessages = [...newMessages, assistantMessage]
-      setMessages(updatedMessages)
+      // Update the placeholder message with actual data
+      setMessages(prev => prev.map(msg =>
+        msg.id === assistantMessageId
+          ? {
+              ...msg,
+              content: data.response,
+              suggestions: data.suggestions || [],
+              sources: data.sources || [],
+              metrics: data.metrics || [],
+              downloadable: data.downloadable,
+              downloadContent: data.downloadContent,
+              downloadFilename: data.downloadFilename,
+              isPolicyAnalysis: data.downloadable || false,
+              isStreaming: false,
+              // SQL Agent fields
+              sqlQuery: data.sqlQuery,
+              queryResults: data.queryResults,
+              chartData: data.chartData,
+              provider: data.provider
+            }
+          : msg
+      ))
       setChats(prev => prev.map(chat =>
         chat.id === currentChatId
-          ? { ...chat, messages: updatedMessages }
+          ? {
+              ...chat,
+              messages: chat.messages.map(msg =>
+                msg.id === assistantMessageId
+                  ? {
+                      ...msg,
+                      content: data.response,
+                      suggestions: data.suggestions || [],
+                      sources: data.sources || [],
+                      isStreaming: false,
+                      sqlQuery: data.sqlQuery,
+                      queryResults: data.queryResults,
+                      chartData: data.chartData,
+                      provider: data.provider
+                    }
+                  : msg
+              )
+            }
           : chat
       ))
       setIsTyping(false)
-      setIsAnalyzing(false)
     } catch (error) {
       console.error('Error calling unified API:', error)
 
-      // Fallback error message
-      const errorMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: 'I apologize, but I\'m having trouble connecting to my systems right now. Please try again in a moment, or contact support if the issue persists.',
-        timestamp: new Date(),
-        suggestions: ['Check system status', 'Try again', 'Contact support']
-      }
-
-      const updatedMessages = [...newMessages, errorMessage]
-      setMessages(updatedMessages)
+      // Update placeholder message with error
+      setMessages(prev => prev.map(msg =>
+        msg.id === assistantMessageId
+          ? {
+              ...msg,
+              content: 'I apologize, but I\'m having trouble connecting to my systems right now. Please try again in a moment, or contact support if the issue persists.',
+              suggestions: ['Check system status', 'Try again', 'Contact support'],
+              isStreaming: false
+            }
+          : msg
+      ))
       setChats(prev => prev.map(chat =>
         chat.id === currentChatId
-          ? { ...chat, messages: updatedMessages }
+          ? {
+              ...chat,
+              messages: chat.messages.map(msg =>
+                msg.id === assistantMessageId
+                  ? {
+                      ...msg,
+                      content: 'I apologize, but I\'m having trouble connecting to my systems right now. Please try again in a moment, or contact support if the issue persists.',
+                      suggestions: ['Check system status', 'Try again', 'Contact support'],
+                      isStreaming: false
+                    }
+                  : msg
+              )
+            }
           : chat
       ))
       setIsTyping(false)
-      setIsAnalyzing(false)
     }
   }
 
@@ -550,31 +703,31 @@ export default function MobileChatInterface() {
 
               <div className="space-y-1 sm:space-y-2">
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Hi! I'm Arthur
+                  Hi! I'm Sticks
                 </h1>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-sm px-4 sm:px-0">
-                  I analyze healthcare policies comprehensively to identify coverage gaps, optimize treatment costs, and streamline prior authorizations for your patients.
+                  Your Ship Sticks AI assistant. I optimize golf equipment shipping with intelligent route planning, real-time tracking, and cost savings insights for every shipment to championship courses worldwide.
                 </p>
               </div>
 
-              {/* Patient Context Selector */}
-              {selectedPatient ? (
+              {/* Shipment Context Selector */}
+              {selectedShipment ? (
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-2 sm:p-3 max-w-sm">
                   <div className="flex items-center justify-between">
                     <div className="text-left">
-                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Current Patient</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{selectedPatient}</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Current Shipment</p>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{selectedShipment}</p>
                       {(() => {
-                        const patient = getPatientData(selectedPatient)
-                        return patient ? (
+                        const shipment = getShipmentData(selectedShipment)
+                        return shipment ? (
                           <p className="text-xs text-gray-600 dark:text-gray-400">
-                            {patient.carrier} • {patient.planType}
+                            {shipment.carrier} • {shipment.serviceLevel}
                           </p>
                         ) : null
                       })()}
                     </div>
                     <button
-                      onClick={() => setShowPatientSelector(true)}
+                      onClick={() => setShowShipmentSelector(true)}
                       className="text-xs px-2 py-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800 rounded"
                     >
                       Change
@@ -583,16 +736,16 @@ export default function MobileChatInterface() {
                 </div>
               ) : (
                 <button
-                  onClick={() => setShowPatientSelector(true)}
+                  onClick={() => setShowShipmentSelector(true)}
                   className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
                 >
-                  Select Patient Context
+                  Select Shipment Context
                 </button>
               )}
 
-              {/* Context-Aware Quick Questions - Different UI for Arthur Pro */}
+              {/* Context-Aware Quick Questions - Different UI for Sticks Pro */}
               {selectedModel === 'arthur-pro' ? (
-                /* Arthur Pro: Three-tab interface for complex analytics */
+                /* Sticks Pro: Three-tab interface for complex analytics */
                 <div className="max-w-3xl w-full">
                   {/* Category Tabs - Horizontal grid on all screens */}
                   <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3">
@@ -634,19 +787,16 @@ export default function MobileChatInterface() {
                   {/* Knowledge Graph Power Indicator */}
                   <div className="text-center mb-3">
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {selectedQuestionCategory === 'gapIdentification' ? 'Uncover missed opportunities and inefficiencies in your healthcare system' : selectedQuestionCategory === 'relationshipDiscovery' ? 'Reveal hidden correlations between treatments, costs & outcomes' : 'Optimize revenue streams and maximize financial performance'}
+                      {selectedQuestionCategory === 'gapIdentification' ? 'Uncover missed opportunities and inefficiencies in your shipping network' : selectedQuestionCategory === 'relationshipDiscovery' ? 'Reveal hidden correlations between routes, carriers & delivery success' : 'Optimize cost savings and maximize shipment performance'}
                     </p>
                   </div>
 
                   {/* Questions Grid - Readable text size */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[50vh] overflow-y-auto">
-                    {arthurProQuestions[selectedQuestionCategory].map((question, idx) => (
+                    {shipSticksProQuestions[selectedQuestionCategory].map((question, idx) => (
                       <button
                         key={idx}
-                        onClick={() => {
-                          // Arthur Pro questions don't need patient context
-                          handleSend(question)
-                        }}
+                        onClick={() => handleSend(question)}
                         className={`text-left p-3 rounded-lg border transition-all group hover:shadow-md cursor-pointer ${
                           selectedQuestionCategory === 'gapIdentification'
                             ? 'border-blue-200 hover:border-blue-400 hover:bg-blue-50'
@@ -663,55 +813,32 @@ export default function MobileChatInterface() {
                   </div>
                 </div>
               ) : (
-                /* Arthur Quick: Original simple questions */
+                /* Sticks Quick: Route optimization and shipment tracking */
                 <div className="max-w-md">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                    {selectedPatient ? `Care coordination & policy tools for ${selectedPatient.split(' ')[0]}:` : 'Care coordination & referral management:'}
+                    {selectedShipment ? `Shipment tracking & logistics for ${selectedShipment}:` : 'Route optimization & shipment tracking:'}
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {(() => {
-                      const patient = selectedPatient ? getPatientData(selectedPatient) : null
+                      // Shipment-specific questions if shipment is selected
+                      if (selectedShipment) {
+                        const questions = [
+                          "Track current shipment location",
+                          "Optimize delivery route for fastest arrival",
+                          "Check weather impact on delivery",
+                          "Estimate arrival time at destination",
+                          "Find alternative carriers if delayed",
+                          "Calculate total shipping cost",
+                          "View shipment handling instructions",
+                          "Contact logistics coordinator",
+                          "Upgrade to expedited delivery",
+                          "Request signature confirmation"
+                        ]
 
-                      // Patient-specific questions based on their conditions
-                      if (patient) {
-                        const questions = []
-
-                        // Care Coordination & Referral Management (Core Arthur Health business)
-                        questions.push("Find fastest available specialist for this patient")
-                        questions.push("Optimize care pathway for current conditions")
-                        questions.push("Check referral status and wait times")
-
-                        // Condition-specific care coordination
-                        if (patient.currentConditions.some(c => c.toLowerCase().includes('diabetes'))) {
-                          questions.push("Endocrinologist with shortest wait time")
-                          questions.push("Coordinate diabetes care team")
-                          questions.push("Policy coverage for CGM devices")
-                        }
-                        if (patient.currentConditions.some(c => c.toLowerCase().includes('heart') || c.toLowerCase().includes('chf'))) {
-                          questions.push("Cardiology referral - fastest appointment")
-                          questions.push("Cardiac rehab facility availability")
-                          questions.push("Policy coverage for remote monitoring")
-                        }
-                        if (patient.currentConditions.some(c => c.toLowerCase().includes('pregnancy'))) {
-                          questions.push("High-risk OB referral options")
-                          questions.push("Coordinate prenatal care pathway")
-                          questions.push("Policy maternity benefits summary")
-                        }
-                        if (patient.currentConditions.some(c => c.toLowerCase().includes('kidney'))) {
-                          questions.push("Nephrology specialist availability")
-                          questions.push("Dialysis center options near patient")
-                          questions.push("Policy dialysis coverage review")
-                        }
-
-                        // Policy review for resource planning (essential for coordinators)
-                        questions.push("Review policy coverage for needed services")
-                        questions.push("Prior authorization requirements check")
-                        questions.push("Comprehensive policy review")
-
-                        return questions.slice(0, 10).map((question, idx) => (
+                        return questions.map((question, idx) => (
                           <button
                             key={idx}
-                            onClick={() => handleSend(`For patient ${selectedPatient}: ${question}`)}
+                            onClick={() => handleSend(`For shipment ${selectedShipment}: ${question}`)}
                             className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-500 transition-all"
                           >
                             {question}
@@ -719,42 +846,38 @@ export default function MobileChatInterface() {
                         ))
                       }
 
-                      // Default questions when no patient selected - mix of RAG and patient-specific
-                      const ragQuestions = [
-                        "Who are the specialists with shortest wait times?",
-                        "Show me provider network availability today",
-                        "What are current prior authorization turnaround times?"
+                      // Default questions when no shipment selected - Executive Analytics
+                      const generalQuestions = [
+                        "Show me top 10 customers by lifetime value",
+                        "What are the top customer service issues and their resolution times?",
+                        "Identify our top 10 partner courses by volume and revenue",
+                        "Compare carrier on-time delivery performance",
+                        "Show monthly shipment trends by carrier"
                       ]
 
-                      const patientQuestions = [
-                        "Find fastest specialist for this patient",
-                        "Optimize care pathway for current conditions",
-                        "Check medication formulary coverage",
-                        "Estimate total care costs for this patient"
+                      const shipmentQuestions = [
+                        "Which carriers have lowest damage rates?",
+                        "What's the average delivery time by route?",
+                        "Show revenue breakdown by service tier",
+                        "Analyze seasonal shipping patterns",
+                        "Which routes are most profitable?"
                       ]
 
                       return (
                         <>
-                          {/* Comprehensive Policy Review - Always First */}
+                          {/* Quick Quote - Always First */}
                           <button
-                            key="comprehensive"
-                            onClick={() => {
-                              if (!selectedPatient) {
-                                setShowPatientSelector(true)
-                                setPendingQuestion("Comprehensive policy review")
-                              } else {
-                                handleSend(`For patient ${selectedPatient}: Comprehensive policy review`)
-                              }
-                            }}
+                            key="quick-quote"
+                            onClick={() => handleSend("Get shipping quote for golf equipment")}
                             className="px-3 py-1.5 bg-blue-600 text-white border border-blue-600 rounded-full text-sm font-medium hover:bg-blue-700 transition-all"
                           >
-                            Comprehensive policy review
+                            Get shipping quote
                           </button>
 
-                          {/* RAG Questions - No patient context needed */}
-                          {ragQuestions.map((question, idx) => (
+                          {/* General Questions - No shipment context needed */}
+                          {generalQuestions.map((question, idx) => (
                             <button
-                              key={`rag-${idx}`}
+                              key={`general-${idx}`}
                               onClick={() => handleSend(question)}
                               className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600 transition-all"
                             >
@@ -762,18 +885,11 @@ export default function MobileChatInterface() {
                             </button>
                           ))}
 
-                          {/* Patient-Specific Questions - Require patient context */}
-                          {patientQuestions.map((question, idx) => (
+                          {/* Shipment-Specific Questions - Can work with or without context */}
+                          {shipmentQuestions.map((question, idx) => (
                             <button
-                              key={`patient-${idx}`}
-                              onClick={() => {
-                                if (!selectedPatient) {
-                                  setShowPatientSelector(true)
-                                  setPendingQuestion(question)
-                                } else {
-                                  handleSend(`For patient ${selectedPatient}: ${question}`)
-                                }
-                              }}
+                              key={`shipment-${idx}`}
+                              onClick={() => handleSend(question)}
                               className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-500 transition-all"
                             >
                               {question}
@@ -790,33 +906,65 @@ export default function MobileChatInterface() {
             /* Messages View */
             <div className="space-y-4 max-w-2xl mx-auto pb-8">
               <AnimatePresence>
-                {messages.map((message, index) => (
-                  <motion.div
-                    key={message.id}
-                    ref={message.role === 'assistant' && index === messages.length - 1
-                      ? latestAssistantMessageRef
-                      : null}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div className={`max-w-[80%] ${message.role === 'user' ? 'order-last' : ''}`}>
-                      <div className={`rounded-2xl px-4 py-3 ${
-                        message.role === 'user' 
-                          ? 'bg-scc-red text-white' 
-                          : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 shadow-sm'
-                      }`}>
-                        {message.role === 'user' ? (
-                          <p className="whitespace-pre-wrap text-sm">{message.content}</p>
-                        ) : (
-                          <SimpleMarkdownMessage
-                            content={message.content}
-                            isPolicy={true}
-                          />
-                        )}
-                      </div>
-                      
+                {messages.map((message, index) => {
+                  // Skip rendering empty assistant messages (they show as typing indicator instead)
+                  if (message.role === 'assistant' && !message.content.trim()) {
+                    return null;
+                  }
+
+                  return (
+                    <motion.div
+                      key={message.id}
+                      ref={message.role === 'assistant' && index === messages.length - 1
+                        ? latestAssistantMessageRef
+                        : null}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`max-w-[90%] ${message.role === 'user' ? 'order-last' : ''}`}>
+                        <div className={`rounded-2xl px-4 py-3 ${
+                          message.role === 'user'
+                            ? 'bg-scc-red text-white'
+                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 shadow-sm'
+                        }`}>
+                          {message.role === 'user' ? (
+                            <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                          ) : (
+                            <SimpleMarkdownMessage
+                              content={message.content}
+                              isPolicy={true}
+                            />
+                          )}
+                        </div>
+
+                      {/* SQL Query Results */}
+                      {message.provider === 'sql-agent' && message.role === 'assistant' && (
+                        <div className="mt-3 space-y-3">
+                          {message.sqlQuery && (
+                            <SqlQueryDisplay query={message.sqlQuery} />
+                          )}
+
+                          {message.chartData && (
+                            <ChartDisplay data={message.chartData} />
+                          )}
+
+                          {message.queryResults && message.queryResults.rows.length > 0 && (
+                            <>
+                              <DataTableDisplay
+                                columns={message.queryResults.columns}
+                                rows={message.queryResults.rows}
+                              />
+                              <ExcelDownloadButton
+                                columns={message.queryResults.columns}
+                                rows={message.queryResults.rows}
+                              />
+                            </>
+                          )}
+                        </div>
+                      )}
+
                       {message.downloadable && (
                         <button
                           onClick={() => {
@@ -892,7 +1040,8 @@ export default function MobileChatInterface() {
                       </p>
                     </div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </AnimatePresence>
               
               {/* Analysis Indicator */}
@@ -921,7 +1070,7 @@ export default function MobileChatInterface() {
                           transition={{ duration: 1.2, repeat: Infinity, delay: 0.8 }}
                         />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Analyzing policy...</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">Analyzing shipment...</span>
                     </div>
                   </div>
                 </motion.div>
@@ -934,7 +1083,7 @@ export default function MobileChatInterface() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-start"
                 >
-                  <div className="max-w-[80%]">
+                  <div className="max-w-[90%]">
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 shadow-sm rounded-2xl px-4 py-3">
                       <div className="flex gap-1">
                         <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
@@ -967,7 +1116,7 @@ export default function MobileChatInterface() {
                   handleSend()
                 }
               }}
-              placeholder="Message Arthur"
+              placeholder="Ask about shipments, routes, or tracking..."
               disabled={isTyping}
               className="w-full px-2 py-1.5 bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none transition-all disabled:opacity-50"
               style={{
@@ -1041,7 +1190,7 @@ export default function MobileChatInterface() {
                               className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
                             >
                               <FileText className="w-5 h-5 text-blue-500" />
-                              <span>Upload Policy</span>
+                              <span>Upload Shipping Details</span>
                             </button>
 
                             <button
@@ -1052,7 +1201,7 @@ export default function MobileChatInterface() {
                               className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
                             >
                               <Image className="w-5 h-5 text-green-500" />
-                              <span>Upload Photos</span>
+                              <span>Upload Equipment Photos</span>
                             </button>
 
                             <button
@@ -1081,16 +1230,16 @@ export default function MobileChatInterface() {
 
                             <button
                               onClick={() => {
-                                const claimId = prompt('Enter Claim ID to link from database:')
-                                if (claimId) {
-                                  handleSend(`Link existing claim: ${claimId}`)
+                                const trackingNumber = prompt('Enter Tracking Number to link from database:')
+                                if (trackingNumber) {
+                                  handleSend(`Link existing shipment: ${trackingNumber}`)
                                 }
                                 setShowAttachMenu(false)
                               }}
                               className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
                             >
                               <Link className="w-5 h-5 text-indigo-500" />
-                              <span>Link Claim ID</span>
+                              <span>Link Tracking Number</span>
                             </button>
                           </div>
                         </motion.div>
@@ -1184,14 +1333,14 @@ export default function MobileChatInterface() {
         />
       </AnimatePresence>
 
-      {/* Context Gathering Modal for Qlik */}
+      {/* Context Gathering Modal for Shipment Selection */}
       <AnimatePresence>
 
-        {/* Patient Selector Modal */}
-        <PatientSelectorModal
-          showPatientSelector={showPatientSelector}
-          setShowPatientSelector={setShowPatientSelector}
-          setSelectedPatient={setSelectedPatient}
+        {/* Shipment Selector Modal */}
+        <ShipmentSelectorModal
+          showShipmentSelector={showShipmentSelector}
+          setShowShipmentSelector={setShowShipmentSelector}
+          setSelectedShipment={setSelectedShipment}
           handleSend={handleSend}
           pendingQuestion={pendingQuestion}
           setPendingQuestion={setPendingQuestion}

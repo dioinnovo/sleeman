@@ -1,12 +1,18 @@
-// Arthur Health Brand Colors
-export const ARTHUR_PRIMARY = '#0066CC' // Primary Blue - main CTAs and headers
-export const ARTHUR_PRIMARY_HOVER = '#0052A3' // Darker Blue for hover states
-export const ARTHUR_SECONDARY = '#00A3FF' // Light Blue - secondary elements
-export const ARTHUR_TERTIARY = '#E6F2FF' // Very Light Blue - backgrounds
+// Ship Sticks Brand Colors
+export const SHIPSTICKS_PRIMARY = '#5fd063' // Primary Green - main CTAs and headers
+export const SHIPSTICKS_PRIMARY_HOVER = '#4fab55' // Darker Green for hover states and active navigation
+export const SHIPSTICKS_SECONDARY = '#7FE083' // Light Green - secondary elements
+export const SHIPSTICKS_TERTIARY = '#E6F9E7' // Very Light Green - backgrounds
+
+// Legacy Arthur Health Brand Colors (deprecated - use Ship Sticks colors above)
+export const ARTHUR_PRIMARY = '#5fd063' // Mapped to Ship Sticks Primary Green
+export const ARTHUR_PRIMARY_HOVER = '#4fab55' // Mapped to Ship Sticks Accent Green
+export const ARTHUR_SECONDARY = '#7FE083' // Mapped to Ship Sticks Secondary
+export const ARTHUR_TERTIARY = '#E6F9E7' // Mapped to Ship Sticks Tertiary
 
 // UI Foundation Colors (Primary Usage)
-export const ARTHUR_UI_PRIMARY = '#0066CC' // Primary Blue - main buttons, headers
-export const ARTHUR_UI_SECONDARY = '#00A3FF' // Light Blue - secondary actions
+export const ARTHUR_UI_PRIMARY = '#5fd063' // Primary Green - main buttons, headers
+export const ARTHUR_UI_SECONDARY = '#4fab55' // Accent Green - interactive states, active navigation
 export const ARTHUR_TEXT_PRIMARY = '#2B2B2B' // Dark Gray Text
 export const ARTHUR_TEXT_SECONDARY = '#707070' // Gray Text
 export const ARTHUR_BACKGROUND = '#F5F5F5' // Light Gray Background
@@ -25,13 +31,13 @@ export const ARTHUR_GRAY_200 = '#E0E0E0'
 export const ARTHUR_GRAY_100 = '#F5F5F5'
 export const ARTHUR_GRAY_50 = '#F9FAFB' // Lightest
 
-// Healthcare Semantic Colors
-export const ARTHUR_SUCCESS = '#00A651' // Green for positive outcomes
-export const ARTHUR_WARNING = '#F59E0B' // Amber for care alerts
-export const ARTHUR_ERROR = '#DC2626' // Red for critical alerts
-export const ARTHUR_INFO = '#0066CC' // Blue for information
-export const ARTHUR_CARE = '#4CAF50' // Green for care quality
-export const ARTHUR_RISK = '#FF9800' // Orange for risk indicators
+// Ship Sticks Semantic Colors
+export const ARTHUR_SUCCESS = '#5fd063' // Green for successful deliveries
+export const ARTHUR_WARNING = '#F59E0B' // Amber for shipping alerts
+export const ARTHUR_ERROR = '#DC2626' // Red for delivery issues
+export const ARTHUR_INFO = '#5fd063' // Green for information
+export const ARTHUR_CARE = '#4fab55' // Accent green for quality service
+export const ARTHUR_RISK = '#FF9800' // Orange for priority indicators
 
 // Exported color object for easier access
 export const ARTHUR_COLORS = {

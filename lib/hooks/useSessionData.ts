@@ -69,10 +69,10 @@ export function useSessionData(sessionId: string) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Load care session data
+  // Load shipment data
   useEffect(() => {
     if (!sessionId) {
-      setError('No care session ID provided')
+      setError('No shipment ID provided')
       setLoading(false)
       return
     }
@@ -347,13 +347,13 @@ export function useSessionData(sessionId: string) {
             // Save the initialized data
             localStorage.setItem(`session-${sessionId}-data`, JSON.stringify(newData))
           } else {
-            setError(`No care session found with ID: ${sessionId}`)
+            setError(`No shipment found with ID: ${sessionId}`)
           }
         }
       }
     } catch (err) {
-      console.error('Error loading care session data:', err)
-      setError('Failed to load care session data')
+      console.error('Error loading shipment data:', err)
+      setError('Failed to load shipment data')
     } finally {
       setLoading(false)
     }
@@ -372,8 +372,8 @@ export function useSessionData(sessionId: string) {
       setSessionData(data)
       return true
     } catch (err) {
-      console.error('Error saving care session data:', err)
-      setError('Failed to save care session data')
+      console.error('Error saving shipment data:', err)
+      setError('Failed to save shipment data')
       return false
     }
   }, [sessionId])

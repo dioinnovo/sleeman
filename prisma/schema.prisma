@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -236,4 +236,162 @@ enum NotificationStatus {
   SENT
   FAILED
   BOUNCED
+}
+
+// ============================================
+// SHIP STICKS LOGISTICS SCHEMA
+// ============================================
+
+// Golf Courses - Destination database
+model GolfCourse {
+  id                String       @id @default(cuid())
+  name              String
+  location          String       // City, State/Country
+  address           String?
+  partnershipTier   String       // Premium, Standard, Basic
+  shippingVolume    Int          @default(0)  // Total shipments received
+  latitude          Float?
+  longitude         Float?
+  createdAt         DateTime     @default(now())
+
+  shipments         Shipment[]
+
+  @@index([partnershipTier])
+  @@index([shippingVolume])
+}
+
+// Carriers - Shipping providers
+model Carrier {
+  id                String       @id @default(cuid())
+  name              String       @unique  // FedEx, UPS, DHL, USPS
+  serviceLevel      String       // Standard, Express, Overnight, White Glove
+  baseRate          Float
+  onTimeRate        Float        // Percentage (0-100)
+  damageRate        Float        // Percentage (0-100)
+  active            Boolean      @default(true)
+
+  shipments         Shipment[]
+  routes            Route[]
+
+  @@index([name])
+}
+
+// Shipments - Core shipping records
+model Shipment {
+  id                String       @id @default(cuid())
+  shipmentNumber    String       @unique
+  status            ShipmentStatus @default(PENDING)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  // Customer Information
+  customerName      String
+  customerEmail     String
+  customerPhone     String
+
+  // Origin & Destination
+  originAddress     String
+  originCity        String
+  originState       String
+  originZip         String
+  destinationCourseId String?
+  destinationCourse   GolfCourse?  @relation(fields: [destinationCourseId], references: [id])
+  destinationAddress  String
+  destinationCity     String
+  destinationState    String
+  destinationZip      String
+
+  // Shipping Details
+  carrierId         String
+  carrier           Carrier      @relation(fields: [carrierId], references: [id])
+  serviceLevel      String       // Standard, Express, Overnight, White Glove
+  trackingNumber    String?
+
+  // Equipment Details
+  equipmentType     String       // Golf Bag, Travel Case, Push Cart
+  numberOfClubs     Int?
+  estimatedValue    Float
+  weight            Float        // pounds
+
+  // Dates
+  pickupDate        DateTime?
+  deliveryDate      DateTime?
+  estimatedDelivery DateTime
+  actualDelivery    DateTime?
+
+  // Financial
+  basePrice         Float
+  insuranceFee      Float        @default(0)
+  totalPrice        Float
+  discountApplied   Float        @default(0)
+
+  // Tracking & Quality
+  deliveredOnTime   Boolean?
+  customerRating    Int?         // 1-5 stars
+
+  damageClaims      DamageClaim[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([carrierId])
+  @@index([destinationCourseId])
+}
+
+// Damage Claims - Insurance claims for damaged equipment
+model DamageClaim {
+  id                String       @id @default(cuid())
+  claimNumber       String       @unique
+  shipmentId        String
+  shipment          Shipment     @relation(fields: [shipmentId], references: [id])
+
+  status            ClaimStatus2 @default(FILED)
+  filedAt           DateTime     @default(now())
+  resolvedAt        DateTime?
+
+  damageType        String       // Scratched, Dented, Broken, Lost
+  damageDescription String
+  claimAmount       Float
+  approvedAmount    Float?
+
+  @@index([shipmentId])
+  @@index([status])
+}
+
+// Routes - Popular shipping corridors
+model Route {
+  id                String       @id @default(cuid())
+  name              String       // e.g., "Dallas to Pebble Beach"
+  originCity        String
+  originState       String
+  destinationCity   String
+  destinationState  String
+  distance          Float        // miles
+
+  carrierId         String
+  carrier           Carrier      @relation(fields: [carrierId], references: [id])
+
+  avgDeliveryDays   Float
+  avgPrice          Float
+  shipmentCount     Int          @default(0)
+
+  @@index([carrierId])
+}
+
+// Enums for Ship Sticks
+enum ShipmentStatus {
+  PENDING
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  DELAYED
+}
+
+enum ClaimStatus2 {
+  FILED
+  UNDER_REVIEW
+  APPROVED
+  DENIED
+  PAID
 }

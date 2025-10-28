@@ -48,10 +48,10 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       description: 'Analytics & Insights'
     },
     {
-      title: 'Travel Assistant',
+      title: 'Sticks',
       icon: Brain,
       href: '/dashboard/assistant',
-      description: 'AI Travel Helper'
+      description: 'AI Assistant'
     },
     {
       title: 'Customers',

@@ -1,7 +1,7 @@
-# Coding Standards - SCC Dashboard
+# Coding Standards - Ship Sticks Platform
 
 ## Overview
-These are the coding standards for the SCC Dashboard rebrand project. Follow these patterns consistently.
+These are the coding standards for the Ship Sticks Intelligence Platform. Follow these patterns consistently.
 
 ## Technology Stack
 - **Framework**: Next.js 15.5.2 with App Router
@@ -40,7 +40,8 @@ These are the coding standards for the SCC Dashboard rebrand project. Follow the
 - Use Tailwind utility classes as primary styling method
 - Use `cn()` utility for conditional classes
 - Keep custom CSS minimal (only in globals.css)
-- Use SCC brand colors: `scc-red`, `scc-gray`, `scc-success`
+- Use Ship Sticks brand colors: `scc-red` (green), `scc-gray`, `scc-success`
+- For active/interactive states, prefer the darker green `#4fab55`
 
 ### Component Structure
 ```typescript
@@ -90,13 +91,32 @@ export function MyComponent({ prop1, prop2 }: MyComponentProps) {
 - Optimize images with Next.js Image component
 - Use React.memo() for expensive components when needed
 
-## SCC Brand Requirements
-- Primary Color: SCC Red (#C8102E)
-- Secondary Color: SCC Gray (#707070)
-- Success Color: SCC Green (#00A651)
-- Font: Montserrat
-- AI Assistant: SCOTT (not Stella)
-- Focus: Commercial property (not residential)
+## Ship Sticks Brand Requirements
+
+### Brand Colors
+- **Primary Green**: `#5fd063` - Main brand color for headers, CTAs, and key elements
+- **Accent Green (Darker)**: `#4fab55` - Interactive states (hover, active, selected) - **Recommended for navigation**
+- **Secondary Light Green**: `#7FE083` - Secondary highlights and accents
+- **Light Green Background**: `#E6F9E7` - Subtle backgrounds and panels
+- **Navy**: `#231f20` - Professional text and dark elements
+- **Gray**: `#707070` - Secondary text and neutral elements
+
+### Usage Guidelines
+- **Active Navigation States**: Use `#4fab55` (darker green) for better contrast
+- **Hover States**: Use `#4fab55` for interactive elements
+- **Success Messages**: Use `#5fd063` (primary green)
+- **Buttons & CTAs**: Use `#5fd063` with `#4fab55` hover state
+- **Text on Green**: Use white (`#FFFFFF`) for optimal contrast
+
+### Typography
+- **Primary Font**: Lato (weights: 400, 700, 900)
+- **Secondary Font**: Roboto (weights: 300, 400, 500, 700)
+
+### Brand Identity
+- **AI Assistant**: Sticks (not Arthur, Chip, or Ship Sticks Travel Assistant)
+- **Full Title**: Sticks - Your Ship Sticks AI Assistant
+- **Focus**: Golf equipment shipping, travel logistics, partner golf courses
+- **Tone**: Professional, golf-focused, travel-oriented, friendly
 
 ## Testing Approach
 - Test critical user paths

@@ -5,9 +5,10 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard,
-  FileText,
+  Package,
   Brain,
-  CalendarDays
+  Users,
+  MapPin
 } from 'lucide-react'
 
 export default function MobileBottomNav() {
@@ -20,19 +21,24 @@ export default function MobileBottomNav() {
       href: '/dashboard',
     },
     {
-      title: 'Claims',
-      icon: FileText,
-      href: '/dashboard/claims',
+      title: 'Shipments',
+      icon: Package,
+      href: '/dashboard/care-sessions',
     },
     {
-      title: 'Arthur',
+      title: 'Sticks',
       icon: Brain,
       href: '/dashboard/assistant',
     },
     {
-      title: 'Sessions',
-      icon: CalendarDays,
-      href: '/dashboard/care-sessions',
+      title: 'Customers',
+      icon: Users,
+      href: '/dashboard/claims',
+    },
+    {
+      title: 'Partners',
+      icon: MapPin,
+      href: '/dashboard/referrals',
     }
   ]
 
@@ -65,7 +71,7 @@ export default function MobileBottomNav() {
                   {/* Bubble positioned absolutely within the active item */}
                   {isActive && (
                     <motion.div
-                      className="absolute inset-0 bg-[#0066CC] rounded-full shadow-lg pointer-events-none"
+                      className="absolute inset-0 bg-[#4fab55] rounded-full shadow-lg pointer-events-none"
                       layoutId="nav-bubble"
                       initial={false}
                       transition={{
@@ -81,7 +87,7 @@ export default function MobileBottomNav() {
                       relative z-10 flex flex-col items-center justify-center gap-0.5 px-2 py-3 rounded-full transition-all w-full
                       ${isActive
                         ? 'text-white'
-                        : 'text-gray-600 dark:text-gray-300 hover:text-[#0066CC] hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
+                        : 'text-gray-600 dark:text-gray-300 hover:text-[#4fab55] hover:bg-gray-100/50 dark:hover:bg-gray-800/50'
                       }
                     `}
                   >

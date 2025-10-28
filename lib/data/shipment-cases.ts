@@ -44,7 +44,7 @@ export const SHIPMENT_CASES: ShipmentCase[] = [
       courseName: 'Augusta National Golf Club'
     },
     equipment: {
-      type: 'Custom Tour Bag with 14 Titleist Clubs',
+      type: 'Custom Tour Bag with Titleist T350 Iron Set & TSR Woods',
       description: 'White-glove tournament delivery with climate control',
       value: 8500,
       startDate: '2024-04-05'

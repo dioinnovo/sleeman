@@ -24,10 +24,10 @@ const SiriOrb: React.FC<SiriOrbProps> = ({
 }) => {
   const defaultColors = {
     bg: "transparent",
-    c1: "#003F7F",  // Sotheby's Navy Blue (premium & authoritative)
-    c2: "#2563EB",  // Rich Blue (confident & reliable)
-    c3: "#0891B2",  // Deep Cyan (intelligent & modern)
-    c4: "#0E7490",  // Dark Teal (sophisticated & trustworthy)
+    c1: "#2d5016",  // Deep Forest Green (premium & sophisticated)
+    c2: "#3d6b2e",  // Rich Grass Green (natural & trustworthy)
+    c3: "#4a7c3a",  // Fairway Green (professional & elegant)
+    c4: "#2e5c1f",  // Dark Grass Green (mature & grounded)
   }
 
   const finalColors = { ...defaultColors, ...colors }

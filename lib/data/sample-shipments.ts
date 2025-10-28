@@ -126,7 +126,7 @@ export const SAMPLE_SHIPMENTS: Shipment[] = [
     },
     equipment: {
       type: 'tour-bag',
-      description: 'Titleist Staff Tour Bag with 14 clubs',
+      description: 'Titleist Staff Tour Bag - T350 Irons (4-PW), TSR Woods, Vokey Wedges',
       quantity: 1,
       estimatedValue: 4500,
       weight: 48,
@@ -660,7 +660,7 @@ export const SAMPLE_SHIPMENTS: Shipment[] = [
     },
     equipment: {
       type: 'stand-bag',
-      description: 'Titleist Players 4 Stand Bag',
+      description: 'Titleist Players 4 StaDry Stand Bag with T350 Irons',
       quantity: 1,
       estimatedValue: 2100,
       weight: 40,

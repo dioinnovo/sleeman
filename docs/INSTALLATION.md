@@ -87,10 +87,10 @@ git --version    # Should show git version 2.x.x
 cd ~/Projects  # or C:\Users\YourName\Projects on Windows
 
 # Clone the repository
-git clone https://dev.azure.com/Innovoco/Innovoco%20-%20Infrastructure%20and%20Internal%20Development/_git/AI-Stellar-HomeInspection
+git clone https://github.com/dioinnovo/shipsticks.git
 
 # Navigate into the project
-cd AI-Stellar-HomeInspection
+cd shipsticks
 
 # Verify you're in the right directory
 ls -la  # You should see package.json, README.md, etc.

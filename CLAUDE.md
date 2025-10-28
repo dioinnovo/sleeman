@@ -94,7 +94,7 @@ shipsticks/
    - Cost savings calculator
 
 5. **AI Integration**
-   - Travel Assistant for shipping queries
+   - Sticks - AI Assistant for shipping queries
    - NLP for travel planning
    - Predictive analytics for delivery times
    - Real-time golf course partner network insights
