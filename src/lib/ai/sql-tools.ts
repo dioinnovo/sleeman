@@ -86,7 +86,7 @@ export const listTablesTool = tool(
 Sleeman Breweries Business Data:
 - beer_styles: Beer style definitions (8 styles including Sleeman Clear, Honey Brown, Cream Ale)
 - production_lines: Production line info (5 lines across Guelph and Vernon facilities)
-- production_batches: Production batch records with volume and efficiency tracking
+- production_batches: Production batch records (batch_id links to beer_style_id for style info)
 - quality_tests: Quality test results (ABV, IBU, pH, clarity, taste, carbonation)
 - quality_issues: Quality issue tracking with severity and resolution
 - suppliers: Supplier information (10 suppliers for malt, hops, yeast, packaging)
@@ -95,10 +95,12 @@ Sleeman Breweries Business Data:
 - equipment: Equipment registry (fermenters, tanks, bottling/kegging lines)
 - equipment_downtime: Downtime events with cost impact
 - distributors: Distributor information (LCBO, BC Liquor, regional distributors)
-- shipments: Shipment records to distributors
+- shipments: *** REVENUE DATA *** - Contains total_revenue, unit_price, volume_hectoliters per shipment! Links via batch_id → production_batches → beer_styles
 - products: Product SKUs (15 products in various package formats)
 - monthly_revenue: Revenue by product/month with cost of goods
 - compliance_audits: Audit records for food safety and quality
+
+IMPORTANT: For revenue by beer style queries, use: shipments → production_batches → beer_styles
 
 Total: ${filteredTables.length} tables with 12 months of brewery data`;
     } catch (error: any) {

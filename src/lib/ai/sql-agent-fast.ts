@@ -25,6 +25,22 @@ async function getFastSqlSystemPrompt(): Promise<string> {
 DATABASE SCHEMA:
 ${schemaContext}
 
+CRITICAL: REVENUE DATA LOCATION
+*** The shipments table contains total_revenue column with actual revenue per shipment! ***
+*** Beer style names (e.g., "Sleeman Original Draught") are in beer_styles table, NOT products table! ***
+
+For REVENUE by BEER STYLE queries, use this exact join pattern:
+  SELECT SUM(s.total_revenue) as total_revenue, bs.name as beer_style
+  FROM shipments s
+  JOIN production_batches pb ON s.batch_id = pb.id
+  JOIN beer_styles bs ON pb.beer_style_id = bs.id
+  WHERE bs.name = 'Sleeman Original Draught'  -- or ILIKE '%original%draught%'
+  GROUP BY bs.name
+
+Beer style names in database:
+- Sleeman Clear 2.0, Sleeman Original Draught, Sleeman Honey Brown, Sleeman Cream Ale
+- Sleeman Silver Creek, Okanagan Spring Pale Ale, Wild Rose WRaspberry, Sapporo Premium
+
 YOUR TASK:
 You are a SQL generation specialist. Generate a single, optimized PostgreSQL query to answer the user's question about brewery operations, production, quality, inventory, or distribution.
 

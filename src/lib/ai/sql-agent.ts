@@ -28,7 +28,9 @@ EQUIPMENT TABLES:
 
 DISTRIBUTION TABLES:
 11. distributors - Distributor information (id, name, region, distributor_type, commission_rate, contact_info)
-12. shipments - Shipment records (id, distributor_id, product_id, ship_date, quantity, status)
+12. shipments - Shipment records with REVENUE DATA (id, batch_id, distributor_id, order_date, ship_date, delivery_date, volume_hectoliters, unit_price, total_revenue, status, tracking_number, notes)
+    *** IMPORTANT: shipments.total_revenue contains actual revenue per shipment! ***
+    *** To get revenue by beer style: JOIN shipments → production_batches → beer_styles ***
 13. products - Product SKUs (id, style_id, package_type, package_size, price_per_unit)
 14. monthly_revenue - Revenue by product/month (id, product_id, year, month, units_sold, revenue, cost_of_goods)
 
@@ -36,8 +38,8 @@ COMPLIANCE TABLES:
 15. compliance_audits - Audit records (id, audit_date, audit_type, auditor, score, findings, corrective_actions)
 
 KEY RELATIONSHIPS:
-- production_batches.style_id → beer_styles.id
-- production_batches.line_id → production_lines.id
+- production_batches.beer_style_id → beer_styles.id
+- production_batches.production_line_id → production_lines.id
 - quality_tests.batch_id → production_batches.id
 - quality_issues.batch_id → production_batches.id
 - raw_materials.supplier_id → suppliers.id
@@ -45,10 +47,23 @@ KEY RELATIONSHIPS:
 - material_usage.material_id → raw_materials.id
 - equipment.line_id → production_lines.id
 - equipment_downtime.equipment_id → equipment.id
+- shipments.batch_id → production_batches.id (JOIN through batches to get beer style)
 - shipments.distributor_id → distributors.id
-- shipments.product_id → products.id
 - products.style_id → beer_styles.id
 - monthly_revenue.product_id → products.id
+
+REVENUE QUERY PATTERNS:
+*** For revenue by beer style, use this join pattern: ***
+  shipments s
+  JOIN production_batches pb ON s.batch_id = pb.id
+  JOIN beer_styles bs ON pb.beer_style_id = bs.id
+
+Example: Total revenue for 'Sleeman Original Draught':
+  SELECT SUM(s.total_revenue) as total_revenue
+  FROM shipments s
+  JOIN production_batches pb ON s.batch_id = pb.id
+  JOIN beer_styles bs ON pb.beer_style_id = bs.id
+  WHERE bs.name = 'Sleeman Original Draught'
 
 BEER STYLES IN DATABASE:
 - Sleeman Clear 2.0 (Light Lager)
