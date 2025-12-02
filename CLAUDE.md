@@ -8,36 +8,57 @@ Sleeman BrewMind is a Next.js 16.0.3 application for AI-powered brewery analytic
 
 **Target Demo**: Brian Cappellaro, Director IT & PMO at Sleeman Breweries
 
-## CRITICAL: Database Management
+## CRITICAL: Database Configuration
 
-**READ THIS FIRST** when encountering database issues. See [docs/DATABASE_MANAGEMENT.md](docs/DATABASE_MANAGEMENT.md) for full details.
+**READ THIS FIRST** when encountering database issues.
+
+### Documentation
+- [docs/DATABASE_MANAGEMENT.md](docs/DATABASE_MANAGEMENT.md) - Database troubleshooting
+- [docs/ENTERPRISE_MIGRATION_GUIDE.md](docs/ENTERPRISE_MIGRATION_GUIDE.md) - **Migration guide for repurposing this codebase**
 
 ### Current Database Configuration
 - **Container**: `sleeman-brewmind-db` (Docker)
 - **Port**: `5433` (NOT 5432!)
 - **Database**: `brewmind`
+- **Primary Env Var**: `BREWMIND_DATABASE_URL` (avoids shell conflicts)
 - **Connection**: `postgresql://brewmind:brewmind_demo_2024@localhost:5433/brewmind`
 
-### Common Issue: Wrong Database Connection
+### CRITICAL: Shell Environment Override Issue
 
-If you see errors like `relation "table_name" does not exist`:
+**This was the root cause of repeated deployment failures.**
 
-1. **Check for orphaned PostgreSQL on port 5432:**
-   ```bash
-   lsof -i :5432  # Should be empty
-   brew services stop postgresql@14
+Shell environment variables (from `.bashrc`, `.zshrc`) override `.env.local`. The fix is to use project-specific environment variables.
+
+```typescript
+// In langchain-config.ts - use BREWMIND_DATABASE_URL first
+const databaseUrl = process.env.BREWMIND_DATABASE_URL || process.env.DATABASE_URL;
+```
+
+### Troubleshooting Connection Issues
+
+If you see "No results found" or wrong database errors:
+
+1. **Check which database is being used in logs:**
+   ```
+   🔌 Initializing LangChain TypeORM DataSource...
+      DATABASE_URL: postgresql://brewmind:***@localhost:5433/brewmind  ← Should show BrewMind
    ```
 
 2. **Check for shell environment override:**
    ```bash
-   echo $DATABASE_URL  # Should be empty
-   unset DATABASE_URL
+   echo $DATABASE_URL  # Should be empty or match BrewMind
+   unset DATABASE_URL  # Remove shell override
    ```
 
 3. **Restart Next.js:**
    ```bash
    pkill -f "next dev"
    pnpm run dev
+   ```
+
+4. **Verify BREWMIND_DATABASE_URL is set in .env.local:**
+   ```bash
+   grep BREWMIND_DATABASE_URL .env.local
    ```
 
 ### Demo Lifecycle Scripts
@@ -122,33 +143,73 @@ sleeman/
    - Automatic query validation and safety checks
    - Fast path routing for simple queries
 
-3. **Database Schema** (15 tables)
+3. **Database Schema** (16 tables)
    - Production: beer_styles, production_lines, production_batches
    - Quality: quality_tests, quality_issues
    - Inventory: suppliers, raw_materials, material_usage
    - Equipment: equipment, equipment_downtime
    - Distribution: distributors, shipments, products, monthly_revenue
+   - Sales: **sales_transactions** (600+ rows - detailed revenue by province, liquor board, store)
    - Compliance: compliance_audits
 
 ### Environment Variables
 
 Key environment variables in `.env.local`:
-- `DATABASE_URL` - PostgreSQL connection (must use port 5433)
+- `BREWMIND_DATABASE_URL` - **Primary** PostgreSQL connection (avoids shell conflicts)
+- `DATABASE_URL` - Fallback PostgreSQL connection (must use port 5433)
 - `AZURE_OPENAI_KEY` - Azure OpenAI API key
 - `AZURE_OPENAI_ENDPOINT` - Azure OpenAI endpoint
 - `AZURE_OPENAI_DEPLOYMENT` - Deployment name (gpt-4o-mini)
 - `AZURE_OPENAI_VERSION` - API version
 
+**Important**: Always use project-specific environment variable names (like `BREWMIND_DATABASE_URL`) to avoid conflicts with shell environment variables. See [docs/ENTERPRISE_MIGRATION_GUIDE.md](docs/ENTERPRISE_MIGRATION_GUIDE.md) for details.
+
 ### Design System
 
-- **Colors**:
-  - Sleeman Dark: #1C1812 (backgrounds)
-  - Sleeman Gold: #D4A84B (primary accent)
-  - Sleeman Gold Light: #E8C76A (hover states)
-  - Sleeman Brown: #2C2416 (cards, borders)
-  - Sleeman Blue: #1863DC (secondary accent)
-- **Theme**: Dark brewery aesthetic matching Sleeman brand
-- **Components**: Using shadcn/ui with brewery-themed customizations
+**Full documentation**: [docs/design-system.md](docs/design-system.md)
+
+#### Core Principles
+- **8pt Grid**: All spacing uses multiples of 8px (4, 8, 16, 24, 32, 48, 64px)
+- **Transparent Headers**: Page headers have NO background, border, or shadow
+- **Cards for Content Only**: Only use card styling for KPIs, data tables, distinct blocks
+
+#### Critical UI Rules (AI Agents MUST follow)
+
+1. **PageHeader must remain transparent**
+   - File: `src/components/ui/page-header.tsx`
+   - NO bg-muted, bg-card, shadow, border, or rounded corners
+   - Spacing: `pt-6 pb-4 sm:pt-8 sm:pb-6 px-4 sm:px-6 lg:px-8`
+
+2. **Consistent horizontal padding**
+   - All page content uses: `px-4 sm:px-6 lg:px-8`
+
+3. **Layout gap is fixed**
+   - Gap between sidebar and content: `gap-4` (16px)
+   - Do NOT change this in `src/app/dashboard/layout.tsx`
+
+4. **Sidebar navigation states**
+   - Active: `bg-accent text-foreground/80 font-semibold border-l-4 border-primary`
+   - Hover: `hover:bg-accent/50 text-muted-foreground hover:text-foreground/70`
+
+#### Color Tokens (Tailwind/shadcn)
+- `bg-background` - Page background
+- `bg-muted` - Sidebar, card backgrounds
+- `bg-card` - Card backgrounds
+- `bg-accent` - Hover/active states
+- `text-foreground` - Primary text
+- `text-foreground/80` - Selected nav items
+- `text-muted-foreground` - Secondary text
+
+#### Key UI Files
+| File | Purpose |
+|------|---------|
+| `src/app/dashboard/layout.tsx` | Dashboard shell (sidebar + content) |
+| `src/components/Sidebar.tsx` | Navigation sidebar |
+| `src/components/ui/page-header.tsx` | Page title component |
+| `src/components/MobileBottomNav.tsx` | Mobile bottom nav |
+
+- **Theme**: Light/dark mode with brewery aesthetic
+- **Components**: shadcn/ui with custom styling
 - **Animations**: Framer Motion for smooth transitions
 
 ### AI Agent Architecture

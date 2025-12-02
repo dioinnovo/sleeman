@@ -518,18 +518,25 @@ Tables and key columns (ACTUAL column names):
 - production_lines: id, name, facility, capacity_liters, status, efficiency_rating
 - production_batches: id, batch_code, beer_style_id, production_line_id, start_date, end_date, target_volume_liters, actual_volume_liters, status, efficiency_percentage
 - quality_tests: id, batch_id, test_type, test_date, expected_value, actual_value, passed, technician
-- quality_issues: id, batch_id, issue_type, severity, description, resolution_status
+- quality_issues: id, batch_id, issue_type, severity, description, resolution_status, cost_impact, labor_hours_lost, material_waste_cost
 - suppliers: id, name, category, contact_email, rating
 - raw_materials: id, name, supplier_id, quantity_kg, reorder_level_kg, unit_cost
 - material_usage: id, batch_id, material_id, quantity_used_kg
-- equipment: id, name, type, production_line_id, status, last_maintenance_date
+- equipment: id, name, type, production_line_id, status, last_maintenance_date, purchase_cost, annual_depreciation, net_book_value, maintenance_budget_annual
 - equipment_downtime: id, equipment_id, start_time, end_time, reason, cost_impact
 - distributors: id, name, region, contact_email, active
-- shipments: id, distributor_id, product_id, quantity, ship_date, delivery_status
+- shipments: id, distributor_id, batch_id, volume_hectoliters, unit_price, total_revenue, ship_date, delivery_status
 - products: id, name, beer_style_id, package_type, package_size, price
 - monthly_revenue: id, product_id, month, revenue, units_sold, cost_of_goods
 - compliance_audits: id, audit_type, audit_date, score, findings, auditor
 
+COO FINANCIAL TABLES (3 years of data: 2022-2024):
+- operating_expenses: id, facility, expense_category, expense_type, month, year, budgeted_amount, actual_amount, variance
+- labor_costs: id, facility, department, month, year, headcount, regular_wages, overtime_wages, benefits_cost, training_cost, total_labor_cost, hours_worked
+- distributor_costs: id, distributor_id, month, year, logistics_cost, warehousing_cost, marketing_support, bad_debt_provision, total_channel_cost
+
+Valid expense_category values: Utilities, Rent, Insurance, Maintenance, Logistics, Administrative
+Valid department values: Production, Quality Control, Maintenance, Warehouse, Administration
 Valid test_type values: pH, ABV, specific_gravity, bitterness, color, clarity, taste, aroma, carbonation
 
 Valid beer_styles.name values:
@@ -545,9 +552,10 @@ Key relationships:
 - production_batches → production_lines (production_line_id)
 - quality_tests → production_batches (batch_id)
 - shipments → distributors (distributor_id)
-- shipments → products (product_id)
+- shipments → production_batches (batch_id) → beer_styles
 - products → beer_styles (beer_style_id)
 - monthly_revenue → products (product_id)
+- distributor_costs → distributors (distributor_id)
 `;
 }
 
@@ -610,10 +618,43 @@ function getContextualFallbackQuestions(question: string): string[] {
     ];
   }
 
+  // COO FINANCIAL QUESTIONS
+  if (lowerQuestion.includes('labor') || lowerQuestion.includes('wages') || lowerQuestion.includes('headcount')) {
+    return [
+      "What is the total_labor_cost by department for 2024?",
+      "How does overtime_wages compare between Guelph Brewery and Vernon Brewery?",
+      "Which department has the highest headcount across all facilities?"
+    ];
+  }
+
+  if (lowerQuestion.includes('budget') || lowerQuestion.includes('variance') || lowerQuestion.includes('expense') || lowerQuestion.includes('opex')) {
+    return [
+      "Which expense categories have positive variance (over budget) in 2024?",
+      "How do Utilities costs compare between Guelph Brewery and Vernon Brewery?",
+      "What is the total budgeted_amount vs actual_amount by facility for 2024?"
+    ];
+  }
+
+  if (lowerQuestion.includes('depreciation') || lowerQuestion.includes('asset') || lowerQuestion.includes('book value')) {
+    return [
+      "What is the total annual_depreciation grouped by equipment type?",
+      "Which equipment has the highest net_book_value?",
+      "What is our total maintenance_budget_annual across all facilities?"
+    ];
+  }
+
+  if (lowerQuestion.includes('channel cost') || lowerQuestion.includes('distributor cost') || lowerQuestion.includes('profitability')) {
+    return [
+      "What is the total_channel_cost by distributor for 2024?",
+      "Which distributors have the highest logistics_cost as percentage of total costs?",
+      "What is the total marketing_support spend by distributor type?"
+    ];
+  }
+
   // Default brewery-focused questions using VERIFIED schema references
   return [
     "What is the total actual_volume_liters by beer style name for completed batches?",
     "How do quality_tests pass rates compare between Guelph Brewery and Vernon Brewery?",
-    "Which distributors have the highest total shipment quantities?"
+    "What are the total labor costs by department for 2024?"
   ];
 }

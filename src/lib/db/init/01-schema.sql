@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS production_lines (
   id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL UNIQUE,
   facility VARCHAR(100) NOT NULL,
-  capacity_liters DECIMAL(12,2) NOT NULL,
+  capacity_hectoliters DECIMAL(12,2) NOT NULL,
   status VARCHAR(20) CHECK(status IN ('active', 'maintenance', 'offline')) DEFAULT 'active',
   last_maintenance_date DATE,
   efficiency_rating DECIMAL(5,2) DEFAULT 100.0,
@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS production_batches (
   production_line_id INTEGER REFERENCES production_lines(id),
   start_date TIMESTAMP NOT NULL,
   end_date TIMESTAMP,
-  target_volume_liters DECIMAL(12,2) NOT NULL,
-  actual_volume_liters DECIMAL(12,2),
+  target_volume_hectoliters DECIMAL(12,2) NOT NULL,
+  actual_volume_hectoliters DECIMAL(12,2),
   status VARCHAR(20) CHECK(status IN ('planned', 'in_progress', 'fermenting', 'conditioning', 'completed', 'failed')) DEFAULT 'planned',
   efficiency_percentage DECIMAL(5,2),
   notes TEXT,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS quality_issues (
   resolved_date TIMESTAMP,
   root_cause TEXT,
   corrective_action TEXT,
-  product_loss_liters DECIMAL(10,2) DEFAULT 0,
+  product_loss_hectoliters DECIMAL(10,2) DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS equipment (
   name VARCHAR(200) NOT NULL,
   type VARCHAR(50) NOT NULL CHECK(type IN ('Fermenter', 'Bright_Tank', 'Mash_Tun', 'Lauter_Tun', 'Kettle', 'Whirlpool', 'Heat_Exchanger', 'Bottling_Line', 'Canning_Line', 'Keg_Line', 'CIP_System')),
   production_line_id INTEGER REFERENCES production_lines(id),
-  capacity_liters DECIMAL(12,2),
+  capacity_hectoliters DECIMAL(12,2),
   status VARCHAR(20) CHECK(status IN ('operational', 'maintenance', 'offline', 'cleaning')) DEFAULT 'operational',
   efficiency_rating DECIMAL(5,2) DEFAULT 95.0,
   purchase_date DATE,
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS distributors (
   phone VARCHAR(50),
   address TEXT,
   total_orders INTEGER DEFAULT 0,
-  total_volume_liters DECIMAL(14,2) DEFAULT 0,
+  total_volume_hectoliters DECIMAL(14,2) DEFAULT 0,
   revenue DECIMAL(14,2) DEFAULT 0,
   relationship_start_date DATE,
   credit_limit DECIMAL(12,2),
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS shipments (
   order_date DATE NOT NULL,
   ship_date DATE,
   delivery_date DATE,
-  volume_liters DECIMAL(12,2) NOT NULL,
+  volume_hectoliters DECIMAL(12,2) NOT NULL,
   unit_price DECIMAL(10,4) NOT NULL,
   total_revenue DECIMAL(12,2) NOT NULL,
   status VARCHAR(20) CHECK(status IN ('pending', 'confirmed', 'shipped', 'delivered', 'returned', 'cancelled')) DEFAULT 'pending',
@@ -245,6 +245,42 @@ CREATE TABLE IF NOT EXISTS monthly_revenue (
 );
 
 -- =============================================================================
+-- DETAILED SALES TRANSACTIONS (For comprehensive Excel exports)
+-- =============================================================================
+
+-- Sales transactions - granular revenue data by province, liquor board, store
+CREATE TABLE IF NOT EXISTS sales_transactions (
+  id SERIAL PRIMARY KEY,
+  transaction_date DATE NOT NULL,
+  province VARCHAR(50) NOT NULL,
+  liquor_board VARCHAR(100) NOT NULL,
+  store_name VARCHAR(200) NOT NULL,
+  store_number VARCHAR(20),
+  store_type VARCHAR(50) CHECK(store_type IN ('Flagship', 'Urban', 'Suburban', 'Rural', 'Express', 'Warehouse', 'Online')) DEFAULT 'Urban',
+  channel VARCHAR(50) CHECK(channel IN ('Retail', 'On-Premise', 'Grocery', 'Convenience', 'Online', 'Export')) DEFAULT 'Retail',
+  product_id INTEGER REFERENCES products(id),
+  beer_style_id INTEGER REFERENCES beer_styles(id),
+  units_sold INTEGER NOT NULL DEFAULT 0,
+  cases_sold DECIMAL(10,2) NOT NULL DEFAULT 0,
+  hectoliters_sold DECIMAL(12,4) NOT NULL DEFAULT 0,
+  unit_price DECIMAL(10,4) NOT NULL,
+  gross_revenue DECIMAL(14,2) NOT NULL DEFAULT 0,
+  discounts DECIMAL(12,2) NOT NULL DEFAULT 0,
+  net_revenue DECIMAL(14,2) NOT NULL DEFAULT 0,
+  cost_of_goods DECIMAL(14,2) NOT NULL DEFAULT 0,
+  gross_profit DECIMAL(14,2) NOT NULL DEFAULT 0,
+  margin_percentage DECIMAL(5,2),
+  fiscal_year INTEGER,
+  fiscal_quarter INTEGER CHECK(fiscal_quarter BETWEEN 1 AND 4),
+  fiscal_period INTEGER CHECK(fiscal_period BETWEEN 1 AND 13),
+  week_number INTEGER CHECK(week_number BETWEEN 1 AND 53),
+  is_promotional BOOLEAN DEFAULT FALSE,
+  promotion_name VARCHAR(100),
+  sales_rep VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================================================
 -- INDEXES FOR PERFORMANCE
 -- =============================================================================
 
@@ -262,3 +298,8 @@ CREATE INDEX IF NOT EXISTS idx_shipments_batch ON shipments(batch_id);
 CREATE INDEX IF NOT EXISTS idx_shipments_distributor ON shipments(distributor_id);
 CREATE INDEX IF NOT EXISTS idx_shipments_status ON shipments(status);
 CREATE INDEX IF NOT EXISTS idx_monthly_revenue_date ON monthly_revenue(year, month);
+CREATE INDEX IF NOT EXISTS idx_sales_transactions_date ON sales_transactions(transaction_date);
+CREATE INDEX IF NOT EXISTS idx_sales_transactions_province ON sales_transactions(province);
+CREATE INDEX IF NOT EXISTS idx_sales_transactions_liquor_board ON sales_transactions(liquor_board);
+CREATE INDEX IF NOT EXISTS idx_sales_transactions_product ON sales_transactions(product_id);
+CREATE INDEX IF NOT EXISTS idx_sales_transactions_fiscal ON sales_transactions(fiscal_year, fiscal_quarter);

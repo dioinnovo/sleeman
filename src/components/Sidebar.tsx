@@ -10,7 +10,10 @@ import {
   FileText,
   Settings,
   ShieldCheck,
-  Truck
+  Truck,
+  Presentation,
+  Database,
+  ExternalLink
 } from 'lucide-react'
 import Image from 'next/image'
 import BreweryThemeToggle from './BreweryThemeToggle'
@@ -23,7 +26,13 @@ interface SidebarProps {
 export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname()
 
-  const menuItems = [
+  const menuItems: {
+    title: string
+    icon: typeof LayoutDashboard
+    href: string
+    description: string
+    external?: boolean
+  }[] = [
     {
       title: 'Dashboard',
       icon: LayoutDashboard,
@@ -31,7 +40,7 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       description: 'Brewery Overview'
     },
     {
-      title: 'Barley',
+      title: 'John',
       icon: Brain,
       href: '/dashboard/assistant',
       description: 'AI Data Analyst'
@@ -59,13 +68,26 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       icon: Settings,
       href: '/dashboard/integrations',
       description: 'System Connections'
+    },
+    {
+      title: 'Presentation',
+      icon: Presentation,
+      href: '/dashboard/presentation',
+      description: 'Sales Deck'
+    },
+    {
+      title: 'Database',
+      icon: Database,
+      href: 'http://localhost:5050',
+      description: 'pgAdmin Console',
+      external: true
     }
   ]
 
   return (
     <aside
       className={`
-        bg-card text-foreground h-full transition-all duration-300 flex flex-col rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30 ring-1 ring-border
+        bg-muted dark:bg-card text-foreground h-full transition-all duration-300 flex flex-col rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30 ring-1 ring-border
         ${isCollapsed ? 'w-20' : 'w-64'}
       `}
     >
@@ -148,10 +170,38 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
           {menuItems.map((item) => {
-            const isActive = item.href === '/dashboard'
+            const isActive = !item.external && (item.href === '/dashboard'
               ? pathname === '/dashboard'
-              : pathname === item.href || pathname.startsWith(item.href + '/')
+              : pathname === item.href || pathname.startsWith(item.href + '/'))
             const Icon = item.icon
+
+            // External links open in new tab
+            if (item.external) {
+              return (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all hover:bg-accent/50 text-muted-foreground hover:text-foreground/70"
+                    title={isCollapsed ? item.title : undefined}
+                  >
+                    <Icon size={20} className="flex-shrink-0" />
+                    {!isCollapsed && (
+                      <div className="flex-1">
+                        <div className="font-medium flex items-center gap-1.5">
+                          {item.title}
+                          <ExternalLink size={12} className="opacity-60" />
+                        </div>
+                        {item.description && (
+                          <div className="text-xs opacity-75">{item.description}</div>
+                        )}
+                      </div>
+                    )}
+                  </a>
+                </li>
+              )
+            }
 
             return (
               <li key={item.href}>
@@ -160,8 +210,8 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
                     ${isActive
-                      ? 'bg-accent text-primary border-l-4 border-primary pl-2'
-                      : 'hover:bg-accent text-muted-foreground hover:text-primary'
+                      ? 'bg-accent text-foreground/80 font-semibold border-l-4 border-primary pl-2'
+                      : 'hover:bg-accent/50 text-muted-foreground hover:text-foreground/70'
                     }
                   `}
                   title={isCollapsed ? item.title : undefined}

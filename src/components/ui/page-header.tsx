@@ -20,15 +20,15 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <div
-      className={`bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6 ${className}`}
+      className={`pt-6 pb-4 sm:pt-8 sm:pb-6 px-4 sm:px-6 lg:px-8 ${className}`}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <h1 className="text-[30px] sm:text-3xl font-bold text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
             {title}
           </h1>
           {description && (
-            <p className="text-[14px] sm:text-base text-muted-foreground mt-1 sm:mt-2">
+            <p className="text-sm sm:text-base text-muted-foreground mt-2">
               {description}
             </p>
           )}

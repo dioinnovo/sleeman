@@ -14,7 +14,7 @@ function DashboardLayoutContent({
   const { isCollapsed, setIsCollapsed } = useSidebar()
 
   return (
-    <div className="flex h-screen bg-background md:p-2 sm:gap-2 lg:gap-4">
+    <div className="flex h-screen bg-background md:p-2 gap-4">
       {/* Semantic aside for sidebar navigation - Hidden only on phones, visible on tablets and desktop */}
       <aside
         className={`
@@ -44,9 +44,7 @@ function DashboardLayoutContent({
       >
         <div className={`
           h-full
-          ${pathname === '/dashboard/assistant' ? 'p-0 sm:p-2' : 'p-4 lg:p-6'}
-          bg-card
-          md:rounded-2xl md:border md:border-border md:shadow-lg md:shadow-black/10 dark:md:shadow-black/20
+          bg-transparent
           ${pathname === '/dashboard/assistant' ? 'overflow-hidden' : 'overflow-y-auto overlay-scroll'}
           pb-24 sm:pb-0
         `}>

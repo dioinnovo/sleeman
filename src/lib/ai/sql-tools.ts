@@ -88,11 +88,11 @@ Sleeman Breweries Business Data:
 - production_lines: Production line info (5 lines across Guelph and Vernon facilities)
 - production_batches: Production batch records (batch_id links to beer_style_id for style info)
 - quality_tests: Quality test results (ABV, IBU, pH, clarity, taste, carbonation)
-- quality_issues: Quality issue tracking with severity and resolution
+- quality_issues: Quality issue tracking with severity, resolution, AND COST DATA (cost_impact, labor_hours_lost, material_waste_cost)
 - suppliers: Supplier information (10 suppliers for malt, hops, yeast, packaging)
 - raw_materials: Raw material inventory with reorder levels
 - material_usage: Material consumption records per batch
-- equipment: Equipment registry (fermenters, tanks, bottling/kegging lines)
+- equipment: Equipment registry with FINANCIAL DATA (purchase_cost, depreciation, net_book_value, maintenance_budget_annual)
 - equipment_downtime: Downtime events with cost impact
 - distributors: Distributor information (LCBO, BC Liquor, regional distributors)
 - shipments: *** REVENUE DATA *** - Contains total_revenue, unit_price, volume_hectoliters per shipment! Links via batch_id → production_batches → beer_styles
@@ -100,9 +100,18 @@ Sleeman Breweries Business Data:
 - monthly_revenue: Revenue by product/month with cost of goods
 - compliance_audits: Audit records for food safety and quality
 
-IMPORTANT: For revenue by beer style queries, use: shipments → production_batches → beer_styles
+COO FINANCIAL TABLES (3 years of data: 2022-2024):
+- operating_expenses: *** BUDGET vs ACTUALS *** - Facility costs (utilities, rent, insurance, maintenance, logistics, admin) with budgeted_amount, actual_amount, variance by month/year
+- labor_costs: Labor costs by facility/department (Production, Quality Control, Maintenance, Warehouse, Administration) with headcount, wages, overtime, benefits, training
+- distributor_costs: Channel costs per distributor (logistics, warehousing, marketing, bad debt) - use with shipments for profitability analysis
 
-Total: ${filteredTables.length} tables with 12 months of brewery data`;
+Facilities: 'Guelph Brewery', 'Vernon Brewery'
+
+IMPORTANT: For revenue by beer style queries, use: shipments → production_batches → beer_styles
+IMPORTANT: For budget variance, use: operating_expenses with variance column (auto-calculated)
+IMPORTANT: For labor analysis, use: labor_costs grouped by department or facility
+
+Total: ${filteredTables.length} tables with 3 years of brewery data (2022-2024)`;
     } catch (error: any) {
       return `Error listing tables: ${error.message}`;
     }

@@ -19,7 +19,7 @@ export default function MobileBottomNav() {
       href: '/dashboard',
     },
     {
-      title: 'Barley',
+      title: 'John',
       icon: Brain,
       href: '/dashboard/assistant',
     },
@@ -39,7 +39,7 @@ export default function MobileBottomNav() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden pb-safe">
-      <div className="relative p-4">
+      <div className="relative p-4 bg-muted">
         <nav className="
           relative
           bg-card/95 backdrop-blur-xl backdrop-saturate-150

@@ -1,35 +1,363 @@
-Sleeman Breweries Modern Design SystemVersion 1.0 | 20251. Introduction & Brand PersonaThis design system translates Sleeman Breweries' "Notorious" heritage and modernized "Craftier Thinking" positioning into a cohesive UI/UX framework. The aesthetic balances premium heritage (1834 roots) with modern industrial sharpness.Core Principles:Bold & Unapologetic: Use high-contrast typography and colors.Crafted & Refined: Spacing and alignment must be precise; no "rough edges" unless intentional texture.Accessible: All designs must meet WCAG 2.0 Level AA standards.2. Color Palette2.1 Primary Brand ColorsThese form the core of the UI and must be used predominantly.Color NameHex CodeUsageSleeman Red#C8102EPrimary Call-to-Actions (CTA), Active States, Brand Accents.Brewer's Black#121212Main Background (Dark Mode), Footer, Headings, Secondary Buttons.Crisp White#FFFFFFCard Backgrounds, Main Text on Dark Backgrounds, Negative Space.2.2 Secondary & Premium AccentsUsed for borders, icons, or subtle background highlights to evoke liquid and heritage.Color NameHex CodeUsageCopper#B47E5BIcon highlights, timeline accents, secondary borders.Aged Gold#C5A065Premium badges, hover states for dark backgrounds, awards.Warm Grey#F4F4F4Page backgrounds, secondary section backgrounds.Charcoal#2C2C2CCard borders in dark mode, secondary text in dark mode.2.3 Functional ColorsSuccess Green: #2E7D32Error Red: #D32F2FWarning Amber: #FFA000Info Blue: #1976D22.4 Text ColorsPrimary Text: #212121 (Almost Black - never pure black on white)Secondary Text: #616161 (Dark Grey)Disabled Text: #9E9E9E (Light Grey)Inverted Text: #FFFFFF (White)3. Typography3.1 Font FamiliesHeadings: Oswald (Google Font)Style: Condensed, bold, uppercase. Reflects the industrial/label aesthetic.Fallback: Impact, Arial Narrow, sans-serif.Body: Open Sans (Google Font)Style: Clean, legible, friendly but professional.Fallback: Helvetica Neue, Arial, sans-serif.3.2 Type Scale (Desktop)Display H1: 64px / 72px Line Height / Oswald Bold / UppercaseH1: 48px / 56px Line Height / Oswald Bold / UppercaseH2: 36px / 44px Line Height / Oswald Medium / UppercaseH3: 24px / 32px Line Height / Oswald RegularBody Large: 18px / 28px Line Height / Open Sans RegularBody Regular: 16px / 24px Line Height / Open Sans RegularCaption/Label: 14px / 20px Line Height / Open Sans SemiBold / Uppercase (Tracking: 1px)4. Spacing & Grid System4.1 The 8pt GridAll spacing, sizing, and margins should be divisible by 8. This ensures vertical rhythm.Base Unit: 8pxxs: 4px (Half unit - use sparingly)sm: 8pxmd: 16pxlg: 24pxxl: 32px2xl: 48px3xl: 64pxSection Padding: 80px (Desktop), 40px (Mobile)4.2 Grid LayoutMax Container Width: 1280pxColumns: 12 (Desktop), 8 (Tablet), 4 (Mobile)Gutter: 24px (Desktop), 16px (Mobile)Alignment: Center aligned container.5. IconographyStyle: Minimal outline icons.Stroke Width: 2px (Consistent weight).Color: Primary Text #212121 or Copper #B47E5B for highlights.Shape: Slightly rounded corners (border-radius 2px) to match buttons.Library Recommendation: Lucide-React or Phosphor Icons (Duotone or Outline).6. Components6.1 ButtonsPrimary Button (CTA)Background: Sleeman Red #C8102EText: White #FFFFFF, Oswald Bold, Uppercase, Tracking 1pxBorder: NoneRadius: 2px (Slightly softened square - Industrial feel)Padding: 16px Vertical, 32px HorizontalHover: Darken Red #A00D25, subtle lift translateY(-1px)Secondary Button (Ghost)Background: TransparentBorder: 2px Solid Black #121212 (or White on dark bg)Text: Black #121212 (or White), Oswald Medium, UppercaseHover: Fill Background with Border Color, Text Inverts.Text LinkStyle: Underlined, Sleeman RedHover: Opacity 80%, underline thickens.6.2 Cards (Products/Brands)Background: WhiteShadow: 0px 4px 12px rgba(0,0,0,0.08) (Subtle lift)Border: 1px solid #E0E0E0Border Radius: 4pxLayout: Image top (aspect ratio 4:3 or 1:1), Title H3, Body Text, "Learn More" link.Hover Effect: Card lifts (translateY(-4px)), Shadow increases to 0px 8px 24px rgba(0,0,0,0.12).6.3 Navigation BarBackground: Brewer's Black #121212Height: 80px fixed.Logo: Left aligned, White/Red SVG.Links: White, Open Sans SemiBold, Uppercase, 14px.Active Item: Red Underline (2px thickness) placed 4px below text.Mobile: Hamburger menu icon (White). Slide-out drawer from right.6.4 FooterBackground: Brewer's Black #121212Text: White (Opacity 80%)Headings: Sleeman Red, Oswald, Uppercase.Disclaimer/Age Gate: 12px text, Opacity 60%.Social Icons: White, Hover to Copper #B47E5B.6.5 Forms & InputsBackground: #F4F4F4 (Light Grey)Border: 1px Solid #E0E0E0 (Bottom border only for modern look, or full border) -> Recommendation: Full border for clarity.Radius: 2pxPadding: 12px 16pxFocus: Border Color changes to Sleeman Red #C8102E.7. Responsive PrinciplesMobile First: Design all components for mobile width (375px) first, then expand.Touch Targets: All interactive elements (buttons, links, icons) must be at least 44x44px.Fluid Typography: Scale headings down by 1.2x on mobile screens (<768px).Images: Always width: 100%, height: auto within containers. Use object-fit: cover to maintain aspect ratios without distortion.Stacking: 12-column grid stacks to single column on mobile.8. Coding Guidelines for AgentsCSS Variables (Root)Use these variables to ensure consistency across the application.:root {
-  /* Colors */
-  --color-primary: #C8102E;
-  --color-primary-dark: #A00D25;
-  --color-black: #121212;
-  --color-white: #FFFFFF;
-  --color-copper: #B47E5B;
-  --color-gold: #C5A065;
-  --color-bg-light: #F4F4F4;
-  
-  /* Text */
-  --color-text-main: #212121;
-  --color-text-secondary: #616161;
-  --color-text-inverted: #FFFFFF;
-  
-  /* Typography */
-  --font-heading: 'Oswald', sans-serif;
-  --font-body: 'Open Sans', sans-serif;
-  
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
-  --spacing-section: 80px;
-  
-  /* UI Elements */
-  --radius-sm: 2px;
-  --radius-md: 4px;
-  --shadow-card: 0px 4px 12px rgba(0,0,0,0.08);
-  --shadow-card-hover: 0px 8px 24px rgba(0,0,0,0.12);
+# Sleeman BrewMind Design System
+
+**Version 2.0 | December 2025**
+
+This design system documents the UI/UX framework for the Sleeman BrewMind application. It serves as the single source of truth for AI agents and developers working on this codebase.
+
+---
+
+## Table of Contents
+
+1. [Design Principles](#1-design-principles)
+2. [Color System](#2-color-system)
+3. [Typography](#3-typography)
+4. [Spacing System](#4-spacing-system)
+5. [Layout Architecture](#5-layout-architecture)
+6. [Component Guidelines](#6-component-guidelines)
+7. [Responsive Design](#7-responsive-design)
+8. [AI Agent Instructions](#8-ai-agent-instructions)
+
+---
+
+## 1. Design Principles
+
+### Core Philosophy
+
+- **Clean & Minimal**: Prioritize whitespace and visual breathing room
+- **Transparent Containers**: Avoid visual clutter from unnecessary borders, shadows, and backgrounds
+- **8pt Grid**: All spacing uses multiples of 8px for consistency
+- **Internal ≤ External**: Space within elements should be less than or equal to space around them
+
+### Visual Hierarchy Rules
+
+1. **Headings separated by space, not cards** - Page titles and section headers should NOT have backgrounds, borders, or shadows
+2. **Content cards are exceptions** - Only use card styling for distinct content blocks (KPIs, data displays)
+3. **Consistent gutters** - Maintain uniform spacing between sidebar and content
+
+---
+
+## 2. Color System
+
+### 2.1 Semantic Tokens (Tailwind)
+
+The application uses shadcn/ui semantic color tokens that adapt to light/dark mode:
+
+| Token | Light Mode | Dark Mode | Usage |
+|-------|-----------|-----------|-------|
+| `bg-background` | White | Slate 950 | Page background |
+| `bg-muted` | Slate 100 | Slate 800 | Sidebar, secondary sections |
+| `bg-card` | White | Slate 900 | Card backgrounds |
+| `bg-accent` | Slate 100 | Slate 800 | Hover states, active items |
+| `bg-primary` | Green 500 | Green 500 | Primary buttons, highlights |
+| `text-foreground` | Slate 950 | Slate 50 | Primary text |
+| `text-muted-foreground` | Slate 500 | Slate 400 | Secondary text |
+| `border-border` | Slate 200 | Slate 700 | Borders |
+
+### 2.2 Brand Colors
+
+| Name | Value | Usage |
+|------|-------|-------|
+| Sleeman Green | `#22c55e` | Primary accent, CTAs |
+| Amber | `#f59e0b` | Secondary accent, warnings |
+| Dark Slate | `#1e293b` | Dark mode backgrounds |
+
+### 2.3 Text Color Opacity
+
+For softer text colors without harsh contrast:
+
+```
+text-foreground      → Full opacity (default)
+text-foreground/80   → 80% opacity (selected nav items)
+text-foreground/70   → 70% opacity (hover states)
+text-muted-foreground → Muted color (descriptions, secondary)
+```
+
+---
+
+## 3. Typography
+
+### 3.1 Font Stack
+
+- **Primary**: System font stack (Inter, SF Pro, Segoe UI)
+- **Monospace**: For code blocks and SQL queries
+
+### 3.2 Type Scale
+
+| Element | Mobile | Desktop | Weight | Tracking |
+|---------|--------|---------|--------|----------|
+| Page Title (H1) | 24px (`text-2xl`) | 30px (`text-3xl`) | Bold | Tight |
+| Section Header (H2) | 20px (`text-xl`) | 24px (`text-2xl`) | Semibold | Normal |
+| Card Title (H3) | 16px (`text-base`) | 18px (`text-lg`) | Medium | Normal |
+| Body | 14px (`text-sm`) | 16px (`text-base`) | Normal | Normal |
+| Caption | 12px (`text-xs`) | 14px (`text-sm`) | Normal | Normal |
+
+### 3.3 Typography Spacing Rules
+
+Based on Red Hat Design System and Atlassian guidelines:
+
+| Relationship | Spacing | Tailwind |
+|--------------|---------|----------|
+| Title → Description | 8px | `mt-2` |
+| Title → Body content | 16px | `mt-4` |
+| Section → Section | 32-48px | `mt-8` to `mt-12` |
+| Heading → Card grid | 24px | `mt-6` |
+
+---
+
+## 4. Spacing System
+
+### 4.1 The 8pt Grid
+
+All spacing values are multiples of 8px (with 4px half-step for fine adjustments):
+
+| Token | Value | Tailwind | Usage |
+|-------|-------|----------|-------|
+| xs | 4px | `p-1`, `gap-1` | Icon-to-text, tight grouping |
+| sm | 8px | `p-2`, `gap-2` | Small component padding |
+| md | 16px | `p-4`, `gap-4` | Standard padding, gutters |
+| lg | 24px | `p-6`, `gap-6` | Section padding |
+| xl | 32px | `p-8`, `gap-8` | Large section spacing |
+| 2xl | 48px | `p-12`, `gap-12` | Major section breaks |
+| 3xl | 64px | `p-16` | Page-level spacing |
+
+### 4.2 Internal ≤ External Rule
+
+**Principle**: Space inside elements (padding) should be ≤ space around them (margin/gap).
+
+```
+Card internal padding: 16px (p-4)
+Card external gap: 16px or more (gap-4+)
+
+Button padding: 8-12px
+Button spacing: 8-16px
+```
+
+### 4.3 Layout Spacing Tokens
+
+| Context | Mobile | Tablet | Desktop | Tailwind |
+|---------|--------|--------|---------|----------|
+| Content from sidebar | 16px | 16px | 16px | `gap-4` (handled by layout) |
+| Page header top padding | 24px | 32px | 32px | `pt-6 sm:pt-8` |
+| Page header bottom padding | 16px | 24px | 24px | `pb-4 sm:pb-6` |
+| Page header horizontal padding | 16px | 24px | 32px | `px-4 sm:px-6 lg:px-8` |
+| Section spacing | 24px | 32px | 32px | `space-y-6 sm:space-y-8` |
+| Card grid gap | 16px | 16px | 24px | `gap-4 lg:gap-6` |
+
+---
+
+## 5. Layout Architecture
+
+### 5.1 Dashboard Shell Structure
+
+```
+┌─────────────────────────────────────────────────────────┐
+│ flex h-screen bg-background md:p-2 gap-4               │
+│ ┌──────────┐  ┌────────────────────────────────────────┐│
+│ │          │  │ Main Content Area                      ││
+│ │ Sidebar  │  │ ┌────────────────────────────────────┐ ││
+│ │ w-64     │  │ │ PageHeader (transparent)           │ ││
+│ │ (or w-20)│  │ │ pt-6 pb-4 px-4 sm:pt-8 sm:pb-6    │ ││
+│ │          │  │ │ sm:px-6 lg:px-8                    │ ││
+│ │ bg-muted │  │ └────────────────────────────────────┘ ││
+│ │ rounded  │  │ ┌────────────────────────────────────┐ ││
+│ │ shadow   │  │ │ Page Content                       │ ││
+│ │          │  │ │ Uses same horizontal padding       │ ││
+│ └──────────┘  │ └────────────────────────────────────┘ ││
+│               └────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────┘
+```
+
+### 5.2 Key Layout Rules
+
+1. **Sidebar**: Has card styling (bg-muted, rounded-2xl, shadow, border)
+2. **Main content area**: Transparent background, no border/shadow
+3. **Gap between sidebar and content**: Fixed at 16px (`gap-4`)
+4. **Content padding**: Matches across all pages for alignment
+
+### 5.3 File References
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| Dashboard Layout | `src/app/dashboard/layout.tsx` | Shell with sidebar + content |
+| Sidebar | `src/components/Sidebar.tsx` | Navigation sidebar |
+| PageHeader | `src/components/ui/page-header.tsx` | Page title component |
+| Mobile Nav | `src/components/MobileBottomNav.tsx` | Mobile bottom navigation |
+
+---
+
+## 6. Component Guidelines
+
+### 6.1 PageHeader Component
+
+**Purpose**: Display page title and description without visual clutter.
+
+**Styling**:
+- Background: Transparent (NO bg-muted, bg-card)
+- Border: None
+- Shadow: None
+- Rounded corners: None
+
+**Spacing**:
+```tsx
+className="pt-6 pb-4 sm:pt-8 sm:pb-6 px-4 sm:px-6 lg:px-8"
+```
+
+**Usage**:
+```tsx
+<PageHeader
+  title="Page Title"
+  description="Optional description text"
+/>
+```
+
+### 6.2 Section Headers
+
+**For content sections within a page**:
+
+```tsx
+<div className="px-4 sm:px-6 lg:px-8">
+  <h2 className="text-xl font-semibold text-foreground">Section Title</h2>
+  <p className="text-sm text-muted-foreground mt-1">Description</p>
+  <div className="mt-6">
+    {/* Section content */}
+  </div>
+</div>
+```
+
+### 6.3 Cards
+
+**When to use cards**:
+- KPI displays
+- Data tables
+- Distinct content blocks
+- Interactive elements
+
+**Card styling**:
+```tsx
+className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4"
+```
+
+### 6.4 Sidebar Navigation
+
+**Active state**:
+```tsx
+className="bg-accent text-foreground/80 font-semibold border-l-4 border-primary pl-2"
+```
+
+**Hover state**:
+```tsx
+className="hover:bg-accent/50 text-muted-foreground hover:text-foreground/70"
+```
+
+---
+
+## 7. Responsive Design
+
+### 7.1 Breakpoints
+
+| Breakpoint | Min Width | Device |
+|------------|-----------|--------|
+| Default | 0px | Mobile phones |
+| `sm:` | 640px | Large phones, small tablets |
+| `md:` | 768px | Tablets |
+| `lg:` | 1024px | Laptops |
+| `xl:` | 1280px | Desktops |
+| `2xl:` | 1536px | Large screens |
+
+### 7.2 Layout Behavior
+
+| Element | Mobile (<640px) | Tablet (640-1023px) | Desktop (≥1024px) |
+|---------|-----------------|---------------------|-------------------|
+| Sidebar | Hidden (bottom nav) | Visible, collapsible | Visible, full |
+| Content padding | 16px | 24px | 32px |
+| Card grid | 1 column | 2 columns | 3-4 columns |
+| PageHeader | Smaller text | Standard | Standard |
+
+### 7.3 Mobile Bottom Navigation
+
+Only visible on screens < 640px (`sm:hidden`). Replaces sidebar navigation.
+
+---
+
+## 8. AI Agent Instructions
+
+### 8.1 Critical Rules
+
+When working on this codebase, AI agents MUST follow these rules:
+
+1. **Never add card styling to page headers**
+   - PageHeader component must remain transparent
+   - No bg-muted, bg-card, shadow, border, or rounded on headers
+
+2. **Maintain consistent horizontal padding**
+   - All page content uses: `px-4 sm:px-6 lg:px-8`
+   - This ensures alignment across all pages
+
+3. **Use the 8pt grid**
+   - All spacing values must be multiples of 4 or 8
+   - Tailwind classes: p-1, p-2, p-4, p-6, p-8, etc.
+
+4. **Preserve the gap-4 between sidebar and content**
+   - This is set in layout.tsx and should not be changed
+
+5. **Use semantic color tokens**
+   - Never use raw hex values
+   - Use Tailwind semantic classes (bg-muted, text-foreground, etc.)
+
+### 8.2 Common Patterns
+
+**Adding a new dashboard page**:
+```tsx
+export default function NewPage() {
+  return (
+    <div>
+      <PageHeader
+        title="Page Title"
+        description="Page description"
+      />
+      <div className="px-4 sm:px-6 lg:px-8 space-y-6">
+        {/* Page content */}
+      </div>
+    </div>
+  )
 }
-Accessibility ChecklistContrast: Ensure all text on images has a dark scrim/overlay (at least 40% opacity).Focus States: All buttons/inputs must have a visible focus ring (use --color-gold for brand alignment).Alt Text: Mandatory for all beer bottle/can images.Semantic HTML: Use <header>, <nav>, <main>, <footer>, <article> tags appropriately.
+```
+
+**Creating a card grid**:
+```tsx
+<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+  {items.map(item => (
+    <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4">
+      {/* Card content */}
+    </div>
+  ))}
+</div>
+```
+
+### 8.3 What NOT to Do
+
+- Do NOT add backgrounds to PageHeader
+- Do NOT use inconsistent padding values across pages
+- Do NOT add borders/shadows to transparent containers
+- Do NOT use text-foreground for selected nav items (use text-foreground/80)
+- Do NOT change the layout gap between sidebar and content
+- Do NOT use bg-card for the main content area wrapper
+
+### 8.4 File Modification Checklist
+
+Before modifying UI components:
+
+1. Check if the component follows this design system
+2. Verify spacing uses 8pt grid values
+3. Ensure responsive classes are applied
+4. Test in both light and dark modes
+5. Confirm PageHeader remains transparent
+
+---
+
+## Changelog
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0 | Dec 2025 | Added comprehensive spacing guidelines, layout architecture, AI agent instructions |
+| 1.0 | 2025 | Initial design system |

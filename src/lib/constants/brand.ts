@@ -11,8 +11,8 @@ export const SLEEMAN_BRAND: BrandConfig = {
     success: SLEEMAN_SUCCESS // #10B981 - Green for positive outcomes
   },
   ai: {
-    name: 'Barley',
-    persona: 'Barley is your AI data analyst for Sleeman Breweries, specializing in brewery operations intelligence. Expert at querying production data, quality metrics, equipment health, and compliance reporting across all four facilities: Guelph, Chambly, Vernon, and Calgary. Transforms complex data questions into instant insights using natural language SQL queries.'
+    name: 'John',
+    persona: 'John is your AI data analyst for Sleeman Breweries, specializing in brewery operations intelligence. Expert at querying production data, quality metrics, equipment health, and compliance reporting across all four facilities: Guelph, Chambly, Vernon, and Calgary. Transforms complex data questions into instant insights using natural language SQL queries.'
   }
 }
 

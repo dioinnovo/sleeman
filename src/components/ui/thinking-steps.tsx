@@ -2,14 +2,14 @@
 
 import { useState, memo, type ElementType, type ComponentProps } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Brain, Database, Code, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Brain, Database, Code, CheckCircle2, AlertCircle, Beer } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export interface ThinkingStep {
   id: string
   step: string
   message: string
-  icon: 'analyze' | 'database' | 'code' | 'insights'
+  icon: 'analyze' | 'database' | 'code' | 'insights' | 'beer'
   status: 'active' | 'complete' | 'error' | 'pending'
   timestamp?: number
 }
@@ -24,14 +24,16 @@ const iconMap = {
   analyze: Brain,
   database: Database,
   code: Code,
-  insights: Brain
+  insights: Brain,
+  beer: Beer
 }
 
 const iconColors = {
   analyze: 'text-purple-500',
   database: 'text-blue-500',
   code: 'text-amber-500',
-  insights: 'text-slate-500'
+  insights: 'text-slate-500',
+  beer: 'text-amber-600'
 }
 
 /**
@@ -173,7 +175,7 @@ export function ThinkingSteps({ steps, className, compact = false }: ThinkingSte
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-300" />
               </motion.div>
               <Shimmer duration={1.5} className="font-medium">
-                Processing your query...
+                Brewing your query...
               </Shimmer>
             </>
           ) : (

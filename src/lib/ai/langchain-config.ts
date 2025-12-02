@@ -29,9 +29,11 @@ export async function getLangChainDataSource(): Promise<DataSource> {
     return dataSource;
   }
 
-  const databaseUrl = process.env.DATABASE_URL;
+  // BrewMind-specific database URL to avoid shell environment conflicts
+  // Priority: BREWMIND_DATABASE_URL > DATABASE_URL
+  const databaseUrl = process.env.BREWMIND_DATABASE_URL || process.env.DATABASE_URL;
   if (!databaseUrl) {
-    throw new Error("DATABASE_URL environment variable is not set. Please configure your PostgreSQL connection.");
+    throw new Error("BREWMIND_DATABASE_URL or DATABASE_URL environment variable is not set. Please configure your PostgreSQL connection.");
   }
 
   console.log("🔌 Initializing LangChain TypeORM DataSource...");

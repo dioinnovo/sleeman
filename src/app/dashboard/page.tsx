@@ -152,8 +152,10 @@ export default function DashboardPage() {
         description="Welcome to BrewMind! Here's your brewery operations overview."
       />
 
-      {/* KPI Cards - 6 cards in responsive grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      {/* Content wrapper with consistent horizontal padding matching PageHeader */}
+      <div className="px-4 sm:px-6 lg:px-8 space-y-4 sm:space-y-6">
+        {/* KPI Cards - 6 cards in responsive grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         {kpiCards.map((kpi) => (
           <div
             key={kpi.title}
@@ -399,6 +401,7 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

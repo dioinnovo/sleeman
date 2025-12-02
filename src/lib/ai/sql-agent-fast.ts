@@ -41,6 +41,23 @@ Beer style names in database:
 - Sleeman Clear 2.0, Sleeman Original Draught, Sleeman Honey Brown, Sleeman Cream Ale
 - Sleeman Silver Creek, Okanagan Spring Pale Ale, Wild Rose WRaspberry, Sapporo Premium
 
+CRITICAL: COO FINANCIAL TABLES (3 years: 2022-2024)
+*** operating_expenses - Facility costs with budget vs actual (facility, expense_category, month, year, budgeted_amount, actual_amount, variance)
+*** labor_costs - Labor by department (facility, department, month, year, headcount, total_labor_cost, overtime_wages)
+*** distributor_costs - Channel costs (distributor_id, month, year, total_channel_cost)
+*** equipment - Asset financials (purchase_cost, annual_depreciation, net_book_value, maintenance_budget_annual)
+*** quality_issues - Cost impact (cost_impact, labor_hours_lost, material_waste_cost)
+
+Facilities: 'Guelph Brewery', 'Vernon Brewery'
+Departments: 'Production', 'Quality Control', 'Maintenance', 'Warehouse', 'Administration'
+Expense categories: 'Utilities', 'Rent', 'Insurance', 'Maintenance', 'Logistics', 'Administrative'
+
+COO QUERY PATTERNS:
+- Labor costs: SELECT department, SUM(total_labor_cost) FROM labor_costs GROUP BY department
+- Budget variance: SELECT expense_category, SUM(variance) FROM operating_expenses GROUP BY expense_category
+- Quality costs: SELECT SUM(cost_impact) FROM quality_issues
+- Depreciation: SELECT SUM(annual_depreciation) FROM equipment
+
 YOUR TASK:
 You are a SQL generation specialist. Generate a single, optimized PostgreSQL query to answer the user's question about brewery operations, production, quality, inventory, or distribution.
 

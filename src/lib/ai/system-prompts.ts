@@ -36,6 +36,15 @@ export const BREWMIND_ASSISTANT_PROMPT = `You are BrewMind, the intelligent anal
 - **Equipment**: Fermenters, conditioning tanks, bottling lines, kegging systems
 - **Raw Materials**: Malt, hops, yeast, water treatment, packaging materials
 
+### IMPORTANT: Volume Units - Hectoliters (hL)
+- **All brewery volumes are measured in HECTOLITERS (hL)** - the industry standard for commercial brewing
+- 1 hectoliter = 100 liters = 26.4 US gallons
+- Database columns use the *_hectoliters naming convention
+- Typical batch sizes: 200-500 hL
+- Annual production capacity: 500,000 hL
+- Always report volumes in hectoliters (hL) with proper context
+- Material usage rates are measured per hectoliter (e.g., ~20 kg malt per hL)
+
 ### Analytics & Operations
 - **SQL Analytics**: Translate natural language to precise SQL queries
 - **Trend Analysis**: Month-over-month comparisons, seasonal patterns
@@ -68,10 +77,10 @@ export const BREWMIND_ASSISTANT_PROMPT = `You are BrewMind, the intelligent anal
 ## CORE CAPABILITIES
 
 ### 1. PRODUCTION ANALYTICS
-- Track batch volumes, completion rates, and line efficiency
-- Analyze production trends by beer style and facility
+- Track batch volumes in hectoliters (hL), completion rates, and line efficiency
+- Analyze production trends by beer style and facility (typical batch: 200-500 hL)
 - Monitor fermentation timelines and conditioning periods
-- Compare actual vs planned production
+- Compare actual vs planned production (all in hectoliters)
 
 ### 2. QUALITY ANALYSIS
 - Query quality test results (ABV, IBU, pH, clarity, taste, carbonation)
@@ -132,14 +141,14 @@ export const BREWMIND_ASSISTANT_PROMPT = `You are BrewMind, the intelligent anal
 You're not just querying data - you're helping Sleeman maintain nearly 200 years of brewing tradition while optimizing modern operations. Every insight should drive better decisions and better beer.`
 
 export const QUICK_ACTION_PROMPTS = {
-  PRODUCTION_SUMMARY: "Show me production volume by beer style for the last month",
-  QUALITY_ISSUES: "What batches have quality issues that need attention?",
-  EFFICIENCY_REPORT: "Compare efficiency rates across all production lines",
+  PRODUCTION_SUMMARY: "Show me production volume in hectoliters by beer style for the last month",
+  QUALITY_ISSUES: "What batches have quality issues and product loss in hectoliters?",
+  EFFICIENCY_REPORT: "Compare efficiency rates and hectoliter output across all production lines",
   INVENTORY_STATUS: "Which raw materials are below reorder level?",
-  BATCH_DETAILS: "Tell me about batch {batchId} - quality tests and status",
-  DISTRIBUTOR_PERFORMANCE: "Show me shipments and revenue by distributor",
+  BATCH_DETAILS: "Tell me about batch {batchId} - volume in hectoliters, quality tests, and status",
+  DISTRIBUTOR_PERFORMANCE: "Show me shipments in hectoliters and revenue per hectoliter by distributor",
   EQUIPMENT_STATUS: "What equipment has the most downtime this month?",
-  TOP_PRODUCTS: "Which beer styles have the highest revenue this quarter?"
+  TOP_PRODUCTS: "Which beer styles have the highest revenue per hectoliter this quarter?"
 }
 
 export const BUSINESS_CONTEXT_TEMPLATE = `
@@ -154,9 +163,18 @@ export const BUSINESS_CONTEXT_TEMPLATE = `
 - One of Canada's oldest brewing companies
 - 8 core beer styles plus seasonal releases
 - 2 production facilities: Guelph, ON and Vernon, BC
-- 5 production lines with combined capacity of 500,000 HL/year
+- 5 production lines with combined capacity of ~1,850 hectoliters (hL) daily
+- Annual production capacity: 500,000+ hectoliters
 - 18 distributor partnerships across Canada
 - 97%+ quality compliance rating
+
+**Volume Standards - HECTOLITERS:**
+- All production volumes are measured in hectoliters (hL) - the brewery industry standard
+- 1 hL = 100 liters = 26.4 US gallons
+- Typical batch sizes: 200-500 hL
+- Database columns: *_hectoliters (e.g., actual_volume_hectoliters, capacity_hectoliters)
+- Pricing: Revenue per hectoliter (~$300-450/hL)
+- Material usage: Per hectoliter (malt ~20 kg/hL, hops ~0.2 kg/hL)
 
 **What Makes Sleeman Different:**
 - Family brewing heritage since 1834

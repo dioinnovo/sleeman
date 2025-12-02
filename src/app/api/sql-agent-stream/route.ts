@@ -104,23 +104,23 @@ export async function POST(request: NextRequest) {
           // Phase 1: Query Classification
           send('thinking', {
             step: 'classify',
-            message: 'Analyzing query complexity...',
-            icon: 'analyze'
+            message: 'Tasting the query...',
+            icon: 'beer'
           });
 
           const classification = classifyQueryComplexity(question);
 
           send('thinking', {
             step: 'classify-done',
-            message: `Query type: ${classification.complexity} (${classification.reason})`,
-            icon: 'analyze',
+            message: `Recipe type: ${classification.complexity} (${classification.reason})`,
+            icon: 'beer',
             done: true
           });
 
           // Phase 2: Schema Lookup
           send('thinking', {
             step: 'schema',
-            message: 'Loading database schema...',
+            message: 'Checking the cellar inventory...',
             icon: 'database'
           });
 
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
 
           send('thinking', {
             step: 'schema-done',
-            message: 'Schema loaded from cache',
+            message: 'Cellar map loaded',
             icon: 'database',
             done: true
           });
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
           // Phase 3: SQL Generation
           send('thinking', {
             step: 'sql-gen',
-            message: 'Generating SQL query...',
+            message: 'Drafting the recipe...',
             icon: 'code'
           });
 
@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
 
           send('thinking', {
             step: 'sql-gen-done',
-            message: 'SQL query generated',
+            message: 'Recipe ready',
             icon: 'code',
             done: true
           });
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
           // Phase 3.5: Oracle SQL Translation (Demo)
           send('thinking', {
             step: 'oracle-translate',
-            message: 'Translating to Oracle SQL...',
+            message: 'Blending for Oracle...',
             icon: 'code'
           });
 
@@ -203,7 +203,7 @@ export async function POST(request: NextRequest) {
 
           send('thinking', {
             step: 'oracle-translate-done',
-            message: 'Oracle SQL generated',
+            message: 'Oracle blend ready',
             icon: 'code',
             done: true
           });
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
           // Phase 4: Query Validation & Execution
           send('thinking', {
             step: 'execute',
-            message: 'Validating and executing query...',
+            message: 'Tapping the kegs...',
             icon: 'database'
           });
 
@@ -235,7 +235,7 @@ export async function POST(request: NextRequest) {
 
             send('thinking', {
               step: 'execute-done',
-              message: `Query returned ${queryResults.rows.length} rows`,
+              message: `Poured ${queryResults.rows.length} results`,
               icon: 'database',
               done: true
             });
@@ -254,7 +254,7 @@ export async function POST(request: NextRequest) {
           if (queryResults && queryResults.rows.length > 0) {
             send('thinking', {
               step: 'chart',
-              message: 'Analyzing data for visualization...',
+              message: 'Crafting the visuals...',
               icon: 'insights'
             });
 
@@ -262,14 +262,14 @@ export async function POST(request: NextRequest) {
               chartData = generateChartData(queryResults.columns, queryResults.rows);
               send('thinking', {
                 step: 'chart-done',
-                message: `Generated ${chartData?.type || 'no'} chart`,
+                message: `Served ${chartData?.type || 'fresh'} chart`,
                 icon: 'insights',
                 done: true
               });
             } else {
               send('thinking', {
                 step: 'chart-done',
-                message: 'Data not suitable for visualization',
+                message: 'Data best served as table',
                 icon: 'insights',
                 done: true
               });
@@ -280,8 +280,8 @@ export async function POST(request: NextRequest) {
           if (queryResults && queryResults.rows.length > 0 && !error) {
             send('thinking', {
               step: 'insights',
-              message: 'Generating business insights...',
-              icon: 'insights'
+              message: 'Fermenting insights...',
+              icon: 'beer'
             });
 
             // Build context for insights
@@ -308,16 +308,16 @@ export async function POST(request: NextRequest) {
 
             send('thinking', {
               step: 'insights-done',
-              message: 'Insights generated',
-              icon: 'insights',
+              message: 'Insights on tap',
+              icon: 'beer',
               done: true
             });
 
             // Generate follow-up questions
             send('thinking', {
               step: 'followup',
-              message: 'Generating follow-up questions...',
-              icon: 'insights'
+              message: 'Casking suggestions...',
+              icon: 'beer'
             });
 
             const followUpQuestions = await generateFollowUpQuestions(
@@ -329,8 +329,8 @@ export async function POST(request: NextRequest) {
 
             send('thinking', {
               step: 'followup-done',
-              message: `Generated ${followUpQuestions.length} suggestions`,
-              icon: 'insights',
+              message: `${followUpQuestions.length} rounds ready to serve`,
+              icon: 'beer',
               done: true
             });
 
@@ -374,8 +374,8 @@ export async function POST(request: NextRequest) {
             // Generate follow-up questions even for empty results
             send('thinking', {
               step: 'followup',
-              message: 'Generating alternative questions...',
-              icon: 'insights'
+              message: 'Brewing alternatives...',
+              icon: 'beer'
             });
 
             const emptyResultFollowUps = await generateFollowUpQuestions(
@@ -387,8 +387,8 @@ export async function POST(request: NextRequest) {
 
             send('thinking', {
               step: 'followup-done',
-              message: `Generated ${emptyResultFollowUps.length} suggestions`,
-              icon: 'insights',
+              message: `${emptyResultFollowUps.length} new batches ready`,
+              icon: 'beer',
               done: true
             });
 

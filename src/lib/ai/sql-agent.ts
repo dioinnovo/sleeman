@@ -15,7 +15,8 @@ PRODUCTION TABLES:
 2. production_lines - Production line info (id, name, facility, capacity_hl, line_type, status)
 3. production_batches - Production batch records (id, batch_number, style_id, line_id, start_date, end_date, target_volume_hl, actual_volume_hl, status, efficiency_pct, notes)
 4. quality_tests - Quality test results (id, batch_id, test_type, test_date, expected_value, actual_value, passed, notes)
-5. quality_issues - Quality issue tracking (id, batch_id, issue_type, severity, detected_date, resolved_date, resolution, cost_impact)
+5. quality_issues - Quality issue tracking with COST DATA (id, batch_id, issue_type, severity, detected_date, resolved_date, resolution, cost_impact, labor_hours_lost, material_waste_cost)
+   *** quality_issues.cost_impact contains monetized cost per quality incident ***
 
 INVENTORY TABLES:
 6. suppliers - Supplier information (id, name, material_type, lead_time_days, reliability_score, contact_info)
@@ -23,7 +24,8 @@ INVENTORY TABLES:
 8. material_usage - Material consumption records (id, batch_id, material_id, quantity_used, usage_date)
 
 EQUIPMENT TABLES:
-9. equipment - Equipment registry (id, name, line_id, equipment_type, capacity, installation_date, last_maintenance, status)
+9. equipment - Equipment registry with FINANCIAL DATA (id, name, line_id, equipment_type, capacity, installation_date, last_maintenance, status, purchase_cost, purchase_date, useful_life_years, salvage_value, annual_depreciation, accumulated_depreciation, net_book_value, maintenance_budget_annual)
+   *** equipment has full asset financials: purchase_cost, depreciation, net_book_value ***
 10. equipment_downtime - Downtime events (id, equipment_id, start_time, end_time, reason, cost_impact, maintenance_type)
 
 DISTRIBUTION TABLES:
@@ -36,6 +38,18 @@ DISTRIBUTION TABLES:
 
 COMPLIANCE TABLES:
 15. compliance_audits - Audit records (id, audit_date, audit_type, auditor, score, findings, corrective_actions)
+
+FINANCIAL/COO TABLES (3 years of data: 2022-2024):
+16. operating_expenses - Facility operating costs with BUDGET vs ACTUALS (id, facility, expense_category, expense_type, month, year, budgeted_amount, actual_amount, variance, notes)
+    *** Categories: Utilities, Rent, Insurance, Maintenance, Logistics, Administrative ***
+    *** variance is auto-calculated as (actual_amount - budgeted_amount) ***
+    *** Facilities: 'Guelph Brewery', 'Vernon Brewery' ***
+17. labor_costs - Labor costs by facility/department (id, facility, department, month, year, headcount, regular_wages, overtime_wages, benefits_cost, training_cost, total_labor_cost, hours_worked)
+    *** Departments: Production, Quality Control, Maintenance, Warehouse, Administration ***
+    *** total_labor_cost = regular_wages + overtime_wages + benefits_cost + training_cost ***
+18. distributor_costs - Channel costs per distributor (id, distributor_id, month, year, logistics_cost, warehousing_cost, marketing_support, bad_debt_provision, total_channel_cost)
+    *** Links to distributors table via distributor_id ***
+    *** Use to calculate distributor profitability: shipments.total_revenue - distributor_costs.total_channel_cost ***
 
 KEY RELATIONSHIPS:
 - production_batches.beer_style_id → beer_styles.id
@@ -51,6 +65,8 @@ KEY RELATIONSHIPS:
 - shipments.distributor_id → distributors.id
 - products.style_id → beer_styles.id
 - monthly_revenue.product_id → products.id
+- distributor_costs.distributor_id → distributors.id (for distributor profitability analysis)
+- operating_expenses and labor_costs use facility VARCHAR matching production_lines.facility
 
 REVENUE QUERY PATTERNS:
 *** For revenue by beer style, use this join pattern: ***
@@ -76,8 +92,55 @@ BEER STYLES IN DATABASE:
 - Sapporo Premium (Lager)
 
 FACILITIES:
-- Guelph Facility (Ontario): 3 production lines
-- Vernon Facility (BC): 2 production lines
+- Guelph Brewery (Ontario): 3 production lines - use 'Guelph Brewery' for financial tables
+- Vernon Brewery (BC): 2 production lines - use 'Vernon Brewery' for financial tables
+
+COO FINANCIAL QUERY PATTERNS:
+
+1. Labor costs by department:
+   SELECT department, SUM(total_labor_cost) as total_labor
+   FROM labor_costs
+   WHERE year = 2024
+   GROUP BY department
+   ORDER BY total_labor DESC
+
+2. Operating expenses budget variance:
+   SELECT expense_category,
+          SUM(budgeted_amount) as budgeted,
+          SUM(actual_amount) as actual,
+          SUM(variance) as variance,
+          ROUND(SUM(variance) / NULLIF(SUM(budgeted_amount), 0) * 100, 1) as variance_pct
+   FROM operating_expenses
+   WHERE year = 2024
+   GROUP BY expense_category
+   ORDER BY variance DESC
+
+3. Quality issue cost impact:
+   SELECT issue_type, COUNT(*) as incidents, SUM(cost_impact) as total_cost
+   FROM quality_issues
+   WHERE cost_impact IS NOT NULL
+   GROUP BY issue_type
+   ORDER BY total_cost DESC
+
+4. Equipment depreciation:
+   SELECT equipment_type, COUNT(*) as count,
+          SUM(purchase_cost) as total_value,
+          SUM(annual_depreciation) as annual_depreciation,
+          SUM(net_book_value) as book_value
+   FROM equipment
+   GROUP BY equipment_type
+   ORDER BY total_value DESC
+
+5. Distributor profitability (advanced):
+   SELECT d.name as distributor,
+          SUM(s.total_revenue) as revenue,
+          SUM(dc.total_channel_cost) as costs,
+          SUM(s.total_revenue) - SUM(dc.total_channel_cost) as profit
+   FROM distributors d
+   JOIN shipments s ON d.id = s.distributor_id
+   JOIN distributor_costs dc ON d.id = dc.distributor_id
+   GROUP BY d.id, d.name
+   ORDER BY profit DESC
 
 IMPORTANT WORKFLOW - FOLLOW THESE STEPS IN ORDER:
 1. ALWAYS start by calling sql_db_list_tables to see available tables

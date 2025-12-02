@@ -22,14 +22,14 @@ export const BREWERY_QUERIES = {
       bs.name as beer_style,
       TO_CHAR(pb.start_date, 'YYYY-MM') as month,
       COUNT(*) as batch_count,
-      ROUND(SUM(pb.actual_volume_liters)::NUMERIC, 0) as total_volume_liters,
+      ROUND(SUM(pb.actual_volume_hectoliters)::NUMERIC, 0) as total_volume_hectoliters,
       ROUND(AVG(pb.efficiency_percentage)::NUMERIC, 1) as avg_efficiency
     FROM production_batches pb
     JOIN beer_styles bs ON pb.beer_style_id = bs.id
     WHERE pb.status = 'completed'
       AND pb.start_date >= NOW() - INTERVAL '12 months'
     GROUP BY bs.name, TO_CHAR(pb.start_date, 'YYYY-MM')
-    ORDER BY month DESC, total_volume_liters DESC
+    ORDER BY month DESC, total_volume_hectoliters DESC
   `,
 
   fermentation_efficiency_by_line: `
@@ -38,7 +38,7 @@ export const BREWERY_QUERIES = {
       pl.facility,
       COUNT(pb.id) as total_batches,
       ROUND(AVG(pb.efficiency_percentage)::NUMERIC, 1) as avg_efficiency,
-      ROUND(SUM(pb.actual_volume_liters)::NUMERIC, 0) as total_volume,
+      ROUND(SUM(pb.actual_volume_hectoliters)::NUMERIC, 0) as total_volume_hectoliters,
       pl.efficiency_rating as line_rating
     FROM production_lines pl
     LEFT JOIN production_batches pb ON pl.id = pb.production_line_id
@@ -67,7 +67,7 @@ export const BREWERY_QUERIES = {
     SELECT
       TO_CHAR(pb.start_date, 'YYYY-MM') as month,
       COUNT(*) as batches,
-      ROUND(SUM(pb.actual_volume_liters)::NUMERIC, 0) as total_volume,
+      ROUND(SUM(pb.actual_volume_hectoliters)::NUMERIC, 0) as total_volume_hectoliters,
       ROUND(AVG(pb.efficiency_percentage)::NUMERIC, 1) as avg_efficiency,
       COUNT(CASE WHEN pb.status = 'failed' THEN 1 END) as failed_batches
     FROM production_batches pb
@@ -83,7 +83,7 @@ export const BREWERY_QUERIES = {
       (SELECT COUNT(*) FROM production_batches WHERE status = 'in_progress') as batches_in_progress,
       (SELECT COUNT(*) FROM production_batches WHERE status = 'fermenting') as batches_fermenting,
       (SELECT COUNT(*) FROM production_batches WHERE status = 'conditioning') as batches_conditioning,
-      (SELECT ROUND(SUM(actual_volume_liters)::NUMERIC, 0) FROM production_batches WHERE DATE(end_date) = CURRENT_DATE) as volume_completed_today
+      (SELECT ROUND(SUM(actual_volume_hectoliters)::NUMERIC, 0) FROM production_batches WHERE DATE(end_date) = CURRENT_DATE) as volume_completed_today_hectoliters
   `,
 
   // ==========================================================================
@@ -98,7 +98,7 @@ export const BREWERY_QUERIES = {
       qi.severity,
       qi.detected_date,
       qi.resolved_date,
-      ROUND(qi.product_loss_liters::NUMERIC, 0) as product_loss_liters,
+      ROUND(qi.product_loss_hectoliters::NUMERIC, 1) as product_loss_hectoliters,
       qi.root_cause,
       qi.corrective_action
     FROM quality_issues qi
@@ -140,7 +140,7 @@ export const BREWERY_QUERIES = {
       qi.severity,
       COUNT(*) as occurrence_count,
       ROUND(AVG(EXTRACT(EPOCH FROM (qi.resolved_date - qi.detected_date)) / 3600)::NUMERIC, 1) as avg_resolution_hours,
-      ROUND(SUM(qi.product_loss_liters)::NUMERIC, 0) as total_product_loss
+      ROUND(SUM(qi.product_loss_hectoliters)::NUMERIC, 1) as total_product_loss_hectoliters
     FROM quality_issues qi
     WHERE qi.resolved_date IS NOT NULL
     GROUP BY qi.issue_type, qi.severity
@@ -231,9 +231,9 @@ export const BREWERY_QUERIES = {
       d.region,
       d.type,
       d.total_orders,
-      ROUND(d.total_volume_liters::NUMERIC, 0) as total_volume_liters,
+      ROUND(d.total_volume_hectoliters::NUMERIC, 0) as total_volume_hectoliters,
       ROUND(d.revenue::NUMERIC, 2) as total_revenue,
-      ROUND((d.revenue / NULLIF(d.total_volume_liters, 0))::NUMERIC, 2) as revenue_per_liter,
+      ROUND((d.revenue / NULLIF(d.total_volume_hectoliters, 0))::NUMERIC, 2) as revenue_per_hectoliter,
       d.relationship_start_date
     FROM distributors d
     WHERE d.total_orders > 0
@@ -314,15 +314,15 @@ export const BREWERY_QUERIES = {
     SELECT
       pl.name as production_line,
       pl.facility,
-      pl.capacity_liters as line_capacity,
-      ROUND(SUM(pb.actual_volume_liters)::NUMERIC, 0) as actual_production,
-      ROUND((SUM(pb.actual_volume_liters) / (pl.capacity_liters * 365) * 100)::NUMERIC, 1) as utilization_pct,
+      pl.capacity_hectoliters as line_capacity_hectoliters,
+      ROUND(SUM(pb.actual_volume_hectoliters)::NUMERIC, 0) as actual_production_hectoliters,
+      ROUND((SUM(pb.actual_volume_hectoliters) / (pl.capacity_hectoliters * 365) * 100)::NUMERIC, 1) as utilization_pct,
       COUNT(pb.id) as batches_completed
     FROM production_lines pl
     LEFT JOIN production_batches pb ON pl.id = pb.production_line_id
       AND pb.status = 'completed'
       AND pb.start_date >= NOW() - INTERVAL '1 year'
-    GROUP BY pl.id, pl.name, pl.facility, pl.capacity_liters
+    GROUP BY pl.id, pl.name, pl.facility, pl.capacity_hectoliters
     ORDER BY utilization_pct DESC NULLS LAST
   `,
 
@@ -353,9 +353,9 @@ export const BREWERY_QUERIES = {
     SELECT
       pl.name as production_line,
       pl.facility,
-      ROUND(SUM(pb.actual_volume_liters)::NUMERIC / 100, 0) as hectoliters_produced,
+      ROUND(SUM(pb.actual_volume_hectoliters)::NUMERIC, 0) as hectoliters_produced,
       ROUND(SUM(mu.cost)::NUMERIC, 2) as total_material_cost,
-      ROUND((SUM(mu.cost) / NULLIF(SUM(pb.actual_volume_liters) / 100, 0))::NUMERIC, 2) as cost_per_hectoliter
+      ROUND((SUM(mu.cost) / NULLIF(SUM(pb.actual_volume_hectoliters), 0))::NUMERIC, 2) as cost_per_hectoliter
     FROM production_lines pl
     JOIN production_batches pb ON pl.id = pb.production_line_id
     JOIN material_usage mu ON pb.id = mu.batch_id
@@ -369,11 +369,11 @@ export const BREWERY_QUERIES = {
     SELECT
       pl.name as production_line,
       COUNT(pb.id) as total_batches,
-      ROUND(SUM(pb.target_volume_liters)::NUMERIC, 0) as target_volume,
-      ROUND(SUM(pb.actual_volume_liters)::NUMERIC, 0) as actual_volume,
-      ROUND(SUM(pb.target_volume_liters - COALESCE(pb.actual_volume_liters, 0))::NUMERIC, 0) as volume_loss,
-      ROUND(((SUM(pb.target_volume_liters) - SUM(COALESCE(pb.actual_volume_liters, 0))) / NULLIF(SUM(pb.target_volume_liters), 0) * 100)::NUMERIC, 2) as waste_rate_pct,
-      ROUND(SUM(qi.product_loss_liters)::NUMERIC, 0) as quality_loss
+      ROUND(SUM(pb.target_volume_hectoliters)::NUMERIC, 0) as target_volume_hectoliters,
+      ROUND(SUM(pb.actual_volume_hectoliters)::NUMERIC, 0) as actual_volume_hectoliters,
+      ROUND(SUM(pb.target_volume_hectoliters - COALESCE(pb.actual_volume_hectoliters, 0))::NUMERIC, 0) as volume_loss_hectoliters,
+      ROUND(((SUM(pb.target_volume_hectoliters) - SUM(COALESCE(pb.actual_volume_hectoliters, 0))) / NULLIF(SUM(pb.target_volume_hectoliters), 0) * 100)::NUMERIC, 2) as waste_rate_pct,
+      ROUND(SUM(qi.product_loss_hectoliters)::NUMERIC, 1) as quality_loss_hectoliters
     FROM production_lines pl
     JOIN production_batches pb ON pl.id = pb.production_line_id
     LEFT JOIN quality_issues qi ON pb.id = qi.batch_id
