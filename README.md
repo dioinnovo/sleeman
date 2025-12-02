@@ -2,7 +2,7 @@
 
 > **Quick Start**: Deploy and run the complete AI-powered brewery analytics platform in under 10 minutes
 
-[![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.0.3-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green?style=flat&logo=node.js)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=flat&logo=postgresql)](https://www.postgresql.org/)
@@ -104,7 +104,7 @@ BrewMind connects to a PostgreSQL database with **15 brewery-specific tables**:
 ## 🏗️ Architecture
 
 ### Technology Stack
-- **Framework**: Next.js 15.5.2 with App Router
+- **Framework**: Next.js 16.0.3 with App Router
 - **AI**: LangChain + Azure OpenAI (GPT-4o-mini)
 - **Database**: PostgreSQL 16 (Docker) + TypeORM
 - **UI**: React 18.2, Tailwind CSS, shadcn/ui
@@ -218,7 +218,9 @@ docker-compose up -d sleeman-brewmind-db
 ## 📖 Documentation
 
 - [Database Management Guide](docs/DATABASE_MANAGEMENT.md) - Troubleshooting & best practices
-- [SQL Agent Architecture](docs/SQL_AGENT_ARCHITECTURE.md) - Technical details
+- [Demo Script](docs/DEMO_SCRIPT.md) - Comprehensive 10-15 minute demo walkthrough
+- [Epic Checklist](docs/EPIC_CHECKLIST.md) - Feature completion tracking
+- [Migration Plan](docs/COMPLETE_MIGRATION_PLAN.md) - Full project plan
 
 ## 🎯 Target Demo
 

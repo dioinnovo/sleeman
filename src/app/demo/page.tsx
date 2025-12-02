@@ -287,9 +287,9 @@ export default function DemoPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-6">
-                    {step.preview.type === 'chat' && (
+                    {step.preview.type === 'chat' && 'messages' in step.preview && (
                       <div className="space-y-4">
-                        {step.preview.messages.map((msg, index) => (
+                        {step.preview.messages?.map((msg, index) => (
                           <motion.div
                             key={index}
                             initial={{ opacity: 0, y: 10 }}
@@ -316,9 +316,9 @@ export default function DemoPage() {
                       </div>
                     )}
 
-                    {step.preview.type === 'kpis' && (
+                    {step.preview.type === 'kpis' && 'metrics' in step.preview && (
                       <div className="grid grid-cols-2 gap-4">
-                        {step.preview.metrics.map((metric, index) => (
+                        {step.preview.metrics?.map((metric, index) => (
                           <motion.div
                             key={metric.label}
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -334,9 +334,9 @@ export default function DemoPage() {
                       </div>
                     )}
 
-                    {step.preview.type === 'quality' && (
+                    {step.preview.type === 'quality' && 'tests' in step.preview && (
                       <div className="space-y-4">
-                        {step.preview.tests.map((test, index) => (
+                        {step.preview.tests?.map((test, index) => (
                           <motion.div
                             key={test.name}
                             initial={{ opacity: 0, x: -10 }}
@@ -360,9 +360,9 @@ export default function DemoPage() {
                       </div>
                     )}
 
-                    {step.preview.type === 'distribution' && (
+                    {step.preview.type === 'distribution' && 'shipments' in step.preview && (
                       <div className="space-y-4">
-                        {step.preview.shipments.map((shipment, index) => (
+                        {step.preview.shipments?.map((shipment, index) => (
                           <motion.div
                             key={shipment.distributor}
                             initial={{ opacity: 0, y: 10 }}
@@ -390,7 +390,7 @@ export default function DemoPage() {
                       </div>
                     )}
 
-                    {step.preview.type === 'sql' && (
+                    {step.preview.type === 'sql' && 'query' in step.preview && (
                       <div className="space-y-4">
                         <div className="bg-sleeman-dark rounded-lg p-4 font-mono text-sm">
                           <div className="text-gray-400 mb-2">-- Generated SQL Query</div>
@@ -400,7 +400,7 @@ export default function DemoPage() {
                         </div>
                         <div className="flex items-center justify-between text-sm">
                           <span className="text-gray-400">Query executed successfully</span>
-                          <span className="text-sleeman-gold">{step.preview.resultCount} returned</span>
+                          <span className="text-sleeman-gold">{'resultCount' in step.preview && step.preview.resultCount} returned</span>
                         </div>
                         <div className="flex items-center gap-2 text-green-400">
                           <CheckCircle2 className="h-4 w-4" />

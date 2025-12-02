@@ -4,7 +4,8 @@ import { useState } from 'react'
 import {
   Truck, Package, TrendingUp, Users, MapPin, DollarSign,
   Clock, CheckCircle, AlertTriangle, BarChart3, Warehouse,
-  Calendar, ArrowRight, Building2, RefreshCw, Eye, Download
+  ArrowRight, Building2, RefreshCw, Eye, Download,
+  ArrowUp
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/page-header'
 
@@ -14,7 +15,7 @@ interface Distributor {
   region: string
   type: 'Retail' | 'Wholesale' | 'Restaurant' | 'Bar' | 'Export'
   totalOrders: number
-  totalVolume: number // in hectoliters
+  totalVolume: number
   revenue: number
   onTimeDeliveryRate: number
   lastOrderDate: Date
@@ -218,12 +219,12 @@ export default function DistributionPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'delivered': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-      case 'shipped': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-      case 'confirmed': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-      case 'pending': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-      case 'returned': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+      case 'delivered': return 'bg-green-900/50 text-green-400'
+      case 'shipped': return 'bg-blue-900/50 text-blue-400'
+      case 'confirmed': return 'bg-purple-900/50 text-purple-400'
+      case 'pending': return 'bg-yellow-900/50 text-yellow-400'
+      case 'returned': return 'bg-red-900/50 text-red-400'
+      default: return 'bg-gray-700 text-gray-300'
     }
   }
 
@@ -240,12 +241,12 @@ export default function DistributionPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'Retail': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-      case 'Wholesale': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-      case 'Restaurant': return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
-      case 'Bar': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
-      case 'Export': return 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400'
-      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+      case 'Retail': return 'bg-blue-900/50 text-blue-400'
+      case 'Wholesale': return 'bg-green-900/50 text-green-400'
+      case 'Restaurant': return 'bg-purple-900/50 text-purple-400'
+      case 'Bar': return 'bg-amber-900/50 text-amber-400'
+      case 'Export': return 'bg-indigo-900/50 text-indigo-400'
+      default: return 'bg-gray-700 text-gray-300'
     }
   }
 
@@ -272,8 +273,60 @@ export default function DistributionPage() {
     return s.status === selectedStatus
   })
 
+  // KPI Cards data with proper vertical hierarchy
+  const kpiCards = [
+    {
+      title: 'Active Distributors',
+      value: activeDistributors.toString(),
+      change: '+2 this quarter',
+      trend: 'up' as const,
+      icon: Users,
+      description: 'Partner network'
+    },
+    {
+      title: 'Volume YTD',
+      value: `${(totalVolume / 1000).toFixed(1)}k HL`,
+      change: '+18.3%',
+      trend: 'up' as const,
+      icon: Package,
+      description: 'Hectoliters shipped'
+    },
+    {
+      title: 'Revenue YTD',
+      value: `$${(totalRevenue / 1000000).toFixed(1)}M`,
+      change: '+15.2%',
+      trend: 'up' as const,
+      icon: DollarSign,
+      description: 'Total distribution'
+    },
+    {
+      title: 'On-Time Delivery',
+      value: `${avgOnTimeDelivery}%`,
+      change: '+2.1% vs target',
+      trend: 'up' as const,
+      icon: Truck,
+      description: 'Average rate'
+    },
+    {
+      title: 'Pending Orders',
+      value: pendingShipments.toString(),
+      change: 'Awaiting shipment',
+      trend: 'neutral' as const,
+      icon: Clock,
+      description: 'To be processed'
+    },
+    {
+      title: 'In Transit',
+      value: inTransitShipments.toString(),
+      change: 'Active shipments',
+      trend: 'neutral' as const,
+      icon: RefreshCw,
+      description: 'Currently shipping'
+    }
+  ]
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 w-full">
       <PageHeader
         title="Distribution Management"
         description="Distributor network, shipments, and regional delivery analytics"
@@ -285,93 +338,77 @@ export default function DistributionPage() {
         }
       />
 
-      {/* KPI Overview Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <Users className="text-sleeman-gold" size={20} />
-            <span className="text-xs text-green-600 font-semibold">Active</span>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{activeDistributors}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Active Distributors</p>
-        </div>
+      {/* KPI Cards - Proper vertical layout with breathing room */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+        {kpiCards.map((kpi) => (
+          <div
+            key={kpi.title}
+            className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-5 hover:border-sleeman-gold/50 transition"
+          >
+            {/* Icon + Trend Row */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="p-2 rounded-lg bg-sleeman-dark">
+                <kpi.icon className="text-sleeman-gold" size={20} />
+              </div>
+              {kpi.trend !== 'neutral' && (
+                <div className="flex items-center gap-1 text-xs font-medium text-green-400">
+                  <ArrowUp size={12} />
+                </div>
+              )}
+            </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <Package className="text-blue-600" size={20} />
-            <span className="text-xs text-blue-600 font-semibold">Volume</span>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{(totalVolume / 1000).toFixed(1)}k</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Total HL YTD</p>
-        </div>
+            {/* Title */}
+            <p className="text-xs text-gray-400 mb-1 truncate" title={kpi.title}>{kpi.title}</p>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <DollarSign className="text-green-600" size={20} />
-            <span className="text-xs text-green-600 font-semibold">Revenue</span>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">${(totalRevenue / 1000000).toFixed(1)}M</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Total Revenue YTD</p>
-        </div>
+            {/* Primary Value - LARGEST */}
+            <p className="text-2xl sm:text-3xl font-bold text-gray-100 whitespace-nowrap">{kpi.value}</p>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <Truck className="text-purple-600" size={20} />
-            <span className="text-xs text-purple-600 font-semibold">On-Time</span>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{avgOnTimeDelivery}%</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Avg Delivery Rate</p>
-        </div>
+            {/* Change/Context */}
+            <p className={`text-xs mt-1 ${kpi.trend === 'up' ? 'text-green-400' : 'text-gray-500'}`}>
+              {kpi.change}
+            </p>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <Clock className="text-yellow-600" size={20} />
-            <span className="text-xs text-yellow-600 font-semibold">Pending</span>
+            {/* Description */}
+            <p className="text-xs text-gray-500 mt-1">{kpi.description}</p>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{pendingShipments}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Pending Orders</p>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-2">
-            <RefreshCw className="text-indigo-600" size={20} />
-            <span className="text-xs text-indigo-600 font-semibold">In Transit</span>
-          </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{inTransitShipments}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Shipments Active</p>
-        </div>
+        ))}
       </div>
 
       {/* Regional Performance */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
+        <h2 className="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
           <MapPin size={20} className="text-sleeman-gold" />
           Regional Distribution Performance
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {regionalData.map((region) => (
             <div
               key={region.region}
-              className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-sleeman-gold transition-colors cursor-pointer"
+              className="p-4 bg-sleeman-dark border border-sleeman-brown rounded-lg hover:border-sleeman-gold/50 transition-colors cursor-pointer"
             >
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">{region.region}</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Distributors</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{region.distributors}</span>
+              <h3 className="font-semibold text-gray-100 mb-4 text-base">{region.region}</h3>
+
+              <div className="space-y-3">
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-500">Distributors</span>
+                  <span className="text-lg font-bold text-gray-100">{region.distributors}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Volume</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{(region.volumeHL / 1000).toFixed(1)}k HL</span>
+
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-500">Volume</span>
+                  <span className="text-lg font-bold text-gray-100">{(region.volumeHL / 1000).toFixed(1)}k HL</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Revenue</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">${(region.revenue / 1000000).toFixed(1)}M</span>
+
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-500">Revenue</span>
+                  <span className="text-lg font-bold text-gray-100">${(region.revenue / 1000000).toFixed(1)}M</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Growth</span>
-                  <span className={`font-medium ${region.growth > 0 ? 'text-green-600' : 'text-red-600'}`}>
+
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-500">Growth</span>
+                  <span className={`text-lg font-bold flex items-center gap-1 ${region.growth > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {region.growth > 0 && <ArrowUp size={14} />}
                     {region.growth > 0 ? '+' : ''}{region.growth}%
                   </span>
                 </div>
@@ -381,70 +418,72 @@ export default function DistributionPage() {
         </div>
       </div>
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Two Column Layout - Distributors & Shipments */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Top Distributors */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown overflow-hidden">
+          <div className="px-4 sm:px-6 py-4 border-b border-sleeman-dark flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 className="text-lg font-bold text-gray-100 flex items-center gap-2">
               <Building2 size={20} className="text-sleeman-gold" />
               Top Distributors
             </h2>
-            <div className="flex gap-2">
-              <select
-                value={selectedRegion}
-                onChange={(e) => setSelectedRegion(e.target.value as typeof selectedRegion)}
-                className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              >
-                <option value="all">All Regions</option>
-                <option value="ontario">Ontario</option>
-                <option value="quebec">Quebec</option>
-                <option value="western">Western Canada</option>
-                <option value="atlantic">Atlantic</option>
-              </select>
-            </div>
+            <select
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value as typeof selectedRegion)}
+              aria-label="Filter by region"
+              className="text-sm border border-sleeman-dark rounded-lg px-3 py-2 bg-sleeman-dark text-gray-100 focus:border-sleeman-gold focus:outline-none cursor-pointer"
+            >
+              <option value="all">All Regions</option>
+              <option value="ontario">Ontario</option>
+              <option value="quebec">Quebec</option>
+              <option value="western">Western Canada</option>
+              <option value="atlantic">Atlantic</option>
+            </select>
           </div>
 
-          <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[400px] overflow-y-auto">
+          <div className="divide-y divide-sleeman-dark max-h-[480px] overflow-y-auto">
             {filteredDistributors.slice(0, 6).map((distributor) => (
-              <div key={distributor.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                <div className="flex items-start justify-between mb-2">
-                  <div>
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100">{distributor.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{distributor.region}</p>
+              <div key={distributor.id} className="p-4 hover:bg-sleeman-dark/50 transition-colors">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-gray-100 truncate" title={distributor.name}>
+                      {distributor.name}
+                    </h3>
+                    <p className="text-sm text-gray-400">{distributor.region}</p>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getTypeColor(distributor.type)}`}>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${getTypeColor(distributor.type)}`}>
                     {distributor.type}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mt-3">
+                <div className="grid grid-cols-3 gap-3 mb-3">
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Orders</p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{distributor.totalOrders}</p>
+                    <p className="text-xs text-gray-500 mb-0.5">Orders</p>
+                    <p className="text-sm font-bold text-gray-100">{distributor.totalOrders}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Volume</p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{(distributor.totalVolume / 1000).toFixed(1)}k HL</p>
+                    <p className="text-xs text-gray-500 mb-0.5">Volume</p>
+                    <p className="text-sm font-bold text-gray-100">{(distributor.totalVolume / 1000).toFixed(1)}k HL</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">${(distributor.revenue / 1000000).toFixed(2)}M</p>
+                    <p className="text-xs text-gray-500 mb-0.5">Revenue</p>
+                    <p className="text-sm font-bold text-gray-100">${(distributor.revenue / 1000000).toFixed(2)}M</p>
                   </div>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center justify-between pt-3 border-t border-sleeman-dark">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 dark:text-gray-400">On-time:</span>
-                    <span className={`text-xs font-semibold ${
-                      distributor.onTimeDeliveryRate >= 95 ? 'text-green-600' :
-                      distributor.onTimeDeliveryRate >= 90 ? 'text-yellow-600' :
-                      'text-red-600'
+                    <span className="text-xs text-gray-500">On-time:</span>
+                    <span className={`text-xs font-bold flex items-center gap-0.5 ${
+                      distributor.onTimeDeliveryRate >= 95 ? 'text-green-400' :
+                      distributor.onTimeDeliveryRate >= 90 ? 'text-yellow-400' :
+                      'text-red-400'
                     }`}>
+                      {distributor.onTimeDeliveryRate >= 95 && <ArrowUp size={10} />}
                       {distributor.onTimeDeliveryRate}%
                     </span>
                   </div>
-                  <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium flex items-center gap-1">
+                  <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium flex items-center gap-1 transition-colors">
                     View Details
                     <ArrowRight size={14} />
                   </button>
@@ -455,63 +494,66 @@ export default function DistributionPage() {
         </div>
 
         {/* Recent Shipments */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown overflow-hidden">
+          <div className="px-4 sm:px-6 py-4 border-b border-sleeman-dark flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 className="text-lg font-bold text-gray-100 flex items-center gap-2">
               <Truck size={20} className="text-sleeman-gold" />
               Recent Shipments
             </h2>
-            <div className="flex gap-2">
-              <select
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value as typeof selectedStatus)}
-                className="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="shipped">In Transit</option>
-                <option value="delivered">Delivered</option>
-              </select>
-            </div>
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value as typeof selectedStatus)}
+              aria-label="Filter by shipment status"
+              className="text-sm border border-sleeman-dark rounded-lg px-3 py-2 bg-sleeman-dark text-gray-100 focus:border-sleeman-gold focus:outline-none cursor-pointer"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="shipped">In Transit</option>
+              <option value="delivered">Delivered</option>
+            </select>
           </div>
 
-          <div className="divide-y divide-gray-200 dark:divide-gray-700 max-h-[400px] overflow-y-auto">
+          <div className="divide-y divide-sleeman-dark max-h-[480px] overflow-y-auto">
             {filteredShipments.map((shipment) => {
               const StatusIcon = getStatusIcon(shipment.status)
 
               return (
-                <div key={shipment.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{shipment.product}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{shipment.distributor}</p>
+                <div key={shipment.id} className="p-4 hover:bg-sleeman-dark/50 transition-colors">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-gray-100 truncate" title={shipment.product}>
+                        {shipment.product}
+                      </h3>
+                      <p className="text-sm text-gray-400 truncate" title={shipment.distributor}>
+                        {shipment.distributor}
+                      </p>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(shipment.status)}`}>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap ${getStatusColor(shipment.status)}`}>
                       <StatusIcon size={12} />
                       {shipment.status.charAt(0).toUpperCase() + shipment.status.slice(1)}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4 mt-3">
+                  <div className="grid grid-cols-3 gap-3 mb-3">
                     <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Volume</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{shipment.volumeHL} HL</p>
+                      <p className="text-xs text-gray-500 mb-0.5">Volume</p>
+                      <p className="text-sm font-bold text-gray-100">{shipment.volumeHL} HL</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Order Date</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{shipment.orderDate.toLocaleDateString()}</p>
+                      <p className="text-xs text-gray-500 mb-0.5">Order Date</p>
+                      <p className="text-sm font-bold text-gray-100">{shipment.orderDate.toLocaleDateString()}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Revenue</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">${(shipment.revenue / 1000).toFixed(0)}k</p>
+                      <p className="text-xs text-gray-500 mb-0.5">Revenue</p>
+                      <p className="text-sm font-bold text-gray-100">${(shipment.revenue / 1000).toFixed(0)}k</p>
                     </div>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 font-mono">
+                  <div className="flex items-center justify-between pt-3 border-t border-sleeman-dark">
+                    <span className="text-xs text-gray-500 font-mono">
                       {shipment.trackingNumber}
                     </span>
-                    <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium flex items-center gap-1">
+                    <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium flex items-center gap-1 transition-colors">
                       <Eye size={14} />
                       Track
                     </button>
@@ -524,94 +566,107 @@ export default function DistributionPage() {
       </div>
 
       {/* Delivery Performance Summary */}
-      <div className="bg-gradient-to-r from-sleeman-dark to-sleeman-brown rounded-xl shadow-sm p-6 text-white">
-        <div className="flex items-center gap-2 mb-4">
+      <div className="bg-gradient-to-r from-sleeman-dark to-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
+        <div className="flex items-center gap-2 mb-6">
           <BarChart3 size={24} className="text-sleeman-gold" />
-          <h2 className="text-xl font-bold">Delivery Performance Overview</h2>
+          <h2 className="text-xl font-bold text-gray-100">Delivery Performance Overview</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
-              <CheckCircle size={16} />
-              Delivered This Week
-            </h3>
-            <p className="text-3xl font-bold">47</p>
-            <p className="text-sm opacity-90 mt-1">Shipments completed</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-xl p-5 border border-sleeman-brown">
+            <div className="flex items-center gap-2 mb-3">
+              <CheckCircle size={18} className="text-green-400" />
+              <h3 className="font-semibold text-gray-100">Delivered This Week</h3>
+            </div>
+            <p className="text-4xl font-bold text-gray-100">47</p>
+            <p className="text-sm text-gray-400 mt-2">Shipments completed</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
-              <Truck size={16} />
-              In Transit
-            </h3>
-            <p className="text-3xl font-bold">12</p>
-            <p className="text-sm opacity-90 mt-1">Active shipments</p>
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-xl p-5 border border-sleeman-brown">
+            <div className="flex items-center gap-2 mb-3">
+              <Truck size={18} className="text-blue-400" />
+              <h3 className="font-semibold text-gray-100">In Transit</h3>
+            </div>
+            <p className="text-4xl font-bold text-gray-100">12</p>
+            <p className="text-sm text-gray-400 mt-2">Active shipments</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
-              <Clock size={16} />
-              Avg Transit Time
-            </h3>
-            <p className="text-3xl font-bold">2.4 days</p>
-            <p className="text-sm opacity-90 mt-1">Door to door</p>
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-xl p-5 border border-sleeman-brown">
+            <div className="flex items-center gap-2 mb-3">
+              <Clock size={18} className="text-purple-400" />
+              <h3 className="font-semibold text-gray-100">Avg Transit Time</h3>
+            </div>
+            <p className="text-4xl font-bold text-gray-100">2.4<span className="text-xl ml-1">days</span></p>
+            <p className="text-sm text-gray-400 mt-2">Door to door</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
-              <TrendingUp size={16} />
-              Month vs Last
-            </h3>
-            <p className="text-3xl font-bold text-green-400">+18.3%</p>
-            <p className="text-sm opacity-90 mt-1">Volume increase</p>
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-xl p-5 border border-sleeman-brown">
+            <div className="flex items-center gap-2 mb-3">
+              <TrendingUp size={18} className="text-sleeman-gold" />
+              <h3 className="font-semibold text-gray-100">Month vs Last</h3>
+            </div>
+            <p className="text-4xl font-bold text-green-400 flex items-center">
+              <ArrowUp size={28} className="mr-1" />
+              18.3%
+            </p>
+            <p className="text-sm text-gray-400 mt-2">Volume increase</p>
           </div>
         </div>
       </div>
 
       {/* Warehouse Inventory Status */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
+        <h2 className="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2">
           <Warehouse size={20} className="text-sleeman-gold" />
           Warehouse Inventory for Distribution
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { product: 'Sleeman Original Draught', stock: 4500, allocated: 1200, unit: 'cases' },
             { product: 'Sleeman Honey Brown', stock: 3200, allocated: 800, unit: 'cases' },
             { product: 'Sleeman Clear 2.0', stock: 2800, allocated: 600, unit: 'cases' },
             { product: 'Sleeman Cream Ale', stock: 2100, allocated: 450, unit: 'cases' }
-          ].map((item, idx) => (
-            <div key={idx} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-3">{item.product}</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">In Stock</span>
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">{item.stock.toLocaleString()} {item.unit}</span>
+          ].map((item, idx) => {
+            const availablePercent = Math.round(((item.stock - item.allocated) / item.stock) * 100)
+
+            return (
+              <div key={idx} className="p-4 bg-sleeman-dark border border-sleeman-brown rounded-xl hover:border-sleeman-gold/50 transition">
+                <h3 className="font-semibold text-gray-100 mb-4 truncate" title={item.product}>
+                  {item.product}
+                </h3>
+
+                <div className="space-y-3">
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500">In Stock</span>
+                    <span className="text-lg font-bold text-gray-100">{item.stock.toLocaleString()} {item.unit}</span>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500">Allocated</span>
+                    <span className="text-lg font-bold text-yellow-400">{item.allocated.toLocaleString()} {item.unit}</span>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <span className="text-xs text-gray-500">Available</span>
+                    <span className="text-lg font-bold text-green-400">{(item.stock - item.allocated).toLocaleString()} {item.unit}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Allocated</span>
-                  <span className="font-semibold text-yellow-600">{item.allocated.toLocaleString()} {item.unit}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 dark:text-gray-400">Available</span>
-                  <span className="font-semibold text-green-600">{(item.stock - item.allocated).toLocaleString()} {item.unit}</span>
+
+                <div className="mt-4 pt-3 border-t border-sleeman-brown">
+                  <div className="w-full bg-sleeman-brown rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className="bg-sleeman-gold h-2.5 rounded-full transition-all duration-300"
+                      style={{ width: `${availablePercent}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2 text-center">
+                    {availablePercent}% available for orders
+                  </p>
                 </div>
               </div>
-              <div className="mt-3">
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                  <div
-                    className="bg-sleeman-gold h-2 rounded-full"
-                    style={{ width: `${((item.stock - item.allocated) / item.stock) * 100}%` }}
-                  />
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  {Math.round(((item.stock - item.allocated) / item.stock) * 100)}% available
-                </p>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

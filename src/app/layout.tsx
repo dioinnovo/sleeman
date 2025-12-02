@@ -38,6 +38,7 @@ export const metadata: Metadata = {
     apple: '/favicon_io/apple-touch-icon.png',
     shortcut: '/favicon.ico',
   },
+  manifest: '/favicon_io/site.webmanifest',
   openGraph: {
     title: 'Sleeman BrewMind - AI-Powered Brewery Analytics',
     description: 'AI-powered analytics platform for Sleeman Breweries - Transform brewery operations with natural language data insights',

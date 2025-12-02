@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@ai-sdk/azure": "^2.0.32",
+    "@ai-sdk/openai-compatible": "^1.0.28",
     "@ai-sdk/provider": "^2.0.0",
     "@ai-sdk/provider-utils": "^3.0.9",
     "@chroma-core/default-embed": "^0.1.8",

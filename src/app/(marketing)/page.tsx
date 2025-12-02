@@ -316,7 +316,7 @@ export default function LandingPage() {
               className="grid grid-cols-2 gap-4"
             >
               {[
-                { icon: Database, label: 'PostgreSQL', desc: 'Real-time data' },
+                { icon: Database, label: 'SQL/Oracle SQL', desc: 'Multi-dialect' },
                 { icon: Brain, label: 'Claude AI', desc: 'Natural language' },
                 { icon: LineChart, label: 'Analytics', desc: 'Visual insights' },
                 { icon: Zap, label: 'Real-time', desc: 'Instant queries' }

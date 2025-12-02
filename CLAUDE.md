@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Sleeman BrewMind is a Next.js 15.5.2 application for AI-powered brewery analytics and operations intelligence. It demonstrates how AI can help Sleeman Breweries optimize production, quality control, inventory management, and distribution through natural language SQL queries and business insights.
+Sleeman BrewMind is a Next.js 16.0.3 application for AI-powered brewery analytics and operations intelligence. It demonstrates how AI can help Sleeman Breweries optimize production, quality control, inventory management, and distribution through natural language SQL queries powered by the BrewMind AI assistant "Barley".
 
 **Target Demo**: Brian Cappellaro, Director IT & PMO at Sleeman Breweries
 
@@ -70,7 +70,7 @@ pnpm start
 ## Architecture Overview
 
 ### Technology Stack
-- **Framework**: Next.js 15.5.2 with App Router
+- **Framework**: Next.js 16.0.3 with App Router
 - **UI**: React 18.2, Tailwind CSS 3.3, shadcn/ui components
 - **State Management**: React hooks
 - **Animations**: Framer Motion 11.0
@@ -142,10 +142,13 @@ Key environment variables in `.env.local`:
 ### Design System
 
 - **Colors**:
-  - Primary: Sleeman Green (#22c55e)
-  - Secondary: Amber (#f59e0b)
-  - Dark: Slate (#1e293b)
-- **Components**: Using shadcn/ui with brewery-focused customizations
+  - Sleeman Dark: #1C1812 (backgrounds)
+  - Sleeman Gold: #D4A84B (primary accent)
+  - Sleeman Gold Light: #E8C76A (hover states)
+  - Sleeman Brown: #2C2416 (cards, borders)
+  - Sleeman Blue: #1863DC (secondary accent)
+- **Theme**: Dark brewery aesthetic matching Sleeman brand
+- **Components**: Using shadcn/ui with brewery-themed customizations
 - **Animations**: Framer Motion for smooth transitions
 
 ### AI Agent Architecture

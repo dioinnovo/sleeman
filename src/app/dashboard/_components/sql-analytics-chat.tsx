@@ -10,13 +10,15 @@ import {
   Database,
   BarChart3,
   TrendingUp,
-  Code
+  Code,
+  Info
 } from 'lucide-react'
 import SiriOrb from '@/components/ui/siri-orb'
 import SimpleMarkdownMessage from '@/components/ui/simple-markdown-message'
 import { ThinkingSteps, type ThinkingStep } from '@/components/ui/thinking-steps'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { getFriendlyColumnName } from '@/lib/columnMapping'
 
 interface Message {
@@ -25,6 +27,7 @@ interface Message {
   content: string
   timestamp: Date
   sqlQuery?: string
+  oracleSqlQuery?: string  // Oracle SQL translation for demo purposes
   results?: any[]
   rowCount?: number
   queryTime?: number
@@ -63,6 +66,7 @@ export default function SQLAnalyticsChat() {
   const [isTyping, setIsTyping] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [expandedQuery, setExpandedQuery] = useState<string | null>(null)
+  const [expandedOracleQuery, setExpandedOracleQuery] = useState<string | null>(null)
   const [thinkingSteps, setThinkingSteps] = useState<ThinkingStep[]>([])
   const [streamingContent, setStreamingContent] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -82,13 +86,13 @@ export default function SQLAnalyticsChat() {
     adjustTextareaHeight()
   }, [inputValue])
 
-  // Auto-scroll to latest message
+  // Auto-scroll to latest message - use 'end' to keep at bottom without jumping
   useEffect(() => {
-    if (latestAssistantMessageRef.current) {
+    if (messagesContainerRef.current) {
       setTimeout(() => {
-        latestAssistantMessageRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
+        messagesContainerRef.current?.scrollTo({
+          top: messagesContainerRef.current.scrollHeight,
+          behavior: 'smooth'
         })
       }, 100)
     }
@@ -213,6 +217,7 @@ export default function SQLAnalyticsChat() {
       const decoder = new TextDecoder()
       let buffer = ''
       let finalData: any = null
+      let accumulatedContent = '' // Track streaming content locally for reliable capture
 
       while (true) {
         const { done, value } = await reader.read()
@@ -240,6 +245,10 @@ export default function SQLAnalyticsChat() {
                 // Save final data for message creation
                 if (currentEvent === 'data') {
                   finalData = parsedData
+                } else if (currentEvent === 'text-delta') {
+                  // Accumulate text locally AND update React state for live display
+                  accumulatedContent += parsedData.textDelta
+                  processStreamEvent(currentEvent, parsedData)
                 } else {
                   processStreamEvent(currentEvent, parsedData)
                 }
@@ -276,11 +285,12 @@ export default function SQLAnalyticsChat() {
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
-          content: streamingContent || (rowCount > 0
+          content: accumulatedContent || (rowCount > 0
             ? `Found ${rowCount} results`
             : 'No results found for this query.'),
           timestamp: new Date(),
           sqlQuery: finalData.sqlQuery,
+          oracleSqlQuery: finalData.oracleSqlQuery,  // Oracle SQL translation for demo
           results: resultsAsObjects,
           rowCount: rowCount,
           followUpQuestions: finalData.followUpQuestions,
@@ -483,7 +493,7 @@ export default function SQLAnalyticsChat() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
                 <YAxis fontSize={12} />
-                <Tooltip />
+                <RechartsTooltip />
                 <Legend />
                 {datasets.map((dataset: any, idx: number) => (
                   <Line
@@ -508,7 +518,7 @@ export default function SQLAnalyticsChat() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
               <YAxis fontSize={12} />
-              <Tooltip />
+              <RechartsTooltip />
               <Legend />
               {datasets.map((dataset: any, idx: number) => (
                 <Bar
@@ -557,7 +567,7 @@ export default function SQLAnalyticsChat() {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey={labelKey} angle={-45} textAnchor="end" height={100} fontSize={12} />
             <YAxis fontSize={12} />
-            <Tooltip formatter={(value, name) => [value, getFriendlyColumnName(name as string)]} />
+            <RechartsTooltip formatter={(value: any, name: any) => [value, getFriendlyColumnName(name as string)]} />
             <Legend formatter={(value) => getFriendlyColumnName(value)} />
             <Bar dataKey={primaryMetric} fill="#5fd063" name={getFriendlyColumnName(primaryMetric)} />
           </BarChart>
@@ -719,7 +729,7 @@ export default function SQLAnalyticsChat() {
                               <div className="flex items-center gap-2">
                                 <Code className="w-4 h-4 text-gray-400" />
                                 <span className="text-sm font-medium text-gray-300">
-                                  Generated SQL Query
+                                  PostgreSQL Query
                                 </span>
                               </div>
                               <ChevronDown
@@ -745,6 +755,64 @@ export default function SQLAnalyticsChat() {
                               </div>
                             )}
                           </div>
+                        )}
+
+                        {/* Expandable Oracle SQL Query (Demo) */}
+                        {message.oracleSqlQuery && (
+                          <TooltipProvider>
+                            <div className="bg-sleeman-dark rounded-lg border border-orange-700/50">
+                              <button
+                                onClick={() => setExpandedOracleQuery(expandedOracleQuery === message.id ? null : message.id)}
+                                className="w-full px-4 py-2 flex items-center justify-between hover:bg-sleeman-brown/50 transition-colors rounded-lg"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <Database className="w-4 h-4 text-orange-500" />
+                                  <span className="text-sm font-medium text-gray-300">
+                                    Oracle SQL Query
+                                  </span>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="text-xs px-1.5 py-0.5 bg-orange-500/20 text-orange-400 rounded cursor-help flex items-center gap-1">
+                                        Demo
+                                        <Info className="w-3 h-3" />
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="max-w-[280px]">
+                                      <p className="font-medium mb-1">Oracle SQL Translation</p>
+                                      <p className="text-gray-400 mb-2">Syntax differences handled:</p>
+                                      <ul className="text-xs space-y-0.5 text-gray-300">
+                                        <li>• LIMIT 100 → FETCH FIRST 100 ROWS ONLY</li>
+                                        <li>• NOW() → SYSDATE</li>
+                                        <li>• COALESCE → NVL (where applicable)</li>
+                                        <li>• Type casting ::type → CAST()</li>
+                                      </ul>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </div>
+                                <ChevronDown
+                                  className={cn(
+                                    "w-4 h-4 text-gray-400 transition-transform",
+                                    expandedOracleQuery === message.id && "transform rotate-180"
+                                  )}
+                                />
+                              </button>
+                              {expandedOracleQuery === message.id && (
+                                <div className="px-4 pb-4">
+                                  <pre className="text-xs bg-gray-900 text-orange-400 p-3 rounded overflow-x-auto">
+                                    <code>{message.oracleSqlQuery}</code>
+                                  </pre>
+                                  <button
+                                    onClick={() => {
+                                      navigator.clipboard.writeText(message.oracleSqlQuery!)
+                                    }}
+                                    className="mt-2 text-xs text-orange-400 hover:text-orange-300"
+                                  >
+                                    Copy
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </TooltipProvider>
                         )}
 
                         {/* Query Results Table */}
