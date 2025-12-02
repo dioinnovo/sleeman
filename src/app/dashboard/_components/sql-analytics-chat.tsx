@@ -732,7 +732,7 @@ export default function SQLAnalyticsChat() {
       </div>
 
       {/* Messages Area */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 pt-4">
         {messages.length === 0 ? (
           /* Welcome Screen */
           <div className="flex flex-col items-center justify-start pt-2 sm:pt-4 text-center space-y-4 sm:space-y-6">
@@ -787,12 +787,12 @@ export default function SQLAnalyticsChat() {
                   exit={{ opacity: 0, y: -10 }}
                   className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-[90%] ${message.role === 'user' ? 'order-last' : ''}`}>
+                  <div className={`${message.role === 'user' ? 'max-w-[90%] order-last' : 'w-full'}`}>
                     {/* Message bubble */}
                     <div className={`rounded-2xl px-4 py-3 ${
                       message.role === 'user'
                         ? 'bg-primary text-primary-foreground'
-                        : 'bg-card border border-border text-foreground shadow-sm'
+                        : 'bg-transparent text-foreground'
                     }`}>
                       {message.role === 'user' ? (
                         <p className="whitespace-pre-wrap text-sm">{message.content}</p>
@@ -965,7 +965,7 @@ export default function SQLAnalyticsChat() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex justify-start"
               >
-                <div className="max-w-[90%]">
+                <div className="w-full">
                   <ThinkingSteps steps={thinkingSteps} />
 
                   {/* Streaming content preview */}
@@ -973,7 +973,7 @@ export default function SQLAnalyticsChat() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="mt-2 bg-card border border-border text-foreground rounded-2xl px-4 py-3"
+                      className="mt-2 bg-transparent text-foreground rounded-2xl px-4 py-3"
                     >
                       <SimpleMarkdownMessage content={streamingContent} className="text-sm" />
                       <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-1" />
