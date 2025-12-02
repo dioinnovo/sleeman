@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -8,15 +7,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Brain,
-  Sun,
-  Moon,
   FileText,
   Settings,
   ShieldCheck,
   Truck
 } from 'lucide-react'
 import Image from 'next/image'
-import { useTheme } from 'next-themes'
+import BreweryThemeToggle from './BreweryThemeToggle'
 
 interface SidebarProps {
   isCollapsed?: boolean
@@ -25,12 +22,6 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname()
-  const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const menuItems = [
     {
@@ -193,23 +184,10 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
 
       {/* Footer */}
       <div className="p-4 border-t border-border">
-        {/* Theme Toggle */}
-        {mounted && (
-          <div className={`mb-3 ${isCollapsed ? 'flex justify-center' : ''}`}>
-            <button
-              onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-primary"
-              title={isCollapsed ? `Switch to ${theme === 'light' ? 'dark' : 'light'} mode` : undefined}
-            >
-              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-              {!isCollapsed && (
-                <span className="text-sm font-medium">
-                  {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
-                </span>
-              )}
-            </button>
-          </div>
-        )}
+        {/* Brewery Theme Toggle with Carbonation Animation */}
+        <div className={`mb-3 ${isCollapsed ? 'flex justify-center' : ''}`}>
+          <BreweryThemeToggle collapsed={isCollapsed} />
+        </div>
 
         {/* Company Info */}
         {!isCollapsed ? (

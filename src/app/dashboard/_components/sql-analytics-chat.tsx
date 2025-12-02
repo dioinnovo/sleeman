@@ -714,7 +714,7 @@ export default function SQLAnalyticsChat() {
   return (
     <div className="h-full w-full flex flex-col bg-gradient-to-br from-muted to-background overflow-hidden">
       {/* Top Header */}
-      <div className="flex-shrink-0 flex items-center justify-between p-4 min-h-[4rem] bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="flex-shrink-0 flex items-center justify-between p-4 min-h-[4rem] bg-background/80 backdrop-blur-md border-b border-border rounded-tl-xl rounded-tr-xl">
         <div className="flex items-center gap-2">
           <Database className="w-6 h-6 text-primary" />
           <h2 className="text-sm font-semibold text-foreground">

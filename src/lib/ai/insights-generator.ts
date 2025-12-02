@@ -3,6 +3,20 @@ import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { getCachedSchema, getCachedTableNames } from "./langchain-config";
 
 /**
+ * Strip markdown formatting from text
+ * Removes bold (**text**), italic (*text* or _text_), and other common markdown
+ */
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold **text**
+    .replace(/\*([^*]+)\*/g, '$1')       // Remove italic *text*
+    .replace(/__([^_]+)__/g, '$1')       // Remove bold __text__
+    .replace(/_([^_]+)_/g, '$1')         // Remove italic _text_
+    .replace(/`([^`]+)`/g, '$1')         // Remove inline code `text`
+    .trim();
+}
+
+/**
  * Response mode types for insights generation
  * - quick: Concise 3-5 sentence summary
  * - pro: Comprehensive 200+ word analysis with sections
@@ -326,6 +340,7 @@ CRITICAL RULES:
 2. NEVER hallucinate entity names - use only the exact beer style names, distributor names, facility names provided
 3. Questions must be answerable with a single SQL query against the provided schema
 4. If results were empty, suggest questions about related data that DOES exist
+5. DO NOT use any markdown formatting - no asterisks, no bold, no italics. Return plain text only.
 
 Generate questions that:
 1. Build on the data just analyzed - drill deeper into the results
@@ -335,7 +350,8 @@ Generate questions that:
 
 Return exactly 3 questions that would naturally follow from the analysis.
 Questions should be complete sentences ending with a question mark.
-Each question MUST reference actual tables/columns from the schema.`;
+Each question MUST reference actual tables/columns from the schema.
+IMPORTANT: Output plain text only - no markdown, no formatting characters.`;
 
 /**
  * Generate contextual follow-up questions based on the conversation
@@ -413,19 +429,35 @@ export async function generateFollowUpQuestions(
 === DATABASE SCHEMA (Use ONLY these exact names) ===
 ${schemaContext}
 
-=== VALID BEER STYLES (Use ONLY these exact names) ===
-- Sleeman Clear 2.0 (Light Lager)
-- Sleeman Original Draught (Lager)
-- Sleeman Honey Brown (Amber Ale)
-- Sleeman Cream Ale (Cream Ale)
-- Sleeman Silver Creek (Lager)
-- Okanagan Spring Pale Ale (Pale Ale)
-- Wild Rose WRaspberry (Fruit Beer)
-- Sapporo Premium (Lager)
+=== VALID BEER STYLES (Use ONLY these EXACT names from beer_styles.name) ===
+- Sleeman Clear 2.0
+- Sleeman Original Draught
+- Sleeman Honey Brown Lager
+- Sleeman Cream Ale
+- Sleeman Silver Creek Lager
+- Okanagan Spring Pale Ale
+- Wild Rose IPA
+- Sapporo Premium Beer
 
-=== FACILITIES ===
-- Guelph Facility (Ontario) - 3 production lines
-- Vernon Facility (BC) - 2 production lines
+=== VALID DISTRIBUTORS (Use ONLY these EXACT names from distributors.name) ===
+- LCBO Ontario
+- BC Liquor Stores
+- SAQ Quebec
+- Alberta Gaming
+- Costco Canada
+- Metro Inc.
+- Sobeys
+- The Keg Steakhouse
+- Boston Pizza
+- Moxies
+- Bier Markt
+- Craft Beer Market
+- Export USA
+- Export Japan
+
+=== FACILITIES (Use ONLY these EXACT values from production_lines.facility) ===
+- Guelph Brewery
+- Vernon Brewery
 
 === YOUR TASK ===
 Generate exactly 3 follow-up questions that:
@@ -441,7 +473,8 @@ IMPORTANT: Since the query returned no results, suggest questions about:
 - Related tables (e.g., if quality failed, ask about production or inventory)
 ` : ''}
 
-Return ONLY the 3 questions, one per line, with no numbering or bullet points.`;
+Return ONLY the 3 questions, one per line, with no numbering or bullet points.
+DO NOT use any markdown formatting (no asterisks, no bold, no italics). Plain text only.`;
 
     const response = await insightsLLM.invoke([
       new SystemMessage(FOLLOWUP_SYSTEM_PROMPT),
@@ -450,11 +483,12 @@ Return ONLY the 3 questions, one per line, with no numbering or bullet points.`;
 
     const content = response.content as string;
 
-    // Parse the response into individual questions
+    // Parse the response into individual questions and strip any markdown
     const questions = content
       .split('\n')
       .map(line => line.trim())
       .filter(line => line.length > 10 && line.endsWith('?'))
+      .map(line => stripMarkdown(line)) // Remove any markdown formatting
       .slice(0, 3);
 
     // If we got valid questions, return them
@@ -475,15 +509,15 @@ Return ONLY the 3 questions, one per line, with no numbering or bullet points.`;
 
 /**
  * Hardcoded schema reference as fallback when database is unavailable
- * Contains the actual Sleeman Breweries database structure
+ * Contains the ACTUAL Sleeman Breweries database structure (verified against DB)
  */
 function getHardcodedSchemaReference(): string {
   return `
-Tables and key columns:
+Tables and key columns (ACTUAL column names):
 - beer_styles: id, name, category, description, abv_min, abv_max, ibu_min, ibu_max, fermentation_days
-- production_lines: id, name, facility_location, capacity_hl, status
-- production_batches: id, batch_number, beer_style_id, production_line_id, brew_date, volume_hl, efficiency_percent, status
-- quality_tests: id, batch_id, test_type (ABV, IBU, pH, clarity, taste, carbonation), result, passed, test_date
+- production_lines: id, name, facility, capacity_liters, status, efficiency_rating
+- production_batches: id, batch_code, beer_style_id, production_line_id, start_date, end_date, target_volume_liters, actual_volume_liters, status, efficiency_percentage
+- quality_tests: id, batch_id, test_type, test_date, expected_value, actual_value, passed, technician
 - quality_issues: id, batch_id, issue_type, severity, description, resolution_status
 - suppliers: id, name, category, contact_email, rating
 - raw_materials: id, name, supplier_id, quantity_kg, reorder_level_kg, unit_cost
@@ -495,6 +529,16 @@ Tables and key columns:
 - products: id, name, beer_style_id, package_type, package_size, price
 - monthly_revenue: id, product_id, month, revenue, units_sold, cost_of_goods
 - compliance_audits: id, audit_type, audit_date, score, findings, auditor
+
+Valid test_type values: pH, ABV, specific_gravity, bitterness, color, clarity, taste, aroma, carbonation
+
+Valid beer_styles.name values:
+Sleeman Clear 2.0, Sleeman Original Draught, Sleeman Honey Brown Lager, Sleeman Cream Ale, Sleeman Silver Creek Lager, Okanagan Spring Pale Ale, Wild Rose IPA, Sapporo Premium Beer
+
+Valid production_lines.facility values: Guelph Brewery, Vernon Brewery
+
+Valid distributors.name values:
+LCBO Ontario, BC Liquor Stores, SAQ Quebec, Alberta Gaming, Costco Canada, Metro Inc., Sobeys, The Keg Steakhouse, Boston Pizza, Moxies, Bier Markt, Craft Beer Market, Export USA, Export Japan
 
 Key relationships:
 - production_batches → beer_styles (beer_style_id)

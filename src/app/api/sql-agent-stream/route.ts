@@ -366,9 +366,30 @@ export async function POST(request: NextRequest) {
               }
             });
           } else {
-            // No results
+            // No results - generate contextual follow-up questions
             send('text-delta', {
               textDelta: `No data found matching your query. This could mean:\n- No records match the specified criteria\n- The time period selected has no activity\n- The filters are too restrictive`
+            });
+
+            // Generate follow-up questions even for empty results
+            send('thinking', {
+              step: 'followup',
+              message: 'Generating alternative questions...',
+              icon: 'insights'
+            });
+
+            const emptyResultFollowUps = await generateFollowUpQuestions(
+              question,
+              sqlQuery,
+              { columns: [], rows: [] },  // Empty results for context
+              null
+            );
+
+            send('thinking', {
+              step: 'followup-done',
+              message: `Generated ${emptyResultFollowUps.length} suggestions`,
+              icon: 'insights',
+              done: true
             });
 
             send('data', {
@@ -377,11 +398,7 @@ export async function POST(request: NextRequest) {
               oracleSqlQuery,
               queryResults: { columns: [], rows: [] },
               chartData: null,
-              followUpQuestions: [
-                'What is our production volume by beer style this quarter?',
-                'Show me the top distributors by revenue',
-                'What are the quality test results for recent batches?'
-              ],
+              followUpQuestions: emptyResultFollowUps,
               metadata: {
                 complexity: classification.complexity,
                 usedFastPath: classification.useFastPath,

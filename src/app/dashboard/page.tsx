@@ -46,14 +46,14 @@ const qualityTrendData = [
   { month: 'Dec', passRate: 97.2, target: 95 },
 ]
 
-// Beer style distribution data
+// Beer style distribution data - Sleeman Blue palette
 const beerStyleData = [
-  { name: 'Original Draught', value: 28, color: '#D4A84B' },
-  { name: 'Honey Brown', value: 21, color: '#E8C76A' },
-  { name: 'Cream Ale', value: 17, color: '#F59E0B' },
-  { name: 'Sleeman Clear', value: 13, color: '#60A5FA' },
-  { name: 'IPA', value: 10, color: '#F87171' },
-  { name: 'Other', value: 11, color: '#8B6914' },
+  { name: 'Original Draught', value: 28, color: '#1863DC' },
+  { name: 'Honey Brown', value: 21, color: '#3B82F6' },
+  { name: 'Cream Ale', value: 17, color: '#60A5FA' },
+  { name: 'Sleeman Clear', value: 13, color: '#93C5FD' },
+  { name: 'IPA', value: 10, color: '#1E40AF' },
+  { name: 'Other', value: 11, color: '#1E3A8A' },
 ]
 
 // Top products by revenue
@@ -196,10 +196,10 @@ export default function DashboardPage() {
                 <YAxis stroke="#9CA3AF" fontSize={12} tickFormatter={(value) => `${value/1000}k`} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#1C1812', border: '1px solid #2C2416', borderRadius: '8px' }}
-                  labelStyle={{ color: '#D4A84B' }}
+                  labelStyle={{ color: '#1863DC' }}
                   formatter={(value: number) => [`${value.toLocaleString()} HL`, 'Volume']}
                 />
-                <Bar dataKey="volume" fill="#D4A84B" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="volume" fill="#1863DC" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -216,10 +216,10 @@ export default function DashboardPage() {
                 <YAxis stroke="#9CA3AF" fontSize={12} domain={[94, 100]} tickFormatter={(value) => `${value}%`} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#1C1812', border: '1px solid #2C2416', borderRadius: '8px' }}
-                  labelStyle={{ color: '#D4A84B' }}
+                  labelStyle={{ color: '#1863DC' }}
                   formatter={(value: number) => [`${value}%`, '']}
                 />
-                <Line type="monotone" dataKey="passRate" stroke="#D4A84B" strokeWidth={2} dot={{ fill: '#D4A84B' }} name="Pass Rate" />
+                <Line type="monotone" dataKey="passRate" stroke="#1863DC" strokeWidth={2} dot={{ fill: '#1863DC' }} name="Pass Rate" />
                 <Line type="monotone" dataKey="target" stroke="#22C55E" strokeWidth={2} strokeDasharray="5 5" dot={false} name="Target" />
               </LineChart>
             </ResponsiveContainer>
@@ -270,10 +270,10 @@ export default function DashboardPage() {
                 <YAxis type="category" dataKey="name" stroke="#9CA3AF" fontSize={11} width={120} />
                 <Tooltip
                   contentStyle={{ backgroundColor: '#1C1812', border: '1px solid #2C2416', borderRadius: '8px' }}
-                  labelStyle={{ color: '#D4A84B' }}
+                  labelStyle={{ color: '#1863DC' }}
                   formatter={(value: number) => [`$${(value/1000000).toFixed(2)}M`, 'Revenue']}
                 />
-                <Bar dataKey="revenue" fill="#E8C76A" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="revenue" fill="#3B82F6" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
