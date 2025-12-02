@@ -280,12 +280,12 @@ export default function BreweryReportsPage() {
   }
 
   return (
-    <div className="space-y-6 bg-sleeman-dark min-h-screen p-6">
+    <div className="space-y-6">
       <PageHeader
         title="Brewery Reports"
         description="Production, quality, distribution, and financial analytics"
         action={
-          <button className="h-12 px-6 bg-sleeman-gold text-sleeman-dark rounded-full hover:bg-sleeman-gold-light flex items-center justify-center gap-2 transition-colors font-semibold">
+          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 flex items-center justify-center gap-2 transition-colors font-semibold">
             <Calendar size={20} />
             <span>Schedule Report</span>
           </button>
@@ -294,54 +294,54 @@ export default function BreweryReportsPage() {
 
       {/* Report Statistics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <FileText className="text-sleeman-gold" size={20} />
-            <span className="text-xs text-sleeman-gold font-semibold">Total</span>
+            <FileText className="text-primary" size={20} />
+            <span className="text-xs text-primary font-semibold">Total</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{stats.totalReports}</p>
-          <p className="text-xs text-gray-400 mt-1">Available Reports</p>
+          <p className="text-2xl font-bold text-foreground">{stats.totalReports}</p>
+          <p className="text-xs text-muted-foreground mt-1">Available Reports</p>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="text-green-500" size={20} />
-            <span className="text-xs text-green-500 font-semibold">Ready</span>
+            <CheckCircle className="text-green-600 dark:text-green-500" size={20} />
+            <span className="text-xs text-green-600 dark:text-green-500 font-semibold">Ready</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{stats.readyToDownload}</p>
-          <p className="text-xs text-gray-400 mt-1">Ready to Download</p>
+          <p className="text-2xl font-bold text-foreground">{stats.readyToDownload}</p>
+          <p className="text-xs text-muted-foreground mt-1">Ready to Download</p>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <Clock className="text-blue-500" size={20} />
-            <span className="text-xs text-blue-500 font-semibold">Active</span>
+            <Clock className="text-blue-600 dark:text-blue-500" size={20} />
+            <span className="text-xs text-blue-600 dark:text-blue-500 font-semibold">Active</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{stats.generatingNow}</p>
-          <p className="text-xs text-gray-400 mt-1">Generating Now</p>
+          <p className="text-2xl font-bold text-foreground">{stats.generatingNow}</p>
+          <p className="text-xs text-muted-foreground mt-1">Generating Now</p>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <Calendar className="text-amber-500" size={20} />
-            <span className="text-xs text-amber-500 font-semibold">Scheduled</span>
+            <Calendar className="text-amber-600 dark:text-amber-500" size={20} />
+            <span className="text-xs text-amber-600 dark:text-amber-500 font-semibold">Scheduled</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{stats.scheduledDeliveries}</p>
-          <p className="text-xs text-gray-400 mt-1">Scheduled Deliveries</p>
+          <p className="text-2xl font-bold text-foreground">{stats.scheduledDeliveries}</p>
+          <p className="text-xs text-muted-foreground mt-1">Scheduled Deliveries</p>
         </div>
       </div>
 
       {/* Search and Filter */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4">
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" size={20} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
             <input
               type="text"
               placeholder="Search reports..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-sleeman-dark border border-sleeman-brown rounded-lg focus:outline-none focus:ring-2 focus:ring-sleeman-gold/50 text-gray-100 placeholder-gray-500"
+              className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-foreground placeholder-muted-foreground"
             />
           </div>
           <div className="flex gap-2 overflow-x-auto">
@@ -351,8 +351,8 @@ export default function BreweryReportsPage() {
                 onClick={() => setSelectedCategory(category as typeof selectedCategory)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                   selectedCategory === category
-                    ? 'bg-sleeman-gold text-sleeman-dark'
-                    : 'bg-sleeman-dark text-gray-300 hover:bg-sleeman-dark/80 border border-sleeman-brown'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-background text-muted-foreground hover:bg-accent border border-border'
                 }`}
               >
                 {category === 'all' ? 'All Reports' : category.charAt(0).toUpperCase() + category.slice(1)}
@@ -368,37 +368,37 @@ export default function BreweryReportsPage() {
           const CategoryIcon = getCategoryIcon(report.category)
 
           return (
-            <div key={report.id} className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+            <div key={report.id} className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getCategoryColor(report.category)}`}>
                     <CategoryIcon size={20} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-100">{report.name}</h3>
-                    <p className="text-xs text-gray-400 capitalize">{report.category} Report</p>
+                    <h3 className="font-semibold text-foreground">{report.name}</h3>
+                    <p className="text-xs text-muted-foreground capitalize">{report.category} Report</p>
                   </div>
                 </div>
                 {getStatusBadge(report.status)}
               </div>
 
-              <p className="text-sm text-gray-400 mb-4">{report.description}</p>
+              <p className="text-sm text-muted-foreground mb-4">{report.description}</p>
 
-              <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
                 <span className="flex items-center gap-1">
                   <Clock size={12} />
                   Last generated: {formatDate(report.lastGenerated)}
                 </span>
-                <span className="capitalize px-2 py-1 bg-sleeman-dark rounded">
+                <span className="capitalize px-2 py-1 bg-background rounded">
                   {report.frequency}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-sleeman-dark">
+              <div className="flex items-center justify-between pt-4 border-t border-border">
                 <div className="flex items-center gap-2">
                   {(report.format === 'pdf' || report.format === 'both') && (
                     <button
-                      className="flex items-center gap-1 px-3 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm"
+                      className="flex items-center gap-1 px-3 py-2 bg-red-100 text-red-700 dark:bg-red-600/20 dark:text-red-400 rounded-lg hover:bg-red-200 dark:hover:bg-red-600/30 transition-colors text-sm"
                       disabled={report.status !== 'ready'}
                     >
                       <FilePieChart size={14} />
@@ -407,7 +407,7 @@ export default function BreweryReportsPage() {
                   )}
                   {(report.format === 'excel' || report.format === 'both') && (
                     <button
-                      className="flex items-center gap-1 px-3 py-2 bg-green-600/20 text-green-400 rounded-lg hover:bg-green-600/30 transition-colors text-sm"
+                      className="flex items-center gap-1 px-3 py-2 bg-green-100 text-green-700 dark:bg-green-600/20 dark:text-green-400 rounded-lg hover:bg-green-200 dark:hover:bg-green-600/30 transition-colors text-sm"
                       disabled={report.status !== 'ready'}
                     >
                       <FileSpreadsheet size={14} />
@@ -416,7 +416,7 @@ export default function BreweryReportsPage() {
                   )}
                 </div>
                 <button
-                  className="flex items-center gap-1 px-3 py-2 bg-sleeman-gold/20 text-sleeman-gold rounded-lg hover:bg-sleeman-gold/30 transition-colors text-sm font-medium"
+                  className="flex items-center gap-1 px-3 py-2 bg-primary/20 text-primary rounded-lg hover:bg-primary/30 transition-colors text-sm font-medium"
                   disabled={report.status !== 'ready'}
                 >
                   <Download size={14} />
@@ -429,49 +429,49 @@ export default function BreweryReportsPage() {
       </div>
 
       {/* Scheduled Reports */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown overflow-hidden">
-        <div className="px-6 py-4 border-b border-sleeman-dark">
-          <h2 className="text-lg font-semibold text-gray-100 flex items-center gap-2">
-            <Calendar className="text-sleeman-gold" size={20} />
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border overflow-hidden">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <Calendar className="text-primary" size={20} />
             Scheduled Report Deliveries
           </h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-sleeman-dark">
+            <thead className="bg-background">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Report Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Next Delivery
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Recipients
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Format
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-sleeman-dark">
+            <tbody className="divide-y divide-border">
               {scheduledReports.map((schedule) => (
-                <tr key={schedule.id} className="hover:bg-sleeman-dark/50 transition-colors">
+                <tr key={schedule.id} className="hover:bg-accent/50 transition-colors">
                   <td className="px-6 py-4">
-                    <p className="text-sm font-medium text-gray-100">{schedule.name}</p>
+                    <p className="text-sm font-medium text-foreground">{schedule.name}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-sm text-gray-300">{formatDate(schedule.nextRun)}</p>
-                    <p className="text-xs text-gray-500">{formatTime(schedule.nextRun)}</p>
+                    <p className="text-sm text-foreground">{formatDate(schedule.nextRun)}</p>
+                    <p className="text-xs text-muted-foreground">{formatTime(schedule.nextRun)}</p>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1">
                       {schedule.recipients.map((email, idx) => (
-                        <span key={idx} className="text-xs px-2 py-1 bg-sleeman-dark rounded text-gray-400">
+                        <span key={idx} className="text-xs px-2 py-1 bg-background rounded text-muted-foreground">
                           {email}
                         </span>
                       ))}
@@ -480,15 +480,15 @@ export default function BreweryReportsPage() {
                   <td className="px-6 py-4 text-center">
                     <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
                       schedule.format === 'pdf'
-                        ? 'bg-red-600/20 text-red-400'
-                        : 'bg-green-600/20 text-green-400'
+                        ? 'bg-red-100 text-red-700 dark:bg-red-600/20 dark:text-red-400'
+                        : 'bg-green-100 text-green-700 dark:bg-green-600/20 dark:text-green-400'
                     }`}>
                       {schedule.format === 'pdf' ? <FilePieChart size={12} /> : <FileSpreadsheet size={12} />}
                       {schedule.format.toUpperCase()}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium">
+                    <button className="text-primary hover:text-primary/80 text-sm font-medium">
                       Edit
                     </button>
                   </td>
@@ -500,42 +500,42 @@ export default function BreweryReportsPage() {
       </div>
 
       {/* Quick Report Generation */}
-      <div className="bg-gradient-to-r from-sleeman-gold/20 to-sleeman-brown rounded-xl shadow-lg shadow-black/20 p-6 border border-sleeman-gold/30">
+      <div className="bg-gradient-to-r from-primary/20 to-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-primary/30">
         <div className="flex items-center gap-2 mb-4">
-          <TrendingUp className="text-sleeman-gold" size={24} />
-          <h2 className="text-xl font-bold text-gray-100">Quick Report Generation</h2>
+          <TrendingUp className="text-primary" size={24} />
+          <h2 className="text-xl font-bold text-foreground">Quick Report Generation</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
-            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
-              <BarChart3 size={18} className="text-sleeman-gold" />
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <BarChart3 size={18} className="text-primary" />
               Executive Summary
             </h3>
-            <p className="text-sm text-gray-400 mb-3">Generate a comprehensive overview of brewery operations for leadership review.</p>
-            <button className="w-full py-2 bg-sleeman-gold text-sleeman-dark rounded-lg font-semibold hover:bg-sleeman-gold-light transition-colors">
+            <p className="text-sm text-muted-foreground mb-3">Generate a comprehensive overview of brewery operations for leadership review.</p>
+            <button className="w-full py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
               Generate Now
             </button>
           </div>
 
-          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
-            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
-              <Beaker size={18} className="text-sleeman-gold" />
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <Beaker size={18} className="text-primary" />
               Quality Audit Package
             </h3>
-            <p className="text-sm text-gray-400 mb-3">Compile all quality documentation for regulatory compliance audits.</p>
-            <button className="w-full py-2 bg-sleeman-gold text-sleeman-dark rounded-lg font-semibold hover:bg-sleeman-gold-light transition-colors">
+            <p className="text-sm text-muted-foreground mb-3">Compile all quality documentation for regulatory compliance audits.</p>
+            <button className="w-full py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
               Generate Now
             </button>
           </div>
 
-          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
-            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
-              <DollarSign size={18} className="text-sleeman-gold" />
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <DollarSign size={18} className="text-primary" />
               Monthly Performance
             </h3>
-            <p className="text-sm text-gray-400 mb-3">Full month-end report with production, quality, and financial metrics.</p>
-            <button className="w-full py-2 bg-sleeman-gold text-sleeman-dark rounded-lg font-semibold hover:bg-sleeman-gold-light transition-colors">
+            <p className="text-sm text-muted-foreground mb-3">Full month-end report with production, quality, and financial metrics.</p>
+            <button className="w-full py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
               Generate Now
             </button>
           </div>

@@ -192,12 +192,12 @@ export default function BreweryIntegrationsPage() {
   }
 
   return (
-    <div className="space-y-6 bg-sleeman-dark min-h-screen p-6">
+    <div className="space-y-6">
       <PageHeader
         title="System Integrations"
         description="Enterprise system connectivity and data synchronization"
         action={
-          <button type="button" className="h-12 px-6 bg-sleeman-gold text-sleeman-dark rounded-full hover:bg-sleeman-gold-light flex items-center justify-center gap-2 transition-colors font-semibold">
+          <button type="button" className="h-12 px-6 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 flex items-center justify-center gap-2 transition-colors font-semibold">
             <Cloud size={20} />
             <span>Add Integration</span>
           </button>
@@ -206,45 +206,45 @@ export default function BreweryIntegrationsPage() {
 
       {/* Integration Statistics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <Server className="text-sleeman-gold" size={20} />
-            <span className="text-xs text-sleeman-gold font-semibold">Active</span>
+            <Server className="text-primary" size={20} />
+            <span className="text-xs text-primary font-semibold">Active</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{stats.totalIntegrations}</p>
-          <p className="text-xs text-gray-400 mt-1">Total Integrations</p>
+          <p className="text-2xl font-bold text-foreground">{stats.totalIntegrations}</p>
+          <p className="text-xs text-muted-foreground mt-1">Total Integrations</p>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="text-green-500" size={20} />
-            <span className="text-xs text-green-500 font-semibold">{Math.round((stats.connectedSystems / stats.totalIntegrations) * 100)}%</span>
+            <CheckCircle className="text-green-600 dark:text-green-500" size={20} />
+            <span className="text-xs text-green-600 dark:text-green-500 font-semibold">{Math.round((stats.connectedSystems / stats.totalIntegrations) * 100)}%</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{stats.connectedSystems}</p>
-          <p className="text-xs text-gray-400 mt-1">Connected Systems</p>
+          <p className="text-2xl font-bold text-foreground">{stats.connectedSystems}</p>
+          <p className="text-xs text-muted-foreground mt-1">Connected Systems</p>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <Database className="text-purple-500" size={20} />
-            <span className="text-xs text-green-500 font-semibold">+12K/day</span>
+            <Database className="text-purple-600 dark:text-purple-500" size={20} />
+            <span className="text-xs text-green-600 dark:text-green-500 font-semibold">+12K/day</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{(stats.totalRecords / 1000).toFixed(0)}K</p>
-          <p className="text-xs text-gray-400 mt-1">Records Synced Today</p>
+          <p className="text-2xl font-bold text-foreground">{(stats.totalRecords / 1000).toFixed(0)}K</p>
+          <p className="text-xs text-muted-foreground mt-1">Records Synced Today</p>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
           <div className="flex items-center justify-between mb-2">
-            <Zap className="text-amber-500" size={20} />
-            <span className="text-xs text-green-500 font-semibold">Real-time</span>
+            <Zap className="text-amber-600 dark:text-amber-500" size={20} />
+            <span className="text-xs text-green-600 dark:text-green-500 font-semibold">Real-time</span>
           </div>
-          <p className="text-2xl font-bold text-gray-100">{(stats.dataPointsPerDay / 1000).toFixed(0)}K</p>
-          <p className="text-xs text-gray-400 mt-1">Data Points/Day</p>
+          <p className="text-2xl font-bold text-foreground">{(stats.dataPointsPerDay / 1000).toFixed(0)}K</p>
+          <p className="text-xs text-muted-foreground mt-1">Data Points/Day</p>
         </div>
       </div>
 
       {/* Category Filter */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4">
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4">
         <div className="flex gap-2 overflow-x-auto">
           {['all', 'erp', 'dcs', 'hr', 'quality', 'distribution'].map((category) => (
             <button
@@ -253,8 +253,8 @@ export default function BreweryIntegrationsPage() {
               onClick={() => setSelectedCategory(category as typeof selectedCategory)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                 selectedCategory === category
-                  ? 'bg-sleeman-gold text-sleeman-dark'
-                  : 'bg-sleeman-dark text-gray-300 hover:bg-sleeman-dark/80 border border-sleeman-brown'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background text-muted-foreground hover:bg-accent border border-border'
               }`}
             >
               {category === 'all' ? 'All Systems' :
@@ -274,15 +274,15 @@ export default function BreweryIntegrationsPage() {
           const Icon = getTypeIcon(integration.type)
 
           return (
-            <div key={integration.id} className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+            <div key={integration.id} className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-sleeman-gold/20 rounded-lg flex items-center justify-center">
-                    <Icon className="text-sleeman-gold" size={24} />
+                  <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center">
+                    <Icon className="text-primary" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-100">{integration.name}</h3>
-                    <p className="text-sm text-gray-400">{integration.vendor}</p>
+                    <h3 className="font-semibold text-foreground">{integration.name}</h3>
+                    <p className="text-sm text-muted-foreground">{integration.vendor}</p>
                   </div>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(integration.status)}`}>
@@ -293,27 +293,27 @@ export default function BreweryIntegrationsPage() {
                 </span>
               </div>
 
-              <p className="text-sm text-gray-400 mb-4">{integration.description}</p>
+              <p className="text-sm text-muted-foreground mb-4">{integration.description}</p>
 
               {/* Data Flow Indicator */}
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-xs text-gray-500">Data Flow:</span>
+                <span className="text-xs text-muted-foreground">Data Flow:</span>
                 <div className="flex items-center gap-1">
                   {integration.dataFlow === 'bidirectional' ? (
                     <>
-                      <ArrowLeft size={14} className="text-sleeman-gold" />
-                      <ArrowRight size={14} className="text-sleeman-gold" />
-                      <span className="text-xs font-medium text-gray-300">Bidirectional</span>
+                      <ArrowLeft size={14} className="text-primary" />
+                      <ArrowRight size={14} className="text-primary" />
+                      <span className="text-xs font-medium text-foreground">Bidirectional</span>
                     </>
                   ) : integration.dataFlow === 'inbound' ? (
                     <>
-                      <ArrowLeft size={14} className="text-sleeman-gold" />
-                      <span className="text-xs font-medium text-gray-300">Inbound</span>
+                      <ArrowLeft size={14} className="text-primary" />
+                      <span className="text-xs font-medium text-foreground">Inbound</span>
                     </>
                   ) : (
                     <>
-                      <ArrowRight size={14} className="text-sleeman-gold" />
-                      <span className="text-xs font-medium text-gray-300">Outbound</span>
+                      <ArrowRight size={14} className="text-primary" />
+                      <span className="text-xs font-medium text-foreground">Outbound</span>
                     </>
                   )}
                 </div>
@@ -321,10 +321,10 @@ export default function BreweryIntegrationsPage() {
 
               {/* Features */}
               <div className="mb-4">
-                <p className="text-xs text-gray-500 mb-2">Synced Data:</p>
+                <p className="text-xs text-muted-foreground mb-2">Synced Data:</p>
                 <div className="flex flex-wrap gap-1">
                   {integration.features.map((feature, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-sleeman-dark text-xs rounded text-gray-400">
+                    <span key={idx} className="px-2 py-1 bg-background text-xs rounded text-muted-foreground">
                       {feature}
                     </span>
                   ))}
@@ -333,17 +333,17 @@ export default function BreweryIntegrationsPage() {
 
               {/* Sync Status */}
               {integration.status === 'connected' && integration.lastSync && (
-                <div className="pt-4 border-t border-sleeman-dark">
+                <div className="pt-4 border-t border-border">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-4">
-                      <span className="text-gray-500">
+                      <span className="text-muted-foreground">
                         Last sync: {formatTime(integration.lastSync)}
                       </span>
-                      <span className="text-gray-500">
+                      <span className="text-muted-foreground">
                         {integration.recordsSync?.toLocaleString()} records
                       </span>
                     </div>
-                    <button type="button" className="flex items-center gap-1 text-sleeman-gold hover:text-sleeman-gold-light transition-colors">
+                    <button type="button" className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors">
                       <RefreshCw size={12} />
                       Sync Now
                     </button>
@@ -352,10 +352,10 @@ export default function BreweryIntegrationsPage() {
               )}
 
               {integration.status === 'error' && (
-                <div className="pt-4 border-t border-sleeman-dark">
+                <div className="pt-4 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-red-400">Connection failed - Check credentials</span>
-                    <button type="button" className="text-xs text-sleeman-gold hover:text-sleeman-gold-light font-medium">
+                    <span className="text-xs text-red-600 dark:text-red-400">Connection failed - Check credentials</span>
+                    <button type="button" className="text-xs text-primary hover:text-primary/80 font-medium">
                       Reconnect
                     </button>
                   </div>
@@ -363,10 +363,10 @@ export default function BreweryIntegrationsPage() {
               )}
 
               {integration.status === 'pending' && (
-                <div className="pt-4 border-t border-sleeman-dark">
+                <div className="pt-4 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-amber-400">Configuration in progress</span>
-                    <button type="button" className="text-xs text-sleeman-gold hover:text-sleeman-gold-light font-medium">
+                    <span className="text-xs text-amber-600 dark:text-amber-400">Configuration in progress</span>
+                    <button type="button" className="text-xs text-primary hover:text-primary/80 font-medium">
                       Configure
                     </button>
                   </div>
@@ -378,24 +378,24 @@ export default function BreweryIntegrationsPage() {
       </div>
 
       {/* Real-time Data Flow */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
-          <TrendingUp size={20} className="text-sleeman-gold" />
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <TrendingUp size={20} className="text-primary" />
           Real-time Data Flow
         </h2>
 
         <div className="space-y-3">
           {dataFlows.map((flow, idx) => (
-            <div key={idx} className="flex items-center justify-between p-3 bg-sleeman-dark rounded-lg">
+            <div key={idx} className="flex items-center justify-between p-3 bg-background rounded-lg">
               <div className="flex items-center gap-3 flex-1">
-                <div className="text-sm font-medium text-gray-100">{flow.source}</div>
-                <ArrowRight className="text-sleeman-gold" size={16} />
-                <div className="text-sm font-medium text-gray-100">{flow.destination}</div>
+                <div className="text-sm font-medium text-foreground">{flow.source}</div>
+                <ArrowRight className="text-primary" size={16} />
+                <div className="text-sm font-medium text-foreground">{flow.destination}</div>
               </div>
-              <div className="flex items-center gap-4 text-xs text-gray-400">
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 <span>{flow.type}</span>
-                <span className="font-medium text-gray-300">{flow.volume.toLocaleString()} records</span>
-                <span className="px-2 py-1 bg-green-900/30 text-green-400 rounded">
+                <span className="font-medium text-foreground">{flow.volume.toLocaleString()} records</span>
+                <span className="px-2 py-1 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded">
                   {flow.frequency}
                 </span>
               </div>
@@ -405,21 +405,21 @@ export default function BreweryIntegrationsPage() {
       </div>
 
       {/* Integration Architecture */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
-        <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
-          <Settings size={20} className="text-sleeman-gold" />
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-6">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Settings size={20} className="text-primary" />
           Integration Architecture
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Source Systems */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Source Systems</h3>
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Source Systems</h3>
             <div className="space-y-2">
               {['Oracle ERP Cloud', 'PlantPAx DCS', 'Workday HCM', 'LIMS Quality'].map((system, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-2 bg-sleeman-dark rounded-lg">
+                <div key={idx} className="flex items-center gap-2 p-2 bg-background rounded-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-gray-300">{system}</span>
+                  <span className="text-sm text-foreground">{system}</span>
                 </div>
               ))}
             </div>
@@ -427,27 +427,27 @@ export default function BreweryIntegrationsPage() {
 
           {/* BrewMind Hub */}
           <div className="flex flex-col items-center justify-center">
-            <div className="w-32 h-32 bg-gradient-to-br from-sleeman-gold/30 to-sleeman-gold/10 rounded-full flex items-center justify-center border-2 border-sleeman-gold/50">
+            <div className="w-32 h-32 bg-gradient-to-br from-primary/30 to-primary/10 rounded-full flex items-center justify-center border-2 border-primary/50">
               <div className="text-center">
-                <Database className="text-sleeman-gold mx-auto mb-1" size={28} />
-                <span className="text-sm font-bold text-sleeman-gold">BrewMind</span>
-                <p className="text-xs text-gray-400">Data Hub</p>
+                <Database className="text-primary mx-auto mb-1" size={28} />
+                <span className="text-sm font-bold text-primary">BrewMind</span>
+                <p className="text-xs text-muted-foreground">Data Hub</p>
               </div>
             </div>
             <div className="mt-4 text-center">
-              <p className="text-xs text-gray-400">Real-time data aggregation</p>
-              <p className="text-xs text-gray-400">AI-powered analytics</p>
+              <p className="text-xs text-muted-foreground">Real-time data aggregation</p>
+              <p className="text-xs text-muted-foreground">AI-powered analytics</p>
             </div>
           </div>
 
           {/* Destination Systems */}
           <div className="space-y-3">
-            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Destinations</h3>
+            <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Destinations</h3>
             <div className="space-y-2">
               {['Barley AI Assistant', 'Power BI Dashboards', 'Executive Reports', 'Sapporo Global'].map((system, idx) => (
-                <div key={idx} className="flex items-center gap-2 p-2 bg-sleeman-dark rounded-lg">
-                  <ArrowRight size={14} className="text-sleeman-gold" />
-                  <span className="text-sm text-gray-300">{system}</span>
+                <div key={idx} className="flex items-center gap-2 p-2 bg-background rounded-lg">
+                  <ArrowRight size={14} className="text-primary" />
+                  <span className="text-sm text-foreground">{system}</span>
                 </div>
               ))}
             </div>
@@ -456,35 +456,35 @@ export default function BreweryIntegrationsPage() {
       </div>
 
       {/* Integration Security */}
-      <div className="bg-gradient-to-r from-sleeman-gold/20 to-sleeman-brown rounded-xl shadow-lg shadow-black/20 p-6 border border-sleeman-gold/30">
+      <div className="bg-gradient-to-r from-primary/20 to-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-primary/30">
         <div className="flex items-center gap-2 mb-4">
-          <Lock className="text-sleeman-gold" size={24} />
-          <h2 className="text-xl font-bold text-gray-100">Integration Security & Compliance</h2>
+          <Lock className="text-primary" size={24} />
+          <h2 className="text-xl font-bold text-foreground">Integration Security & Compliance</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
-            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
-              <Shield size={18} className="text-sleeman-gold" />
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <Shield size={18} className="text-primary" />
               SOC 2 Type II
             </h3>
-            <p className="text-sm text-gray-400">All integrations meet enterprise security standards with comprehensive audit trails.</p>
+            <p className="text-sm text-muted-foreground">All integrations meet enterprise security standards with comprehensive audit trails.</p>
           </div>
 
-          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
-            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
-              <Lock size={18} className="text-sleeman-gold" />
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <Lock size={18} className="text-primary" />
               End-to-End Encryption
             </h3>
-            <p className="text-sm text-gray-400">TLS 1.3 encryption for all data in transit, AES-256 for data at rest.</p>
+            <p className="text-sm text-muted-foreground">TLS 1.3 encryption for all data in transit, AES-256 for data at rest.</p>
           </div>
 
-          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
-            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
-              <Activity size={18} className="text-sleeman-gold" />
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+              <Activity size={18} className="text-primary" />
               24/7 Monitoring
             </h3>
-            <p className="text-sm text-gray-400">Real-time health monitoring with automated alerts and failover capabilities.</p>
+            <p className="text-sm text-muted-foreground">Real-time health monitoring with automated alerts and failover capabilities.</p>
           </div>
         </div>
       </div>

@@ -227,7 +227,7 @@ export default function QualityControlPage() {
         title="Quality Control Dashboard"
         description="Brewing standards, quality metrics, and compliance monitoring"
         action={
-          <button className="h-12 px-6 bg-sleeman-gold text-sleeman-dark rounded-full hover:bg-sleeman-gold-light flex items-center justify-center gap-2 transition-colors font-semibold">
+          <button className="h-12 px-6 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 flex items-center justify-center gap-2 transition-colors font-semibold">
             <Download size={20} />
             <span>Quality Report</span>
           </button>
@@ -236,9 +236,9 @@ export default function QualityControlPage() {
 
       {/* Quality Score Overview */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
           <div className="flex items-center justify-between mb-2">
-            <ShieldCheck className="text-sleeman-gold" size={20} />
+            <ShieldCheck className="text-primary" size={20} />
             <span className={`text-xs font-semibold ${
               stats.overallCompliance >= 90 ? 'text-green-600' :
               stats.overallCompliance >= 80 ? 'text-yellow-600' :
@@ -249,49 +249,49 @@ export default function QualityControlPage() {
                'Needs Attention'}
             </span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.overallCompliance}%</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Overall Quality Score</p>
+          <p className="text-2xl font-bold text-foreground">{stats.overallCompliance}%</p>
+          <p className="text-xs text-muted-foreground mt-1">Overall Quality Score</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
           <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="text-green-600" size={20} />
-            <span className="text-xs text-green-600 font-semibold">Compliant</span>
+            <CheckCircle className="text-green-600 dark:text-green-500" size={20} />
+            <span className="text-xs text-green-600 dark:text-green-500 font-semibold">Compliant</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.compliantAreas}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Passing Standards</p>
+          <p className="text-2xl font-bold text-foreground">{stats.compliantAreas}</p>
+          <p className="text-xs text-muted-foreground mt-1">Passing Standards</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
           <div className="flex items-center justify-between mb-2">
-            <AlertTriangle className="text-yellow-600" size={20} />
-            <span className="text-xs text-yellow-600 font-semibold">Monitor</span>
+            <AlertTriangle className="text-yellow-600 dark:text-yellow-500" size={20} />
+            <span className="text-xs text-yellow-600 dark:text-yellow-500 font-semibold">Monitor</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.atRiskAreas}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">At-Risk Areas</p>
+          <p className="text-2xl font-bold text-foreground">{stats.atRiskAreas}</p>
+          <p className="text-xs text-muted-foreground mt-1">At-Risk Areas</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
           <div className="flex items-center justify-between mb-2">
-            <Calendar className="text-purple-600" size={20} />
-            <span className="text-xs text-purple-600 font-semibold">Upcoming</span>
+            <Calendar className="text-purple-600 dark:text-purple-500" size={20} />
+            <span className="text-xs text-purple-600 dark:text-purple-500 font-semibold">Upcoming</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.pendingAudits}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Pending Audits</p>
+          <p className="text-2xl font-bold text-foreground">{stats.pendingAudits}</p>
+          <p className="text-xs text-muted-foreground mt-1">Pending Audits</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
           <div className="flex items-center justify-between mb-2">
-            <BookOpen className="text-blue-600" size={20} />
-            <span className="text-xs text-blue-600 font-semibold">Training</span>
+            <BookOpen className="text-blue-600 dark:text-blue-500" size={20} />
+            <span className="text-xs text-blue-600 dark:text-blue-500 font-semibold">Training</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.trainingCompletion}%</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Training Complete</p>
+          <p className="text-2xl font-bold text-foreground">{stats.trainingCompletion}%</p>
+          <p className="text-xs text-muted-foreground mt-1">Training Complete</p>
         </div>
       </div>
 
       {/* Category Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-200 dark:border-gray-700">
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-4 border border-border">
         <div className="flex gap-2 flex-wrap">
           {['all', 'brewing', 'packaging', 'safety'].map((category) => (
             <button
@@ -299,8 +299,8 @@ export default function QualityControlPage() {
               onClick={() => setSelectedCategory(category as typeof selectedCategory)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 selectedCategory === category
-                  ? 'bg-sleeman-gold text-sleeman-dark'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-background text-muted-foreground hover:bg-accent border border-border'
               }`}
             >
               {category === 'all' ? 'All Categories' :
@@ -318,11 +318,11 @@ export default function QualityControlPage() {
           const Icon = getStatusIcon(metric.status)
 
           return (
-            <div key={metric.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
+            <div key={metric.id} className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100">{metric.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{metric.description}</p>
+                  <h3 className="font-semibold text-foreground">{metric.name}</h3>
+                  <p className="text-sm text-muted-foreground mt-1">{metric.description}</p>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(metric.status)}`}>
                   <Icon size={12} />
@@ -333,10 +333,10 @@ export default function QualityControlPage() {
               {/* Quality Score */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Quality Score</span>
-                  <span className="text-sm font-bold text-gray-900 dark:text-gray-100">{metric.score}% / {metric.target}%</span>
+                  <span className="text-xs font-medium text-muted-foreground">Quality Score</span>
+                  <span className="text-sm font-bold text-foreground">{metric.score}% / {metric.target}%</span>
                 </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-background rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all ${
                       metric.score >= metric.target ? 'bg-green-500' :
@@ -350,10 +350,10 @@ export default function QualityControlPage() {
 
               {/* Requirements */}
               <div className="mb-4">
-                <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Key Checks:</p>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Key Checks:</p>
                 <div className="flex flex-wrap gap-1">
                   {metric.requirements.map((req, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded text-gray-700 dark:text-gray-300">
+                    <span key={idx} className="px-2 py-1 bg-background text-xs rounded text-muted-foreground">
                       {req}
                     </span>
                   ))}
@@ -361,17 +361,17 @@ export default function QualityControlPage() {
               </div>
 
               {/* Audit Schedule */}
-              <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-4 border-t border-border">
                 <div className="flex items-center justify-between text-xs">
                   <div className="flex items-center gap-4">
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="text-muted-foreground">
                       Last audit: {metric.lastAudit.toLocaleDateString()}
                     </span>
-                    <span className="text-gray-500 dark:text-gray-400">
+                    <span className="text-muted-foreground">
                       Next audit: {metric.nextAudit.toLocaleDateString()}
                     </span>
                   </div>
-                  <button className="text-sleeman-gold hover:text-sleeman-gold-light font-medium">
+                  <button className="text-primary hover:text-primary/80 font-medium">
                     View Details
                   </button>
                 </div>
@@ -382,54 +382,54 @@ export default function QualityControlPage() {
       </div>
 
       {/* Audit Schedule */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden border border-gray-200 dark:border-gray-700">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-            <Calendar size={20} className="text-sleeman-gold" />
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 overflow-hidden border border-border">
+        <div className="px-6 py-4 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <Calendar size={20} className="text-primary" />
             Audit Schedule & Results
           </h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-700">
+            <thead className="bg-background">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Audit
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Auditor
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Findings
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Action
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-border">
               {upcomingAudits.map((audit) => (
-                <tr key={audit.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <tr key={audit.id} className="hover:bg-accent/50 transition-colors">
                   <td className="px-6 py-4">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{audit.title}</p>
+                    <p className="text-sm font-medium text-foreground">{audit.title}</p>
                   </td>
                   <td className="px-6 py-4">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{audit.auditor}</p>
+                    <p className="text-sm text-muted-foreground">{audit.auditor}</p>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <p className="text-sm text-gray-900 dark:text-gray-100">{audit.date.toLocaleDateString()}</p>
+                    <p className="text-sm text-foreground">{audit.date.toLocaleDateString()}</p>
                   </td>
                   <td className="px-6 py-4 text-center">
                     {audit.type === 'completed' || audit.type === 'in-progress' ? (
                       <div className="flex items-center justify-center gap-2">
-                        <span className="text-sm text-gray-900 dark:text-gray-100">{audit.findings} findings</span>
+                        <span className="text-sm text-foreground">{audit.findings} findings</span>
                         {audit.criticalFindings > 0 && (
                           <span className="px-2 py-1 bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 text-xs rounded">
                             {audit.criticalFindings} critical
@@ -437,7 +437,7 @@ export default function QualityControlPage() {
                         )}
                       </div>
                     ) : (
-                      <span className="text-sm text-gray-500 dark:text-gray-400">-</span>
+                      <span className="text-sm text-muted-foreground">-</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -450,7 +450,7 @@ export default function QualityControlPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium">
+                    <button className="text-primary hover:text-primary/80 text-sm font-medium">
                       {audit.type === 'completed' ? 'View Report' : 'View Details'}
                     </button>
                   </td>
@@ -462,19 +462,19 @@ export default function QualityControlPage() {
       </div>
 
       {/* Training Compliance */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <BookOpen size={20} className="text-sleeman-gold" />
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-border">
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <BookOpen size={20} className="text-primary" />
           Quality Training Status
         </h2>
 
         <div className="space-y-3">
           {trainingModules.map((module) => (
-            <div key={module.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div key={module.id} className="p-4 border border-border rounded-lg bg-background">
               <div className="flex items-start justify-between mb-2">
                 <div>
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{module.title}</h3>
-                  <div className="flex items-center gap-3 mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  <h3 className="font-medium text-foreground">{module.title}</h3>
+                  <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                     <span>{module.category}</span>
                     <span>•</span>
                     <span>{module.duration}</span>
@@ -492,10 +492,10 @@ export default function QualityControlPage() {
               <div className="flex items-center justify-between">
                 <div className="flex-1 mr-4">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Completion</span>
-                    <span className="text-xs font-bold text-gray-900 dark:text-gray-100">{module.completionRate}%</span>
+                    <span className="text-xs font-medium text-muted-foreground">Completion</span>
+                    <span className="text-xs font-bold text-foreground">{module.completionRate}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-muted rounded-full h-2">
                     <div
                       className={`h-2 rounded-full ${
                         module.completionRate === 100 ? 'bg-green-500' :
@@ -506,7 +506,7 @@ export default function QualityControlPage() {
                     />
                   </div>
                 </div>
-                <button className="text-sleeman-gold hover:text-sleeman-gold-light text-sm font-medium">
+                <button className="text-primary hover:text-primary/80 text-sm font-medium">
                   View Details
                 </button>
               </div>
@@ -516,35 +516,35 @@ export default function QualityControlPage() {
       </div>
 
       {/* Quality Resources */}
-      <div className="bg-gradient-to-r from-sleeman-dark to-sleeman-brown rounded-xl shadow-sm p-6 text-white">
+      <div className="bg-gradient-to-r from-primary/20 to-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 p-6 border border-primary/30">
         <div className="flex items-center gap-2 mb-4">
-          <Beaker size={24} className="text-sleeman-gold" />
-          <h2 className="text-xl font-bold">Quality Control Resources</h2>
+          <Beaker size={24} className="text-primary" />
+          <h2 className="text-xl font-bold text-foreground">Quality Control Resources</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold mb-2 flex items-center gap-2 text-primary">
               <FlaskConical size={16} />
               Lab Procedures
             </h3>
-            <p className="text-sm opacity-90">Standard testing protocols for gravity, pH, IBU, and microbiological analysis.</p>
+            <p className="text-sm text-muted-foreground">Standard testing protocols for gravity, pH, IBU, and microbiological analysis.</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold mb-2 flex items-center gap-2 text-primary">
               <Thermometer size={16} />
               Process Control
             </h3>
-            <p className="text-sm opacity-90">Temperature and timing guidelines for mashing, boiling, and fermentation.</p>
+            <p className="text-sm text-muted-foreground">Temperature and timing guidelines for mashing, boiling, and fermentation.</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2 flex items-center gap-2 text-sleeman-gold">
+          <div className="bg-background/50 backdrop-blur rounded-lg p-4 border border-border">
+            <h3 className="font-semibold mb-2 flex items-center gap-2 text-primary">
               <Droplets size={16} />
               Sanitation Standards
             </h3>
-            <p className="text-sm opacity-90">CIP procedures, cleaning schedules, and sanitation verification protocols.</p>
+            <p className="text-sm text-muted-foreground">CIP procedures, cleaning schedules, and sanitation verification protocols.</p>
           </div>
         </div>
       </div>

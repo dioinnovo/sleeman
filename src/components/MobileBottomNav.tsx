@@ -42,10 +42,10 @@ export default function MobileBottomNav() {
       <div className="relative p-4">
         <nav className="
           relative
-          bg-sleeman-dark/95 backdrop-blur-xl backdrop-saturate-150
-          border border-sleeman-brown
+          bg-card/95 backdrop-blur-xl backdrop-saturate-150
+          border border-border
           rounded-full
-          shadow-[0_4px_20px_rgba(0,0,0,0.4)]
+          shadow-[0_4px_20px_rgba(0,0,0,0.15)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
           px-2 py-2
         ">
           <ul className="flex items-center justify-between relative">
@@ -59,7 +59,7 @@ export default function MobileBottomNav() {
                   {/* Bubble positioned absolutely within the active item */}
                   {isActive && (
                     <motion.div
-                      className="absolute inset-0 bg-sleeman-gold rounded-full shadow-lg pointer-events-none"
+                      className="absolute inset-0 bg-primary rounded-full shadow-lg pointer-events-none"
                       layoutId="nav-bubble"
                       initial={false}
                       transition={{
@@ -74,8 +74,8 @@ export default function MobileBottomNav() {
                     className={`
                       relative z-10 flex flex-col items-center justify-center gap-0.5 px-2 py-3 rounded-full transition-all w-full
                       ${isActive
-                        ? 'text-sleeman-dark'
-                        : 'text-gray-400 hover:text-sleeman-gold-light hover:bg-sleeman-brown/50'
+                        ? 'text-primary-foreground'
+                        : 'text-muted-foreground hover:text-primary hover:bg-accent/50'
                       }
                     `}
                   >

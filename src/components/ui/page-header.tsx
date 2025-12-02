@@ -9,11 +9,11 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, action, className = '' }: PageHeaderProps) {
   return (
-    <div className={`bg-sleeman-dark rounded-xl shadow-lg border border-sleeman-brown p-4 sm:p-6 ${className}`}>
+    <div className={`bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6 ${className}`}>
       <div>
-        <h1 className="text-[30px] sm:text-3xl font-bold text-gray-100">{title}</h1>
+        <h1 className="text-[30px] sm:text-3xl font-bold text-foreground">{title}</h1>
         {description && (
-          <p className="text-[14px] sm:text-base text-gray-400 mt-1 sm:mt-2">{description}</p>
+          <p className="text-[14px] sm:text-base text-muted-foreground mt-1 sm:mt-2">{description}</p>
         )}
         {action && (
           <div className="mt-4">

@@ -1,5 +1,6 @@
 import { ChatOpenAI } from "@langchain/openai";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import { getCachedSchema, getCachedTableNames } from "./langchain-config";
 
 /**
  * Response mode types for insights generation
@@ -310,35 +311,41 @@ ${error.substring(0, 200)}
 
 /**
  * Follow-up question generation system prompt
- * Based on AI SDK best practices for contextual suggestions
+ * Schema-aware version that uses actual database structure
+ *
+ * Best practices implemented:
+ * - Schema injection (AWS, EzInsights)
+ * - Entity validation (LangChain Blog)
+ * - Quick replies based on capabilities (LinkedIn SQL Bot)
  */
 const FOLLOWUP_SYSTEM_PROMPT = `You are a business analyst assistant for Sleeman Breweries.
-Your task is to generate relevant follow-up questions based on the conversation context.
+Your task is to generate relevant follow-up questions that CAN BE ANSWERED by the database.
+
+CRITICAL RULES:
+1. ONLY suggest questions that reference EXACT table names, column names, and values from the provided schema
+2. NEVER hallucinate entity names - use only the exact beer style names, distributor names, facility names provided
+3. Questions must be answerable with a single SQL query against the provided schema
+4. If results were empty, suggest questions about related data that DOES exist
 
 Generate questions that:
 1. Build on the data just analyzed - drill deeper into the results
-2. Explore related business areas - cross-functional insights
-3. Are actionable - lead to business decisions
-4. Are specific to Sleeman Breweries operations
-
-Focus areas for Sleeman:
-- Production: batch volumes, fermentation times, line efficiency
-- Quality: test results, failure rates, quality scores
-- Inventory: raw materials, supplier performance, reorder levels
-- Equipment: downtime, maintenance, utilization
-- Distribution: shipments, distributor performance, delivery metrics
-- Revenue: product sales, monthly trends, profitability
-- Compliance: audit scores, regulatory compliance
+2. Explore RELATED tables using foreign keys shown in schema
+3. Reference SPECIFIC column names and values from the schema
+4. Are actionable - lead to business decisions
 
 Return exactly 3 questions that would naturally follow from the analysis.
 Questions should be complete sentences ending with a question mark.
-Make questions progressively more specific or analytical.`;
+Each question MUST reference actual tables/columns from the schema.`;
 
 /**
  * Generate contextual follow-up questions based on the conversation
  * Uses a separate LLM call to analyze the question + results and suggest next steps
  *
- * Best practice from AI SDK: Generate follow-ups AFTER the main response using the full conversation context
+ * SCHEMA-AWARE VERSION (Best practices from AWS, LangChain, LinkedIn, EzInsights):
+ * - Injects actual database schema into prompt
+ * - Provides sample values for categorical columns
+ * - Ensures questions reference valid tables/columns
+ * - Avoids hallucinated entity names
  *
  * @param question Original user question
  * @param sqlQuery SQL query that was executed (optional)
@@ -353,6 +360,21 @@ export async function generateFollowUpQuestions(
   insights?: string | null
 ): Promise<string[]> {
   try {
+    console.log(`💡 Generating schema-aware follow-up questions...`);
+
+    // CRITICAL: Fetch actual database schema for context
+    let schemaContext = '';
+    try {
+      const tableNames = await getCachedTableNames();
+      const relevantTables = tableNames.filter(t =>
+        !['conversations', 'messages'].includes(t)
+      );
+      schemaContext = await getCachedSchema(relevantTables);
+    } catch (schemaError) {
+      console.warn('⚠️ Could not fetch schema for follow-up generation');
+      schemaContext = getHardcodedSchemaReference();
+    }
+
     // Build context for follow-up generation
     let context = `User's Question: "${question}"`;
 
@@ -360,41 +382,66 @@ export async function generateFollowUpQuestions(
       context += `\n\nSQL Query Used:\n${sqlQuery}`;
     }
 
-    if (queryResults && queryResults.rows.length > 0) {
-      const { columns, rows } = queryResults;
+    // Add result context with special handling for empty results
+    const hasResults = queryResults && queryResults.rows && queryResults.rows.length > 0;
+
+    if (hasResults) {
+      const { columns, rows } = queryResults!;
       context += `\n\nResults Summary:`;
       context += `\n- ${rows.length} rows returned`;
       context += `\n- Columns: ${columns.join(', ')}`;
 
       // Add sample data for context (first 3 rows)
-      if (rows.length > 0) {
-        context += `\n- Sample data:`;
-        rows.slice(0, 3).forEach((row, idx) => {
-          context += `\n  Row ${idx + 1}: ${columns.map((col, i) => `${col}=${row[i]}`).join(', ')}`;
-        });
-      }
+      context += `\n- Sample data:`;
+      rows.slice(0, 3).forEach((row, idx) => {
+        context += `\n  Row ${idx + 1}: ${columns.map((col, i) => `${col}=${row[i]}`).join(', ')}`;
+      });
+    } else {
+      context += `\n\n⚠️ QUERY RETURNED NO RESULTS - This is important context!`;
+      context += `\nThe user's question did not match any data in the database.`;
+      context += `\nSuggest questions about RELATED data that DOES exist, using the schema below.`;
     }
 
-    if (insights) {
-      // Add a summary of insights (truncated to avoid token overflow)
+    if (insights && insights.length > 50) {
       const insightsSummary = insights.substring(0, 500);
       context += `\n\nBusiness Insights Generated:\n${insightsSummary}${insights.length > 500 ? '...' : ''}`;
     }
 
+    // Build the full prompt with schema injection
     const userPrompt = `${context}
 
-Based on this analysis, generate exactly 3 relevant follow-up questions the user might want to ask next.
+=== DATABASE SCHEMA (Use ONLY these exact names) ===
+${schemaContext}
 
-Requirements:
-1. Questions must be specific to Sleeman Breweries data and operations
-2. Questions should build on or expand the current analysis
-3. Each question should explore a different angle (drill down, compare, time trend, etc.)
-4. Questions must be complete, natural-sounding sentences
-5. Questions should lead to actionable business insights
+=== VALID BEER STYLES (Use ONLY these exact names) ===
+- Sleeman Clear 2.0 (Light Lager)
+- Sleeman Original Draught (Lager)
+- Sleeman Honey Brown (Amber Ale)
+- Sleeman Cream Ale (Cream Ale)
+- Sleeman Silver Creek (Lager)
+- Okanagan Spring Pale Ale (Pale Ale)
+- Wild Rose WRaspberry (Fruit Beer)
+- Sapporo Premium (Lager)
+
+=== FACILITIES ===
+- Guelph Facility (Ontario) - 3 production lines
+- Vernon Facility (BC) - 2 production lines
+
+=== YOUR TASK ===
+Generate exactly 3 follow-up questions that:
+1. Reference ACTUAL table names and column names from the schema above
+2. Use EXACT entity names (beer styles, facilities) - NO variations or guessing
+3. ${hasResults ? 'Build on the results shown above' : 'Explore RELATED data that exists (since this query returned nothing)'}
+4. Can be answered with a simple SQL query
+
+${!hasResults ? `
+IMPORTANT: Since the query returned no results, suggest questions about:
+- Different beer styles that DO exist (from the list above)
+- Different time periods or metrics
+- Related tables (e.g., if quality failed, ask about production or inventory)
+` : ''}
 
 Return ONLY the 3 questions, one per line, with no numbering or bullet points.`;
-
-    console.log(`💡 Generating follow-up questions...`);
 
     const response = await insightsLLM.invoke([
       new SystemMessage(FOLLOWUP_SYSTEM_PROMPT),
@@ -408,11 +455,11 @@ Return ONLY the 3 questions, one per line, with no numbering or bullet points.`;
       .split('\n')
       .map(line => line.trim())
       .filter(line => line.length > 10 && line.endsWith('?'))
-      .slice(0, 3); // Ensure max 3 questions
+      .slice(0, 3);
 
     // If we got valid questions, return them
     if (questions.length >= 2) {
-      console.log(`   ✅ Generated ${questions.length} follow-up questions`);
+      console.log(`   ✅ Generated ${questions.length} schema-aware follow-up questions`);
       return questions;
     }
 
@@ -422,71 +469,107 @@ Return ONLY the 3 questions, one per line, with no numbering or bullet points.`;
 
   } catch (error: any) {
     console.error('❌ Error generating follow-up questions:', error);
-    // Return contextual fallback questions on error
     return getContextualFallbackQuestions(question);
   }
 }
 
 /**
+ * Hardcoded schema reference as fallback when database is unavailable
+ * Contains the actual Sleeman Breweries database structure
+ */
+function getHardcodedSchemaReference(): string {
+  return `
+Tables and key columns:
+- beer_styles: id, name, category, description, abv_min, abv_max, ibu_min, ibu_max, fermentation_days
+- production_lines: id, name, facility_location, capacity_hl, status
+- production_batches: id, batch_number, beer_style_id, production_line_id, brew_date, volume_hl, efficiency_percent, status
+- quality_tests: id, batch_id, test_type (ABV, IBU, pH, clarity, taste, carbonation), result, passed, test_date
+- quality_issues: id, batch_id, issue_type, severity, description, resolution_status
+- suppliers: id, name, category, contact_email, rating
+- raw_materials: id, name, supplier_id, quantity_kg, reorder_level_kg, unit_cost
+- material_usage: id, batch_id, material_id, quantity_used_kg
+- equipment: id, name, type, production_line_id, status, last_maintenance_date
+- equipment_downtime: id, equipment_id, start_time, end_time, reason, cost_impact
+- distributors: id, name, region, contact_email, active
+- shipments: id, distributor_id, product_id, quantity, ship_date, delivery_status
+- products: id, name, beer_style_id, package_type, package_size, price
+- monthly_revenue: id, product_id, month, revenue, units_sold, cost_of_goods
+- compliance_audits: id, audit_type, audit_date, score, findings, auditor
+
+Key relationships:
+- production_batches → beer_styles (beer_style_id)
+- production_batches → production_lines (production_line_id)
+- quality_tests → production_batches (batch_id)
+- shipments → distributors (distributor_id)
+- shipments → products (product_id)
+- products → beer_styles (beer_style_id)
+- monthly_revenue → products (product_id)
+`;
+}
+
+/**
  * Get contextual fallback questions based on detected topic
  * Used when AI generation fails or returns invalid results
+ *
+ * IMPORTANT: These use EXACT entity names from the Sleeman database
+ * to prevent hallucination errors
  */
 function getContextualFallbackQuestions(question: string): string[] {
   const lowerQuestion = question.toLowerCase();
 
-  // Detect topic and return relevant follow-ups
+  // Detect topic and return relevant follow-ups using EXACT database entities
   if (lowerQuestion.includes('production') || lowerQuestion.includes('batch') || lowerQuestion.includes('volume')) {
     return [
-      "How does production efficiency vary across our different production lines?",
-      "What are the fermentation times by beer style over the past quarter?",
-      "Which production line has the highest capacity utilization?"
+      "What is the average efficiency_percent by production_line for Sleeman Original Draught batches?",
+      "How many production_batches were completed at the Guelph Facility vs Vernon Facility this year?",
+      "Which beer_style has the highest total volume_hl in production_batches?"
     ];
   }
 
   if (lowerQuestion.includes('quality') || lowerQuestion.includes('failure') || lowerQuestion.includes('test')) {
     return [
-      "What are the most common quality issues by beer style?",
-      "How do quality scores compare between our Guelph and Vernon facilities?",
-      "What is the trend in batch failure rates over the past 6 months?"
+      "What is the pass rate for quality_tests by test_type (ABV, IBU, pH)?",
+      "How many quality_issues with severity 'critical' exist by beer_style?",
+      "What is the average quality_tests result for Sleeman Honey Brown batches?"
     ];
   }
 
   if (lowerQuestion.includes('inventory') || lowerQuestion.includes('material') || lowerQuestion.includes('supplier')) {
     return [
-      "Which raw materials are currently below reorder level?",
-      "How does supplier on-time delivery rate compare across vendors?",
-      "What is our material usage trend for hops and barley?"
+      "Which raw_materials have quantity_kg below reorder_level_kg?",
+      "What is the total material_usage by supplier for hops and malt?",
+      "Which suppliers have the highest rating in the suppliers table?"
     ];
   }
 
   if (lowerQuestion.includes('distributor') || lowerQuestion.includes('shipment') || lowerQuestion.includes('delivery')) {
     return [
-      "Which distributors have the highest shipment volumes this quarter?",
-      "What is the on-time delivery rate by distributor?",
-      "How do distributor performance metrics compare across regions?"
+      "What is the total shipment quantity by distributor region?",
+      "Which products have the most shipments with delivery_status 'delivered'?",
+      "How many active distributors are in each region?"
     ];
   }
 
   if (lowerQuestion.includes('revenue') || lowerQuestion.includes('sales') || lowerQuestion.includes('profit')) {
     return [
-      "What are the revenue trends by product over the past 12 months?",
-      "Which beer styles generate the highest profit margins?",
-      "How does monthly revenue compare year-over-year?"
+      "What is the total monthly_revenue by product for the last 6 months?",
+      "Which products have the highest revenue minus cost_of_goods margin?",
+      "How do units_sold compare between Sleeman Original Draught and Sleeman Cream Ale?"
     ];
   }
 
   if (lowerQuestion.includes('equipment') || lowerQuestion.includes('downtime') || lowerQuestion.includes('maintenance')) {
     return [
-      "What is the total equipment downtime by production line?",
-      "Which equipment types have the most frequent maintenance issues?",
-      "How does equipment utilization vary across facilities?"
+      "What is the total cost_impact from equipment_downtime by production_line?",
+      "Which equipment items have the oldest last_maintenance_date?",
+      "What are the most common equipment_downtime reasons?"
     ];
   }
 
-  // Default brewery-focused questions
+  // Default brewery-focused questions using exact schema references
   return [
-    "What is our production volume by beer style this quarter?",
-    "How do quality scores compare across our beer styles?",
-    "Which distributors are our top performers by revenue?"
+    "What is the production volume_hl by beer_style name for completed batches?",
+    "How do quality_tests pass rates compare between Guelph and Vernon facilities?",
+    "Which distributors have the highest shipment quantities by region?"
   ];
 }

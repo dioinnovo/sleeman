@@ -74,46 +74,83 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
   return (
     <aside
       className={`
-        bg-sleeman-dark text-gray-200 h-full transition-all duration-300 flex flex-col rounded-2xl shadow-lg shadow-black/30 ring-1 ring-sleeman-brown
+        bg-card text-foreground h-full transition-all duration-300 flex flex-col rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30 ring-1 ring-border
         ${isCollapsed ? 'w-20' : 'w-64'}
       `}
     >
       {/* Logo Section */}
-      <div className="p-4 border-b border-sleeman-brown bg-sleeman-dark rounded-t-2xl">
-        <div className="flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            {isCollapsed ? (
+      <div className="p-4 border-b border-border bg-muted rounded-t-2xl">
+        {isCollapsed ? (
+          /* Collapsed: Stack logo and chevron vertically */
+          <div className="flex flex-col items-center gap-3">
+            <Link href="/dashboard">
+              {/* Light mode: dark icon */}
               <Image
-                src="/sleeman-icon-light.png"
+                src="/sleeman-icon.png"
                 alt="Sleeman Breweries"
-                width={32}
-                height={32}
-                className="object-contain"
+                width={36}
+                height={36}
+                className="object-contain dark:hidden"
                 style={{ width: 'auto', height: 'auto' }}
                 priority
               />
-            ) : (
+              {/* Dark mode: light icon */}
+              <Image
+                src="/sleeman-icon-light.png"
+                alt="Sleeman Breweries"
+                width={36}
+                height={36}
+                className="object-contain hidden dark:block"
+                style={{ width: 'auto', height: 'auto' }}
+                priority
+              />
+            </Link>
+            {onToggle && (
+              <button
+                onClick={onToggle}
+                className="p-1.5 hover:bg-accent rounded-lg transition cursor-pointer text-muted-foreground hover:text-primary"
+                aria-label="Expand sidebar"
+              >
+                <ChevronRight size={18} />
+              </button>
+            )}
+          </div>
+        ) : (
+          /* Expanded: Logo and chevron side by side */
+          <div className="flex items-center justify-between">
+            <Link href="/dashboard" className="flex items-center gap-3">
+              {/* Light mode: dark logo */}
+              <Image
+                src="/sleeman-logo.png"
+                alt="Sleeman Breweries"
+                width={180}
+                height={50}
+                className="object-contain dark:hidden"
+                style={{ height: 'auto' }}
+                priority
+              />
+              {/* Dark mode: light logo */}
               <Image
                 src="/sleeman-logo-light.png"
                 alt="Sleeman Breweries"
                 width={180}
                 height={50}
-                className="object-contain"
+                className="object-contain hidden dark:block"
                 style={{ height: 'auto' }}
                 priority
               />
+            </Link>
+            {onToggle && (
+              <button
+                onClick={onToggle}
+                className="p-1.5 hover:bg-accent rounded-lg transition cursor-pointer text-muted-foreground hover:text-primary"
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft size={18} />
+              </button>
             )}
-          </Link>
-          {onToggle && (
-            <button
-              onClick={onToggle}
-              className="p-1.5 hover:bg-sleeman-brown rounded-lg transition cursor-pointer text-gray-400 hover:text-sleeman-gold"
-              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-              {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-            </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       {/* Navigation Menu */}
@@ -132,8 +169,8 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
                     ${isActive
-                      ? 'bg-sleeman-brown text-sleeman-gold border-l-4 border-sleeman-gold pl-2'
-                      : 'hover:bg-sleeman-brown text-gray-300 hover:text-sleeman-gold-light'
+                      ? 'bg-accent text-primary border-l-4 border-primary pl-2'
+                      : 'hover:bg-accent text-muted-foreground hover:text-primary'
                     }
                   `}
                   title={isCollapsed ? item.title : undefined}
@@ -155,13 +192,13 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sleeman-brown">
+      <div className="p-4 border-t border-border">
         {/* Theme Toggle */}
         {mounted && (
           <div className={`mb-3 ${isCollapsed ? 'flex justify-center' : ''}`}>
             <button
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sleeman-brown transition-colors text-gray-400 hover:text-sleeman-gold"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-accent transition-colors text-muted-foreground hover:text-primary"
               title={isCollapsed ? `Switch to ${theme === 'light' ? 'dark' : 'light'} mode` : undefined}
             >
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
@@ -176,13 +213,13 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
 
         {/* Company Info */}
         {!isCollapsed ? (
-          <div className="text-xs text-gray-400">
-            <p className="font-semibold mb-1 text-sleeman-gold">BrewMind AI</p>
+          <div className="text-xs text-muted-foreground">
+            <p className="font-semibold mb-1 text-primary">BrewMind AI</p>
             <p>Intelligent Brewery Analytics</p>
             <p className="mt-2">© 2025 Sleeman Breweries</p>
           </div>
         ) : (
-          <div className="text-center text-xs text-gray-500">
+          <div className="text-center text-xs text-muted-foreground">
             <p>© '25</p>
           </div>
         )}

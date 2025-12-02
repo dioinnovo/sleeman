@@ -4,34 +4,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 24 14% 8%; /* Sleeman dark #1C1812 */
-    --card: 0 0% 100%;
+    /* Light Mode - Warm Cream Theme (Sleeman Brand) */
+    --background: 40 30% 97%;            /* Warm cream #FAF8F5 */
+    --foreground: 24 14% 8%;             /* Sleeman dark #1C1812 */
+    --card: 0 0% 100%;                   /* White */
     --card-foreground: 24 14% 8%;
     --popover: 0 0% 100%;
     --popover-foreground: 24 14% 8%;
-    --primary: 40 55% 56%; /* Sleeman Gold #D4A84B */
+    --primary: 40 55% 56%;               /* Sleeman Gold #D4A84B */
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 78% 48%; /* Sleeman Blue #1863DC */
+    --secondary: 217 78% 48%;            /* Sleeman Blue #1863DC */
     --secondary-foreground: 0 0% 100%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 40 60% 90%; /* Light gold for hover states */
+    --muted: 40 15% 94%;                 /* Warm gray #F2F0ED */
+    --muted-foreground: 24 10% 40%;      /* Warm muted text */
+    --accent: 40 60% 90%;                /* Light gold for hover states */
     --accent-foreground: 24 14% 8%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 40 55% 56%; /* Sleeman Gold */
+    --border: 40 15% 88%;                /* Warm border #E4DFD7 */
+    --input: 40 15% 88%;
+    --ring: 40 75% 31%;                  /* Dark gold focus #8B6914 */
     --radius: 0.65rem;
 
     /* Sleeman Brand Colors */
-    --sleeman-dark: 24 14% 8%; /* #1C1812 */
-    --sleeman-gold: 40 55% 56%; /* #D4A84B */
-    --sleeman-gold-light: 43 70% 66%; /* #E8C76A */
-    --sleeman-gold-dark: 40 75% 31%; /* #8B6914 */
-    --sleeman-blue: 217 78% 48%; /* #1863DC */
-    --sleeman-brown: 30 25% 13%; /* #2C2416 */
+    --sleeman-dark: 24 14% 8%;           /* #1C1812 */
+    --sleeman-gold: 40 55% 56%;          /* #D4A84B */
+    --sleeman-gold-light: 43 70% 66%;    /* #E8C76A */
+    --sleeman-gold-dark: 40 75% 31%;     /* #8B6914 */
+    --sleeman-blue: 217 78% 48%;         /* #1863DC */
+    --sleeman-brown: 30 25% 13%;         /* #2C2416 */
   }
 
   .dark {
@@ -69,33 +70,46 @@
     line-height: 1.6;
   }
 
-  /* Scrollbar that uses existing padding as gutter */
+  /* Scrollbar that uses existing padding as gutter - Light Mode */
   .overlay-scroll {
     /* Firefox - thin scrollbar */
     scrollbar-width: thin;
-    scrollbar-color: rgba(212, 168, 75, 0.3) transparent; /* Sleeman gold tint */
+    scrollbar-color: rgba(139, 105, 20, 0.25) transparent; /* Dark gold tint for light mode */
     scrollbar-gutter: stable;
     /* Enable smooth scrolling on iOS */
     -webkit-overflow-scrolling: touch;
   }
 
-  /* Webkit - thin scrollbar positioned in padding area */
+  /* Webkit - thin scrollbar positioned in padding area - Light Mode */
   .overlay-scroll::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
 
   .overlay-scroll::-webkit-scrollbar-thumb {
-    background: rgba(212, 168, 75, 0.3); /* Sleeman gold tint */
+    background: rgba(139, 105, 20, 0.25); /* Dark gold tint for light mode */
     border-radius: 3px;
   }
 
   .overlay-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(212, 168, 75, 0.5);
+    background: rgba(139, 105, 20, 0.4);
   }
 
   .overlay-scroll::-webkit-scrollbar-track {
     background: transparent;
+  }
+
+  /* Dark Mode Scrollbar */
+  .dark .overlay-scroll {
+    scrollbar-color: rgba(212, 168, 75, 0.3) transparent; /* Sleeman gold tint for dark mode */
+  }
+
+  .dark .overlay-scroll::-webkit-scrollbar-thumb {
+    background: rgba(212, 168, 75, 0.3); /* Sleeman gold tint for dark mode */
+  }
+
+  .dark .overlay-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(212, 168, 75, 0.5);
   }
 }
 

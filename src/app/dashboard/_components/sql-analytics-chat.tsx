@@ -21,6 +21,103 @@ import { cn } from '@/lib/utils'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { getFriendlyColumnName } from '@/lib/columnMapping'
 
+/**
+ * Format a numeric value based on its column name
+ * - Currency columns (revenue, cost, price, amount, value) get $ prefix
+ * - Percentage columns get % suffix
+ * - All numbers get comma separators
+ * - Decimals are limited to 2 places for currency/percentages
+ */
+function formatCellValue(value: any, columnName: string): string {
+  if (value === null || value === undefined) return '—'
+
+  // Try to parse numeric strings (PostgreSQL often returns numbers as strings)
+  let numValue: number
+  if (typeof value === 'number') {
+    numValue = value
+  } else if (typeof value === 'string') {
+    // Check if it looks like a number (possibly with decimal)
+    const parsed = parseFloat(value)
+    if (!isNaN(parsed) && /^-?\d*\.?\d+$/.test(value.trim())) {
+      numValue = parsed
+    } else {
+      // Not a numeric string, return as-is
+      return value
+    }
+  } else {
+    return String(value)
+  }
+
+  const colLower = columnName.toLowerCase()
+
+  // Currency columns
+  const isCurrency =
+    colLower.includes('revenue') ||
+    colLower.includes('cost') ||
+    colLower.includes('price') ||
+    colLower.includes('amount') ||
+    colLower.includes('value') ||
+    colLower.includes('total') && (colLower.includes('$') || colLower.includes('dollar')) ||
+    colLower.includes('sales') ||
+    colLower.includes('profit') ||
+    colLower.includes('expense') ||
+    colLower.includes('budget')
+
+  // Percentage columns
+  const isPercentage =
+    colLower.includes('percent') ||
+    colLower.includes('rate') ||
+    colLower.includes('efficiency') ||
+    colLower.includes('utilization') ||
+    colLower.includes('yield') ||
+    colLower.includes('variance') ||
+    colLower.endsWith('_pct') ||
+    colLower.endsWith('_%')
+
+  if (isCurrency) {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'CAD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2
+    }).format(numValue)
+  }
+
+  if (isPercentage) {
+    // If value is already in percentage form (e.g., 85.5 for 85.5%)
+    return `${numValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}%`
+  }
+
+  // Default: just add comma separators
+  return numValue.toLocaleString('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  })
+}
+
+/**
+ * Format chart axis tick values (abbreviated for large numbers)
+ * e.g., 1,000,000 → 1M, 50,000 → 50K
+ */
+function formatAxisTick(value: number): string {
+  if (value >= 1_000_000) {
+    return `${(value / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`
+  }
+  if (value >= 1_000) {
+    return `${(value / 1_000).toFixed(1).replace(/\.0$/, '')}K`
+  }
+  return value.toLocaleString('en-US')
+}
+
+/**
+ * Format chart tooltip values with full formatting
+ */
+function formatTooltipValue(value: any, name: string): [string, string] {
+  const formattedValue = formatCellValue(value, name)
+  const formattedName = getFriendlyColumnName(name)
+  return [formattedValue, formattedName]
+}
+
 interface Message {
   id: string
   role: 'user' | 'assistant'
@@ -487,13 +584,13 @@ export default function SQLAnalyticsChat() {
 
       if (type === 'line') {
         return (
-          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="mt-4 p-4 bg-muted rounded-lg border border-border">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={rechartsData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
-                <YAxis fontSize={12} />
-                <RechartsTooltip />
+                <YAxis fontSize={12} tickFormatter={formatAxisTick} />
+                <RechartsTooltip formatter={formatTooltipValue} />
                 <Legend />
                 {datasets.map((dataset: any, idx: number) => (
                   <Line
@@ -512,13 +609,13 @@ export default function SQLAnalyticsChat() {
       }
 
       return (
-        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="mt-4 p-4 bg-muted rounded-lg border border-border">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={rechartsData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
-              <YAxis fontSize={12} />
-              <RechartsTooltip />
+              <YAxis fontSize={12} tickFormatter={formatAxisTick} />
+              <RechartsTooltip formatter={formatTooltipValue} />
               <Legend />
               {datasets.map((dataset: any, idx: number) => (
                 <Bar
@@ -561,13 +658,13 @@ export default function SQLAnalyticsChat() {
     ) || numericKeys[0]
 
     return (
-      <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+      <div className="mt-4 p-4 bg-muted rounded-lg border border-border">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey={labelKey} angle={-45} textAnchor="end" height={100} fontSize={12} />
-            <YAxis fontSize={12} />
-            <RechartsTooltip formatter={(value: any, name: any) => [value, getFriendlyColumnName(name as string)]} />
+            <YAxis fontSize={12} tickFormatter={formatAxisTick} />
+            <RechartsTooltip formatter={formatTooltipValue} />
             <Legend formatter={(value) => getFriendlyColumnName(value)} />
             <Bar dataKey={primaryMetric} fill="#5fd063" name={getFriendlyColumnName(primaryMetric)} />
           </BarChart>
@@ -578,32 +675,32 @@ export default function SQLAnalyticsChat() {
 
   const renderTable = (results: any[]) => {
     if (!results || results.length === 0) {
-      return <p className="text-sm text-gray-500">No results found</p>
+      return <p className="text-sm text-muted-foreground">No results found</p>
     }
 
     const columns = Object.keys(results[0])
 
     return (
       <div className="mt-4 overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg">
-          <thead className="bg-gray-50 dark:bg-gray-800">
+        <table className="min-w-full divide-y divide-border border border-border rounded-lg">
+          <thead className="bg-muted">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col}
-                  className="px-4 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider"
+                  className="px-4 py-2 text-left text-xs font-medium text-foreground uppercase tracking-wider"
                 >
                   {getFriendlyColumnName(col)}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-card divide-y divide-border">
             {results.map((row, idx) => (
-              <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <tr key={idx} className="hover:bg-accent">
                 {columns.map((col) => (
-                  <td key={col} className="px-4 py-2 text-sm text-gray-900 dark:text-gray-100 whitespace-nowrap">
-                    {typeof row[col] === 'number' ? row[col].toLocaleString() : row[col]}
+                  <td key={col} className="px-4 py-2 text-sm text-foreground whitespace-nowrap">
+                    {formatCellValue(row[col], col)}
                   </td>
                 ))}
               </tr>
@@ -615,18 +712,18 @@ export default function SQLAnalyticsChat() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col bg-gradient-to-br from-sleeman-brown to-sleeman-dark overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-gradient-to-br from-muted to-background overflow-hidden">
       {/* Top Header */}
-      <div className="flex-shrink-0 flex items-center justify-between p-4 min-h-[4rem] bg-sleeman-dark/80 backdrop-blur-md border-b border-sleeman-brown/50">
+      <div className="flex-shrink-0 flex items-center justify-between p-4 min-h-[4rem] bg-background/80 backdrop-blur-md border-b border-border">
         <div className="flex items-center gap-2">
-          <Database className="w-6 h-6 text-sleeman-gold" />
-          <h2 className="text-sm font-semibold text-gray-100">
+          <Database className="w-6 h-6 text-primary" />
+          <h2 className="text-sm font-semibold text-foreground">
             BrewMind Analytics
           </h2>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-400">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 bg-sleeman-gold rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
             AI Ready
           </span>
           <span className="hidden sm:inline">•</span>
@@ -649,25 +746,25 @@ export default function SQLAnalyticsChat() {
             </div>
 
             <div className="space-y-1 sm:space-y-2">
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-                Natural Language to SQL
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                Hi, I&apos;m <span className="text-primary">Barley</span>!
               </h1>
-              <p className="text-sm sm:text-base text-gray-400 max-w-sm px-4 sm:px-0">
-                Ask questions in plain English, get instant brewing insights
+              <p className="text-sm sm:text-base text-muted-foreground max-w-sm px-4 sm:px-0">
+                Your AI Brewing Data Analyst. Ask me anything about production, quality, inventory, or revenue.
               </p>
             </div>
 
             {/* Quick Questions */}
             <div className="max-w-2xl w-full">
-              <p className="text-xs text-gray-400 mb-3">Quick Questions:</p>
+              <p className="text-xs text-muted-foreground mb-3">Quick Questions:</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {QUICK_QUESTIONS.map((question, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSend(question)}
-                    className="text-left p-3 rounded-lg border border-sleeman-brown hover:border-sleeman-gold hover:bg-sleeman-brown/50 transition-all group"
+                    className="text-left p-3 rounded-lg border border-border hover:border-primary hover:bg-accent transition-all group"
                   >
-                    <p className="text-sm text-gray-200 font-medium">
+                    <p className="text-sm text-foreground font-medium">
                       {question}
                     </p>
                   </button>
@@ -694,8 +791,8 @@ export default function SQLAnalyticsChat() {
                     {/* Message bubble */}
                     <div className={`rounded-2xl px-4 py-3 ${
                       message.role === 'user'
-                        ? 'bg-sleeman-gold text-sleeman-dark'
-                        : 'bg-sleeman-dark border border-sleeman-brown text-gray-200 shadow-sm'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-card border border-border text-foreground shadow-sm'
                     }`}>
                       {message.role === 'user' ? (
                         <p className="whitespace-pre-wrap text-sm">{message.content}</p>
@@ -709,11 +806,11 @@ export default function SQLAnalyticsChat() {
                       <div className="mt-3 space-y-3">
                         {/* Visualization */}
                         {message.chartData && (
-                          <div className="bg-sleeman-dark rounded-lg border border-sleeman-brown p-4">
+                          <div className="bg-card rounded-lg border border-border p-4">
                             <div className="flex items-center gap-2 mb-2">
-                              <BarChart3 className="w-4 h-4 text-sleeman-gold" />
-                              <span className="text-sm font-medium text-gray-300">Visualization</span>
-                              <span className="text-xs text-gray-500">{message.rowCount} results</span>
+                              <BarChart3 className="w-4 h-4 text-primary" />
+                              <span className="text-sm font-medium text-foreground">Visualization</span>
+                              <span className="text-xs text-muted-foreground">{message.rowCount} results</span>
                             </div>
                             {renderChart(message.chartData)}
                           </div>
@@ -721,34 +818,34 @@ export default function SQLAnalyticsChat() {
 
                         {/* Expandable SQL Query */}
                         {message.sqlQuery && (
-                          <div className="bg-sleeman-dark rounded-lg border border-sleeman-brown">
+                          <div className="bg-card rounded-lg border border-border">
                             <button
                               onClick={() => setExpandedQuery(expandedQuery === message.id ? null : message.id)}
-                              className="w-full px-4 py-2 flex items-center justify-between hover:bg-sleeman-brown/50 transition-colors rounded-lg"
+                              className="w-full px-4 py-2 flex items-center justify-between hover:bg-accent transition-colors rounded-lg"
                             >
                               <div className="flex items-center gap-2">
-                                <Code className="w-4 h-4 text-gray-400" />
-                                <span className="text-sm font-medium text-gray-300">
+                                <Code className="w-4 h-4 text-muted-foreground" />
+                                <span className="text-sm font-medium text-foreground">
                                   PostgreSQL Query
                                 </span>
                               </div>
                               <ChevronDown
                                 className={cn(
-                                  "w-4 h-4 text-gray-400 transition-transform",
+                                  "w-4 h-4 text-muted-foreground transition-transform",
                                   expandedQuery === message.id && "transform rotate-180"
                                 )}
                               />
                             </button>
                             {expandedQuery === message.id && (
                               <div className="px-4 pb-4">
-                                <pre className="text-xs bg-gray-900 text-sleeman-gold p-3 rounded overflow-x-auto">
+                                <pre className="text-xs bg-muted text-primary p-3 rounded overflow-x-auto">
                                   <code>{message.sqlQuery}</code>
                                 </pre>
                                 <button
                                   onClick={() => {
                                     navigator.clipboard.writeText(message.sqlQuery!)
                                   }}
-                                  className="mt-2 text-xs text-sleeman-gold hover:text-sleeman-gold-light"
+                                  className="mt-2 text-xs text-primary hover:text-primary/80"
                                 >
                                   Copy
                                 </button>
@@ -760,14 +857,14 @@ export default function SQLAnalyticsChat() {
                         {/* Expandable Oracle SQL Query (Demo) */}
                         {message.oracleSqlQuery && (
                           <TooltipProvider>
-                            <div className="bg-sleeman-dark rounded-lg border border-orange-700/50">
+                            <div className="bg-card rounded-lg border border-orange-700/50 dark:border-orange-700/50">
                               <button
                                 onClick={() => setExpandedOracleQuery(expandedOracleQuery === message.id ? null : message.id)}
-                                className="w-full px-4 py-2 flex items-center justify-between hover:bg-sleeman-brown/50 transition-colors rounded-lg"
+                                className="w-full px-4 py-2 flex items-center justify-between hover:bg-accent transition-colors rounded-lg"
                               >
                                 <div className="flex items-center gap-2">
                                   <Database className="w-4 h-4 text-orange-500" />
-                                  <span className="text-sm font-medium text-gray-300">
+                                  <span className="text-sm font-medium text-foreground">
                                     Oracle SQL Query
                                   </span>
                                   <Tooltip>
@@ -779,8 +876,8 @@ export default function SQLAnalyticsChat() {
                                     </TooltipTrigger>
                                     <TooltipContent side="top" className="max-w-[280px]">
                                       <p className="font-medium mb-1">Oracle SQL Translation</p>
-                                      <p className="text-gray-400 mb-2">Syntax differences handled:</p>
-                                      <ul className="text-xs space-y-0.5 text-gray-300">
+                                      <p className="text-muted-foreground mb-2">Syntax differences handled:</p>
+                                      <ul className="text-xs space-y-0.5 text-foreground">
                                         <li>• LIMIT 100 → FETCH FIRST 100 ROWS ONLY</li>
                                         <li>• NOW() → SYSDATE</li>
                                         <li>• COALESCE → NVL (where applicable)</li>
@@ -791,21 +888,21 @@ export default function SQLAnalyticsChat() {
                                 </div>
                                 <ChevronDown
                                   className={cn(
-                                    "w-4 h-4 text-gray-400 transition-transform",
+                                    "w-4 h-4 text-muted-foreground transition-transform",
                                     expandedOracleQuery === message.id && "transform rotate-180"
                                   )}
                                 />
                               </button>
                               {expandedOracleQuery === message.id && (
                                 <div className="px-4 pb-4">
-                                  <pre className="text-xs bg-gray-900 text-orange-400 p-3 rounded overflow-x-auto">
+                                  <pre className="text-xs bg-muted text-orange-500 dark:text-orange-400 p-3 rounded overflow-x-auto">
                                     <code>{message.oracleSqlQuery}</code>
                                   </pre>
                                   <button
                                     onClick={() => {
                                       navigator.clipboard.writeText(message.oracleSqlQuery!)
                                     }}
-                                    className="mt-2 text-xs text-orange-400 hover:text-orange-300"
+                                    className="mt-2 text-xs text-orange-500 dark:text-orange-400 hover:text-orange-600 dark:hover:text-orange-300"
                                   >
                                     Copy
                                   </button>
@@ -817,13 +914,13 @@ export default function SQLAnalyticsChat() {
 
                         {/* Query Results Table */}
                         {message.results && (
-                          <div className="bg-sleeman-dark rounded-lg border border-sleeman-brown p-4">
+                          <div className="bg-card rounded-lg border border-border p-4">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
-                                <TrendingUp className="w-4 h-4 text-sleeman-gold" />
-                                <span className="text-sm font-medium text-gray-300">Query Results</span>
+                                <TrendingUp className="w-4 h-4 text-primary" />
+                                <span className="text-sm font-medium text-foreground">Query Results</span>
                               </div>
-                              <button className="text-xs text-sleeman-gold hover:text-sleeman-gold-light">
+                              <button className="text-xs text-primary hover:text-primary/80">
                                 Export Excel
                               </button>
                             </div>
@@ -838,7 +935,7 @@ export default function SQLAnalyticsChat() {
                               <button
                                 key={idx}
                                 onClick={() => handleSend(question)}
-                                className="text-sm px-3 py-1.5 bg-sleeman-dark border border-sleeman-brown rounded-full text-gray-300 hover:border-sleeman-gold hover:text-sleeman-gold transition"
+                                className="text-sm px-3 py-1.5 bg-card border border-border rounded-full text-muted-foreground hover:border-primary hover:text-primary transition"
                               >
                                 {question}
                               </button>
@@ -849,7 +946,7 @@ export default function SQLAnalyticsChat() {
                     )}
 
                     <p className={`text-xs mt-1 ${
-                      message.role === 'user' ? 'text-right text-gray-400' : 'text-left text-gray-400'
+                      message.role === 'user' ? 'text-right text-muted-foreground' : 'text-left text-muted-foreground'
                     }`}>
                       {message.timestamp.toLocaleTimeString('en-US', {
                         hour: '2-digit',
@@ -876,10 +973,10 @@ export default function SQLAnalyticsChat() {
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      className="mt-2 bg-sleeman-dark border border-sleeman-brown text-gray-200 rounded-2xl px-4 py-3"
+                      className="mt-2 bg-card border border-border text-foreground rounded-2xl px-4 py-3"
                     >
                       <SimpleMarkdownMessage content={streamingContent} className="text-sm" />
-                      <span className="inline-block w-2 h-4 bg-sleeman-gold animate-pulse ml-1" />
+                      <span className="inline-block w-2 h-4 bg-primary animate-pulse ml-1" />
                     </motion.div>
                   )}
                 </div>
@@ -894,11 +991,11 @@ export default function SQLAnalyticsChat() {
                 className="flex justify-start"
               >
                 <div className="max-w-[80%]">
-                  <div className="bg-sleeman-dark border border-sleeman-brown text-gray-200 shadow-sm rounded-2xl px-4 py-3">
+                  <div className="bg-card border border-border text-foreground shadow-sm rounded-2xl px-4 py-3">
                     <div className="flex gap-1">
-                      <span className="w-2 h-2 bg-sleeman-gold rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                      <span className="w-2 h-2 bg-sleeman-gold rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                      <span className="w-2 h-2 bg-sleeman-gold rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                      <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                     </div>
                   </div>
                 </div>
@@ -910,7 +1007,7 @@ export default function SQLAnalyticsChat() {
 
       {/* Input Area */}
       <div className="flex-shrink-0 p-4 !pb-[16px] sm:pb-4">
-        <div className="bg-sleeman-dark/70 backdrop-blur-xl backdrop-saturate-150 border-2 border-sleeman-brown/50 rounded-2xl p-2 shadow-lg shadow-black/20 ring-2 ring-sleeman-brown/30">
+        <div className="bg-card/70 backdrop-blur-xl backdrop-saturate-150 border-2 border-border/50 rounded-2xl p-2 shadow-lg shadow-black/5 dark:shadow-black/20 ring-2 ring-border/30">
           <textarea
             ref={textareaRef}
             value={inputValue}
@@ -923,7 +1020,7 @@ export default function SQLAnalyticsChat() {
             }}
             placeholder="Ask about production, quality, inventory..."
             disabled={isTyping}
-            className="w-full px-2 py-1.5 bg-transparent text-sm text-gray-100 placeholder-gray-500 focus:outline-none resize-none transition-all disabled:opacity-50"
+            className="w-full px-2 py-1.5 bg-transparent text-sm text-foreground placeholder-muted-foreground focus:outline-none resize-none transition-all disabled:opacity-50"
             style={{
               minHeight: '32px',
               maxHeight: '120px',
@@ -932,7 +1029,7 @@ export default function SQLAnalyticsChat() {
           />
 
           <div className="flex items-center justify-between mt-1">
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-muted-foreground">
               Natural Language to SQL
             </div>
 
@@ -942,8 +1039,8 @@ export default function SQLAnalyticsChat() {
               className={cn(
                 "p-1.5 rounded-full transition-all",
                 inputValue.trim() && !isTyping
-                  ? "bg-sleeman-gold hover:bg-sleeman-gold-light text-sleeman-dark shadow-sm"
-                  : "text-gray-500 bg-sleeman-brown/50"
+                  ? "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
+                  : "text-muted-foreground bg-muted"
               )}
             >
               <ArrowUp className="w-5 h-5" />

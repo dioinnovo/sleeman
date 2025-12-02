@@ -157,28 +157,28 @@ export default function DashboardPage() {
         {kpiCards.map((kpi) => (
           <div
             key={kpi.title}
-            className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-5 hover:border-sleeman-gold/50 transition"
+            className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-5 hover:border-primary/50 transition"
           >
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2 rounded-lg bg-sleeman-dark">
-                <kpi.icon className="text-sleeman-gold" size={20} />
+              <div className="p-2 rounded-lg bg-background">
+                <kpi.icon className="text-primary" size={20} />
               </div>
               {kpi.trend !== 'neutral' && (
                 <div className={`flex items-center gap-1 text-xs font-medium ${
-                  kpi.trend === 'up' ? 'text-green-400' :
-                  kpi.title === 'Pending Quality Issues' ? 'text-green-400' : 'text-red-400'
+                  kpi.trend === 'up' ? 'text-green-600 dark:text-green-400' :
+                  kpi.title === 'Pending Quality Issues' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                 }`}>
                   {kpi.trend === 'up' ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
                   {kpi.change}
                 </div>
               )}
               {kpi.trend === 'neutral' && (
-                <span className="text-xs text-gray-400">{kpi.change}</span>
+                <span className="text-xs text-muted-foreground">{kpi.change}</span>
               )}
             </div>
-            <p className="text-xs text-gray-400 mb-1">{kpi.title}</p>
-            <p className="text-2xl sm:text-3xl font-bold text-gray-100">{kpi.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{kpi.description}</p>
+            <p className="text-xs text-muted-foreground mb-1">{kpi.title}</p>
+            <p className="text-2xl sm:text-3xl font-bold text-foreground">{kpi.value}</p>
+            <p className="text-xs text-muted-foreground/70 mt-1">{kpi.description}</p>
           </div>
         ))}
       </div>
@@ -186,8 +186,8 @@ export default function DashboardPage() {
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Production Volume Chart */}
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
-          <h2 className="text-lg font-bold text-gray-100 mb-4">Production Volume (12 Months)</h2>
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Production Volume (12 Months)</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={productionData}>
@@ -206,8 +206,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Quality Trend Chart */}
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
-          <h2 className="text-lg font-bold text-gray-100 mb-4">Quality Metrics Trend</h2>
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Quality Metrics Trend</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={qualityTrendData}>
@@ -230,8 +230,8 @@ export default function DashboardPage() {
       {/* Second Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Beer Style Distribution */}
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
-          <h2 className="text-lg font-bold text-gray-100 mb-4">Beer Style Distribution</h2>
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Beer Style Distribution</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -260,8 +260,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Top Products by Revenue */}
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
-          <h2 className="text-lg font-bold text-gray-100 mb-4">Top Products by Revenue</h2>
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
+          <h2 className="text-lg font-bold text-foreground mb-4">Top Products by Revenue</h2>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topProductsData} layout="vertical">
@@ -281,35 +281,35 @@ export default function DashboardPage() {
       </div>
 
       {/* Scheduled Batches */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-100">Scheduled Production</h2>
-          <Link href="/dashboard/care-sessions" className="text-sleeman-gold text-sm hover:text-sleeman-gold-light transition">
+          <h2 className="text-lg sm:text-xl font-bold text-foreground">Scheduled Production</h2>
+          <Link href="/dashboard/care-sessions" className="text-primary text-sm hover:text-primary/80 transition">
             View All →
           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
           {scheduledBatches.map((batch) => (
-            <div key={batch.id} className="p-4 border border-sleeman-dark rounded-lg hover:border-sleeman-gold/50 transition bg-sleeman-dark hover:shadow-md">
+            <div key={batch.id} className="p-4 border border-border rounded-lg hover:border-primary/50 transition bg-background hover:shadow-md">
               <div className="space-y-3">
                 <div>
-                  <h3 className="font-semibold text-sm text-gray-100 leading-tight mb-1">{batch.property}</h3>
+                  <h3 className="font-semibold text-sm text-foreground leading-tight mb-1">{batch.property}</h3>
                   <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
-                    batch.status === 'confirmed' ? 'bg-green-900/50 text-green-400' :
-                    'bg-yellow-900/50 text-yellow-400'
+                    batch.status === 'confirmed' ? 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400' :
+                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-400'
                   }`}>
                     {batch.status}
                   </span>
                 </div>
-                <div className="space-y-2 pt-2 border-t border-sleeman-brown">
+                <div className="space-y-2 pt-2 border-t border-border">
                   <div className="flex items-center gap-2">
-                    <Calendar size={14} className="text-gray-500 flex-shrink-0" />
-                    <span className="text-xs text-gray-400">{batch.time}</span>
+                    <Calendar size={14} className="text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground">{batch.time}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3.5 h-3.5 rounded-full bg-sleeman-gold flex-shrink-0" />
-                    <span className="text-xs text-gray-300 font-medium">{batch.type}</span>
+                    <div className="w-3.5 h-3.5 rounded-full bg-primary flex-shrink-0" />
+                    <span className="text-xs text-foreground/80 font-medium">{batch.type}</span>
                   </div>
                 </div>
               </div>
@@ -319,32 +319,32 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Activity */}
-      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
+      <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-100">Recent Activity</h2>
-          <Link href="/dashboard/activity" className="text-sleeman-gold text-sm hover:text-sleeman-gold-light transition">
+          <h2 className="text-lg sm:text-xl font-bold text-foreground">Recent Activity</h2>
+          <Link href="/dashboard/activity" className="text-primary text-sm hover:text-primary/80 transition">
             View All →
           </Link>
         </div>
 
         <div className="space-y-3">
           {recentActivity.map((activity) => (
-            <div key={activity.id} className="flex items-start gap-4 p-4 bg-sleeman-dark rounded-lg hover:bg-sleeman-dark/80 transition">
+            <div key={activity.id} className="flex items-start gap-4 p-4 bg-background rounded-lg hover:bg-accent/50 transition">
               <div className={`p-2 rounded-lg ${
-                activity.status === 'new' ? 'bg-blue-900/50' :
-                activity.status === 'success' ? 'bg-green-900/50' :
-                activity.status === 'warning' ? 'bg-yellow-900/50' :
-                'bg-gray-800'
+                activity.status === 'new' ? 'bg-blue-100 dark:bg-blue-900/50' :
+                activity.status === 'success' ? 'bg-green-100 dark:bg-green-900/50' :
+                activity.status === 'warning' ? 'bg-yellow-100 dark:bg-yellow-900/50' :
+                'bg-muted'
               }`}>
-                {activity.type === 'batch_started' && <Beer className="text-blue-400" size={20} />}
-                {activity.type === 'quality_passed' && <Target className="text-green-400" size={20} />}
-                {activity.type === 'fermentation_complete' && <Beaker className="text-gray-400" size={20} />}
-                {activity.type === 'alert_triggered' && <AlertTriangle className="text-yellow-400" size={20} />}
-                {activity.type === 'report_uploaded' && <FileText className="text-gray-400" size={20} />}
+                {activity.type === 'batch_started' && <Beer className="text-blue-600 dark:text-blue-400" size={20} />}
+                {activity.type === 'quality_passed' && <Target className="text-green-600 dark:text-green-400" size={20} />}
+                {activity.type === 'fermentation_complete' && <Beaker className="text-muted-foreground" size={20} />}
+                {activity.type === 'alert_triggered' && <AlertTriangle className="text-yellow-600 dark:text-yellow-400" size={20} />}
+                {activity.type === 'report_uploaded' && <FileText className="text-muted-foreground" size={20} />}
               </div>
               <div className="flex-1">
-                <p className="font-medium text-gray-100">{activity.title}</p>
-                <p className="text-sm text-gray-500 mt-1">{activity.time}</p>
+                <p className="font-medium text-foreground">{activity.title}</p>
+                <p className="text-sm text-muted-foreground mt-1">{activity.time}</p>
               </div>
             </div>
           ))}
@@ -353,46 +353,46 @@ export default function DashboardPage() {
 
       {/* Beer Styles & Distribution */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4">Beer Style Production (HL)</h2>
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4">Beer Style Production (HL)</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { icon: Beer, value: '845', label: 'Original Draught', color: 'text-amber-500', bg: 'bg-amber-900/30' },
-              { icon: Droplets, value: '623', label: 'Honey Brown', color: 'text-yellow-500', bg: 'bg-yellow-900/30' },
-              { icon: Beer, value: '512', label: 'Cream Ale', color: 'text-orange-400', bg: 'bg-orange-900/30' },
-              { icon: Droplets, value: '398', label: 'Sleeman Clear', color: 'text-sky-400', bg: 'bg-sky-900/30' },
-              { icon: Beer, value: '287', label: 'India Pale Ale', color: 'text-red-400', bg: 'bg-red-900/30' },
-              { icon: Beer, value: '234', label: 'Silver Creek', color: 'text-stone-400', bg: 'bg-stone-800/50' },
-              { icon: Beaker, value: '156', label: 'Fine Porter', color: 'text-emerald-400', bg: 'bg-emerald-900/30' },
-              { icon: Beer, value: '89', label: 'Seasonal', color: 'text-purple-400', bg: 'bg-purple-900/30' },
+              { icon: Beer, value: '845', label: 'Original Draught', color: 'text-amber-600 dark:text-amber-500', bg: 'bg-amber-100 dark:bg-amber-900/30' },
+              { icon: Droplets, value: '623', label: 'Honey Brown', color: 'text-yellow-600 dark:text-yellow-500', bg: 'bg-yellow-100 dark:bg-yellow-900/30' },
+              { icon: Beer, value: '512', label: 'Cream Ale', color: 'text-orange-500 dark:text-orange-400', bg: 'bg-orange-100 dark:bg-orange-900/30' },
+              { icon: Droplets, value: '398', label: 'Sleeman Clear', color: 'text-sky-600 dark:text-sky-400', bg: 'bg-sky-100 dark:bg-sky-900/30' },
+              { icon: Beer, value: '287', label: 'India Pale Ale', color: 'text-red-500 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30' },
+              { icon: Beer, value: '234', label: 'Silver Creek', color: 'text-stone-600 dark:text-stone-400', bg: 'bg-stone-200 dark:bg-stone-800/50' },
+              { icon: Beaker, value: '156', label: 'Fine Porter', color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-100 dark:bg-emerald-900/30' },
+              { icon: Beer, value: '89', label: 'Seasonal', color: 'text-purple-600 dark:text-purple-400', bg: 'bg-purple-100 dark:bg-purple-900/30' },
             ].map((item, index) => (
               <div key={index} className={`flex flex-col items-center p-3 ${item.bg} rounded-lg hover:opacity-80 transition`}>
                 <item.icon className={`${item.color} w-6 h-6 mb-2`} />
-                <span className="text-xl font-bold text-gray-100">{item.value}</span>
-                <span className="text-xs text-gray-400 text-center mt-1">{item.label}</span>
+                <span className="text-xl font-bold text-foreground">{item.value}</span>
+                <span className="text-xs text-muted-foreground text-center mt-1">{item.label}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-4">Distribution Channels</h2>
+        <div className="bg-muted rounded-xl shadow-lg shadow-black/5 dark:shadow-black/20 border border-border p-4 sm:p-6">
+          <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4">Distribution Channels</h2>
           <div className="space-y-4">
             {[
               { icon: Building2, label: 'LCBO (Ontario)', value: 45, color: 'bg-purple-500' },
               { icon: Truck, label: 'BC Liquor Stores', value: 25, color: 'bg-cyan-500' },
               { icon: Home, label: 'Regional Distributors', value: 20, color: 'bg-green-500' },
-              { icon: Beer, label: 'Brewery Direct', value: 10, color: 'bg-sleeman-gold' },
+              { icon: Beer, label: 'Brewery Direct', value: 10, color: 'bg-primary' },
             ].map((channel, index) => (
               <div key={index}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <channel.icon className="text-gray-400 w-5 h-5" />
-                    <span className="font-medium text-sm text-gray-200">{channel.label}</span>
+                    <channel.icon className="text-muted-foreground w-5 h-5" />
+                    <span className="font-medium text-sm text-foreground/90">{channel.label}</span>
                   </div>
-                  <span className="text-sm text-gray-400">{channel.value}%</span>
+                  <span className="text-sm text-muted-foreground">{channel.value}%</span>
                 </div>
-                <div className="w-full bg-sleeman-dark rounded-full h-2">
+                <div className="w-full bg-background rounded-full h-2">
                   <div className={`${channel.color} h-2 rounded-full`} style={{ width: `${channel.value}%` }}></div>
                 </div>
               </div>
