@@ -167,16 +167,22 @@ The SQL agent uses a two-path architecture:
 
 Query classification (`query-classifier.ts`) routes requests automatically.
 
-### Beer Styles in Database
-- Sleeman Clear 2.0 (Light Lager)
-- Sleeman Original Draught (Lager)
-- Sleeman Honey Brown (Amber Ale)
-- Sleeman Cream Ale (Cream Ale)
-- Sleeman Silver Creek (Lager)
-- Okanagan Spring Pale Ale (Pale Ale)
-- Wild Rose WRaspberry (Fruit Beer)
-- Sapporo Premium (Lager)
+### Beer Styles in Database (EXACT names from beer_styles.name)
+- Sleeman Clear 2.0
+- Sleeman Original Draught
+- Sleeman Honey Brown Lager
+- Sleeman Cream Ale
+- Sleeman Silver Creek Lager
+- Okanagan Spring Pale Ale
+- Wild Rose IPA
+- Sapporo Premium Beer
 
-### Facilities
-- Guelph Facility (Ontario): 3 production lines
-- Vernon Facility (BC): 2 production lines
+### Facilities (EXACT values from production_lines.facility)
+- Guelph Brewery: 3 production lines
+- Vernon Brewery: 2 production lines
+
+### Distributors (EXACT names from distributors.name)
+- LCBO Ontario, BC Liquor Stores, SAQ Quebec, Alberta Gaming
+- Costco Canada, Metro Inc., Sobeys
+- The Keg Steakhouse, Boston Pizza, Moxies, Bier Markt, Craft Beer Market
+- Export USA, Export Japan

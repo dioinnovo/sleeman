@@ -61,8 +61,10 @@ const Shimmer = memo(function Shimmer({
     <Component
       className={cn(
         'relative inline-block bg-clip-text text-transparent',
-        'bg-gradient-to-r from-slate-600 via-slate-900 to-slate-600',
-        'dark:from-slate-400 dark:via-slate-100 dark:to-slate-400',
+        // Light mode: Use amber/orange gradient for visibility (matches brand)
+        'bg-gradient-to-r from-amber-600 via-amber-900 to-amber-600',
+        // Dark mode: Use lighter amber tones
+        'dark:from-amber-400 dark:via-amber-100 dark:to-amber-400',
         className
       )}
       style={{
@@ -71,7 +73,7 @@ const Shimmer = memo(function Shimmer({
       {...props}
     >
       <motion.span
-        className="absolute inset-0 bg-clip-text text-transparent bg-gradient-to-r from-slate-600 via-slate-900 to-slate-600 dark:from-slate-400 dark:via-slate-100 dark:to-slate-400"
+        className="absolute inset-0 bg-clip-text text-transparent bg-gradient-to-r from-amber-600 via-amber-900 to-amber-600 dark:from-amber-400 dark:via-amber-100 dark:to-amber-400"
         style={{
           backgroundSize: `${200 + calculatedSpread}% 100%`,
         }}

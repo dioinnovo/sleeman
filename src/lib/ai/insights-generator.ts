@@ -555,65 +555,65 @@ Key relationships:
  * Get contextual fallback questions based on detected topic
  * Used when AI generation fails or returns invalid results
  *
- * IMPORTANT: These use EXACT entity names from the Sleeman database
- * to prevent hallucination errors
+ * CRITICAL: All entity names, column names, and values are VERIFIED against the actual database
+ * to prevent hallucination errors and "no results found" issues
  */
 function getContextualFallbackQuestions(question: string): string[] {
   const lowerQuestion = question.toLowerCase();
 
-  // Detect topic and return relevant follow-ups using EXACT database entities
+  // Detect topic and return relevant follow-ups using VERIFIED database entities
   if (lowerQuestion.includes('production') || lowerQuestion.includes('batch') || lowerQuestion.includes('volume')) {
     return [
-      "What is the average efficiency_percent by production_line for Sleeman Original Draught batches?",
-      "How many production_batches were completed at the Guelph Facility vs Vernon Facility this year?",
-      "Which beer_style has the highest total volume_hl in production_batches?"
+      "What is the average efficiency_percentage by facility for Sleeman Original Draught batches?",
+      "How many production_batches were completed at Guelph Brewery vs Vernon Brewery this year?",
+      "Which beer style has the highest total actual_volume_liters in production_batches?"
     ];
   }
 
   if (lowerQuestion.includes('quality') || lowerQuestion.includes('failure') || lowerQuestion.includes('test')) {
     return [
-      "What is the pass rate for quality_tests by test_type (ABV, IBU, pH)?",
-      "How many quality_issues with severity 'critical' exist by beer_style?",
-      "What is the average quality_tests result for Sleeman Honey Brown batches?"
+      "What is the pass rate for quality_tests by test_type (ABV, pH, clarity)?",
+      "How many quality_issues with severity 'critical' exist grouped by beer style?",
+      "What is the average actual_value for quality_tests on Sleeman Honey Brown Lager batches?"
     ];
   }
 
   if (lowerQuestion.includes('inventory') || lowerQuestion.includes('material') || lowerQuestion.includes('supplier')) {
     return [
       "Which raw_materials have quantity_kg below reorder_level_kg?",
-      "What is the total material_usage by supplier for hops and malt?",
+      "What is the total quantity_used_kg from material_usage grouped by supplier?",
       "Which suppliers have the highest rating in the suppliers table?"
     ];
   }
 
   if (lowerQuestion.includes('distributor') || lowerQuestion.includes('shipment') || lowerQuestion.includes('delivery')) {
     return [
-      "What is the total shipment quantity by distributor region?",
+      "What is the total shipment quantity grouped by distributor region?",
       "Which products have the most shipments with delivery_status 'delivered'?",
-      "How many active distributors are in each region?"
+      "What are the total shipments for LCBO Ontario vs BC Liquor Stores?"
     ];
   }
 
   if (lowerQuestion.includes('revenue') || lowerQuestion.includes('sales') || lowerQuestion.includes('profit')) {
     return [
-      "What is the total monthly_revenue by product for the last 6 months?",
+      "What is the total revenue from monthly_revenue grouped by product name?",
       "Which products have the highest revenue minus cost_of_goods margin?",
-      "How do units_sold compare between Sleeman Original Draught and Sleeman Cream Ale?"
+      "How do units_sold compare between Sleeman Original Draught and Sleeman Cream Ale products?"
     ];
   }
 
   if (lowerQuestion.includes('equipment') || lowerQuestion.includes('downtime') || lowerQuestion.includes('maintenance')) {
     return [
-      "What is the total cost_impact from equipment_downtime by production_line?",
+      "What is the total cost_impact from equipment_downtime grouped by production line?",
       "Which equipment items have the oldest last_maintenance_date?",
-      "What are the most common equipment_downtime reasons?"
+      "What are the most common reasons for equipment_downtime?"
     ];
   }
 
-  // Default brewery-focused questions using exact schema references
+  // Default brewery-focused questions using VERIFIED schema references
   return [
-    "What is the production volume_hl by beer_style name for completed batches?",
-    "How do quality_tests pass rates compare between Guelph and Vernon facilities?",
-    "Which distributors have the highest shipment quantities by region?"
+    "What is the total actual_volume_liters by beer style name for completed batches?",
+    "How do quality_tests pass rates compare between Guelph Brewery and Vernon Brewery?",
+    "Which distributors have the highest total shipment quantities?"
   ];
 }
