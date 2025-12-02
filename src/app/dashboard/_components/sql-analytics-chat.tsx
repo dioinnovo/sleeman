@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Menu,
@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import SiriOrb from '@/components/ui/siri-orb'
 import SimpleMarkdownMessage from '@/components/ui/simple-markdown-message'
+import { ThinkingSteps, type ThinkingStep } from '@/components/ui/thinking-steps'
 import { cn } from '@/lib/utils'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { getFriendlyColumnName } from '@/lib/columnMapping'
@@ -29,27 +30,28 @@ interface Message {
   queryTime?: number
   followUpQuestions?: string[]
   chartData?: any[]
+  thinkingSteps?: ThinkingStep[]
 }
 
 const QUICK_QUESTIONS = [
-  // 🍺 Production & Operations
+  // Production & Operations
   "What is our production volume by beer style over the past 12 months?",
   "Compare fermentation efficiency across production lines",
   "What is the production line downtime and cost impact?",
   "Show me monthly production trends",
 
-  // 📉 Quality Control & Efficiency
+  // Quality Control & Efficiency
   "What are the batch failure rates by beer style?",
   "Show me quality test variance from expected values",
   "What are the most common quality issues and resolution times?",
   "Which batches have the highest quality scores?",
 
-  // 👥 Inventory & Supply Chain
+  // Inventory & Supply Chain
   "Show me material usage trends and costs",
   "What is the supplier reliability and on-time delivery rate?",
   "What materials are below reorder level?",
 
-  // 📊 Strategic Planning & Distribution
+  // Strategic Planning & Distribution
   "Identify our top distributors by volume and revenue",
   "What are our top products by revenue?",
   "Show me capacity utilization by production line",
@@ -61,9 +63,12 @@ export default function SQLAnalyticsChat() {
   const [isTyping, setIsTyping] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [expandedQuery, setExpandedQuery] = useState<string | null>(null)
+  const [thinkingSteps, setThinkingSteps] = useState<ThinkingStep[]>([])
+  const [streamingContent, setStreamingContent] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const latestAssistantMessageRef = useRef<HTMLDivElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   // Auto-resize textarea
   const adjustTextareaHeight = () => {
@@ -87,9 +92,240 @@ export default function SQLAnalyticsChat() {
         })
       }, 100)
     }
-  }, [messages])
+  }, [messages, thinkingSteps, streamingContent])
 
-  const handleSend = async (text?: string) => {
+  /**
+   * Process SSE stream events
+   */
+  const processStreamEvent = useCallback((event: string, data: any) => {
+    switch (event) {
+      case 'thinking':
+        setThinkingSteps(prev => {
+          const existingIndex = prev.findIndex(s =>
+            s.step === data.step || s.step === data.step.replace('-done', '')
+          )
+
+          if (existingIndex >= 0) {
+            // Update existing step
+            const updated = [...prev]
+            updated[existingIndex] = {
+              ...updated[existingIndex],
+              message: data.message,
+              status: data.done ? 'complete' : 'active',
+              timestamp: data.done ? Date.now() : undefined
+            }
+            return updated
+          }
+
+          // Add new step
+          return [...prev, {
+            id: `${data.step}-${Date.now()}`,
+            step: data.step,
+            message: data.message,
+            icon: data.icon || 'analyze',
+            status: data.done ? 'complete' : 'active',
+            timestamp: data.done ? Date.now() : undefined
+          }]
+        })
+        break
+
+      case 'text-delta':
+        setStreamingContent(prev => prev + data.textDelta)
+        break
+
+      case 'tool-call':
+        // Could display tool calls in the UI if desired
+        console.log('Tool call:', data)
+        break
+
+      case 'tool-result':
+        // Could display tool results in the UI if desired
+        console.log('Tool result:', data)
+        break
+
+      case 'error':
+        setThinkingSteps(prev => prev.map(s =>
+          s.step === data.step
+            ? { ...s, status: 'error' as const, message: data.message }
+            : s
+        ))
+        break
+
+      case 'data':
+        // Final data received - will be handled in handleSendStreaming
+        break
+
+      case 'finish':
+        // Stream complete
+        break
+    }
+  }, [])
+
+  /**
+   * Send message with streaming support
+   */
+  const handleSendStreaming = async (text?: string) => {
+    const messageText = text || inputValue.trim()
+    if (!messageText) return
+
+    if (!text) {
+      setInputValue('')
+    }
+
+    // Reset state
+    setThinkingSteps([])
+    setStreamingContent('')
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: messageText,
+      timestamp: new Date()
+    }
+
+    const newMessages = [...messages, userMessage]
+    setMessages(newMessages)
+    setIsTyping(true)
+
+    // Create abort controller for cancellation
+    abortControllerRef.current = new AbortController()
+
+    try {
+      const response = await fetch('/api/sql-agent-stream', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: messageText,
+          responseMode: 'quick'
+        }),
+        signal: abortControllerRef.current.signal
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to get response')
+      }
+
+      const reader = response.body?.getReader()
+      if (!reader) throw new Error('No response body')
+
+      const decoder = new TextDecoder()
+      let buffer = ''
+      let finalData: any = null
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        buffer += decoder.decode(value, { stream: true })
+
+        // Process complete SSE events
+        const lines = buffer.split('\n')
+        buffer = lines.pop() || '' // Keep incomplete line in buffer
+
+        let currentEvent = ''
+        let currentData = ''
+
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            currentEvent = line.slice(7)
+          } else if (line.startsWith('data: ')) {
+            currentData = line.slice(6)
+
+            if (currentEvent && currentData) {
+              try {
+                const parsedData = JSON.parse(currentData)
+
+                // Save final data for message creation
+                if (currentEvent === 'data') {
+                  finalData = parsedData
+                } else {
+                  processStreamEvent(currentEvent, parsedData)
+                }
+              } catch (e) {
+                console.error('Failed to parse SSE data:', e)
+              }
+
+              currentEvent = ''
+              currentData = ''
+            }
+          }
+        }
+      }
+
+      // Create assistant message from final data
+      if (finalData) {
+        const queryResults = finalData.queryResults
+        const columns = queryResults?.columns || []
+        const rows = queryResults?.rows || []
+        const rowCount = rows.length
+
+        // Convert rows to objects for table/chart display
+        let resultsAsObjects: any[] = []
+        if (columns.length > 0 && rows.length > 0) {
+          resultsAsObjects = rows.map((row: any[]) => {
+            const obj: any = {}
+            columns.forEach((col: string, idx: number) => {
+              obj[col] = row[idx]
+            })
+            return obj
+          })
+        }
+
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: streamingContent || (rowCount > 0
+            ? `Found ${rowCount} results`
+            : 'No results found for this query.'),
+          timestamp: new Date(),
+          sqlQuery: finalData.sqlQuery,
+          results: resultsAsObjects,
+          rowCount: rowCount,
+          followUpQuestions: finalData.followUpQuestions,
+          chartData: finalData.chartData,
+          thinkingSteps: [...thinkingSteps]
+        }
+
+        setMessages([...newMessages, assistantMessage])
+      }
+
+      setIsTyping(false)
+      setThinkingSteps([])
+      setStreamingContent('')
+
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        console.log('Request aborted')
+        return
+      }
+
+      console.error('Error calling streaming SQL agent:', error)
+
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'I apologize, but I\'m having trouble connecting to the database. Please ensure the database is running.',
+        timestamp: new Date(),
+        followUpQuestions: [
+          'What is our production volume by beer style?',
+          'Show me the top distributors',
+          'What are the batch failure rates?'
+        ]
+      }
+
+      setMessages([...newMessages, errorMessage])
+      setIsTyping(false)
+      setThinkingSteps([])
+      setStreamingContent('')
+    }
+  }
+
+  /**
+   * Legacy non-streaming send (fallback)
+   */
+  const handleSendNonStreaming = async (text?: string) => {
     const messageText = text || inputValue.trim()
     if (!messageText) return
 
@@ -139,15 +375,12 @@ export default function SQLAnalyticsChat() {
         return
       }
 
-      // Extract data from API response with correct field names
-      // API returns: { success, response, sqlQuery, queryResults: { columns, rows }, chartData, metadata: { executionTimeMs, ... } }
       const queryResults = data.queryResults
       const columns = queryResults?.columns || []
       const rows = queryResults?.rows || []
       const rowCount = rows.length
       const executionTimeMs = data.metadata?.executionTimeMs
 
-      // Convert queryResults.rows (array of arrays) to array of objects for table/chart display
       let resultsAsObjects: any[] = []
       if (columns.length > 0 && rows.length > 0) {
         resultsAsObjects = rows.map((row: any[]) => {
@@ -159,16 +392,13 @@ export default function SQLAnalyticsChat() {
         })
       }
 
-      // Prepare chart data if applicable
       let chartData: any[] | undefined = undefined
       if (resultsAsObjects.length > 0) {
         chartData = prepareChartData(resultsAsObjects) ?? undefined
       }
 
-      // Use API's chartData if provided, otherwise use our generated chart data
       const finalChartData = data.chartData || chartData
 
-      // Build assistant message content - use the AI insights response if available
       const contentText = data.response ||
         (rowCount > 0
           ? `Found ${rowCount} results${executionTimeMs ? ` in ${executionTimeMs}ms` : ''}`
@@ -209,33 +439,31 @@ export default function SQLAnalyticsChat() {
     }
   }
 
+  // Use streaming by default
+  const handleSend = handleSendStreaming
+
   const prepareChartData = (results: any[]) => {
     if (!results || results.length === 0) return null
 
-    // Try to detect if this data is suitable for charting
     const firstRow = results[0]
     const keys = Object.keys(firstRow)
 
-    // Look for numeric columns
     const numericKeys = keys.filter(key => typeof firstRow[key] === 'number')
 
     if (numericKeys.length === 0) return null
 
-    return results.slice(0, 10) // Limit to first 10 rows for cleaner charts
+    return results.slice(0, 10)
   }
 
   const renderChart = (chartData: any) => {
     if (!chartData) return null
 
-    // Check if chartData is in Chart.js format (from API) or array-of-objects format (local)
     const isChartJsFormat = chartData.type && chartData.labels && chartData.datasets
 
     if (isChartJsFormat) {
-      // Convert Chart.js format to Recharts format
       const { labels, datasets, type } = chartData
       if (!labels || labels.length === 0 || !datasets || datasets.length === 0) return null
 
-      // Transform to array of objects for Recharts
       const rechartsData = labels.map((label: string, index: number) => {
         const dataPoint: any = { label }
         datasets.forEach((dataset: any) => {
@@ -247,7 +475,6 @@ export default function SQLAnalyticsChat() {
       const primaryDataset = datasets[0]
       if (!primaryDataset) return null
 
-      // Use line chart for time-series, bar chart otherwise
       if (type === 'line') {
         return (
           <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
@@ -274,7 +501,6 @@ export default function SQLAnalyticsChat() {
         )
       }
 
-      // Default to bar chart
       return (
         <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
           <ResponsiveContainer width="100%" height={300}>
@@ -297,7 +523,6 @@ export default function SQLAnalyticsChat() {
       )
     }
 
-    // Handle array-of-objects format (local prepareChartData)
     const data = chartData as any[]
     if (!Array.isArray(data) || data.length === 0) return null
 
@@ -306,7 +531,6 @@ export default function SQLAnalyticsChat() {
 
     const keys = Object.keys(firstRow)
 
-    // Find the label key (usually first column or one containing "name", "month", etc.)
     const labelKey = keys.find(k =>
       k.toLowerCase().includes('name') ||
       k.toLowerCase().includes('month') ||
@@ -315,12 +539,10 @@ export default function SQLAnalyticsChat() {
       k.toLowerCase().includes('status')
     ) || keys[0]
 
-    // Find numeric keys
     const numericKeys = keys.filter(key => typeof firstRow[key] === 'number')
 
     if (numericKeys.length === 0) return null
 
-    // Use the most significant numeric column (usually total, revenue, count)
     const primaryMetric = numericKeys.find(k =>
       k.toLowerCase().includes('revenue') ||
       k.toLowerCase().includes('total') ||
@@ -571,8 +793,33 @@ export default function SQLAnalyticsChat() {
               ))}
             </AnimatePresence>
 
-            {/* Typing Indicator */}
-            {isTyping && (
+            {/* Thinking Steps - Shown during streaming */}
+            {isTyping && thinkingSteps.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex justify-start"
+              >
+                <div className="max-w-[90%]">
+                  <ThinkingSteps steps={thinkingSteps} />
+
+                  {/* Streaming content preview */}
+                  {streamingContent && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-2 bg-sleeman-dark border border-sleeman-brown text-gray-200 rounded-2xl px-4 py-3"
+                    >
+                      <SimpleMarkdownMessage content={streamingContent} className="text-sm" />
+                      <span className="inline-block w-2 h-4 bg-sleeman-gold animate-pulse ml-1" />
+                    </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Legacy Typing Indicator (fallback when no thinking steps) */}
+            {isTyping && thinkingSteps.length === 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

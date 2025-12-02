@@ -2,24 +2,23 @@
 
 import { useState } from 'react'
 import {
-  Globe, Server, Database, Shield, Activity, CheckCircle,
+  Server, Database, Shield, Activity, CheckCircle,
   AlertCircle, Clock, ArrowRight, ArrowLeft, RefreshCw,
-  Lock, Zap, FileText, Users, Building2, Heart,
-  Stethoscope, Pill, Calendar, TrendingUp, Cloud
+  Lock, Zap, Factory, Truck, Users, Building2,
+  Beaker, BarChart3, Cloud, Settings, TrendingUp
 } from 'lucide-react'
 import { PageHeader } from '@/components/ui/page-header'
 
 interface Integration {
   id: string
   name: string
-  type: 'ehr' | 'hie' | 'pharmacy' | 'lab' | 'imaging' | 'payer' | 'device'
+  type: 'erp' | 'dcs' | 'hr' | 'quality' | 'distribution' | 'analytics'
   status: 'connected' | 'pending' | 'error' | 'disabled'
   description: string
-  vendor?: string
+  vendor: string
   lastSync?: Date
   recordsSync?: number
   dataFlow: 'bidirectional' | 'inbound' | 'outbound'
-  compliance: string[]
   features: string[]
 }
 
@@ -31,128 +30,145 @@ interface DataFlow {
   frequency: string
 }
 
-export default function IntegrationsPage() {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'ehr' | 'hie' | 'pharmacy' | 'lab' | 'payer'>('all')
+export default function BreweryIntegrationsPage() {
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'erp' | 'dcs' | 'hr' | 'quality' | 'distribution'>('all')
 
   const integrations: Integration[] = [
     {
       id: '1',
-      name: 'Epic MyChart',
-      type: 'ehr',
+      name: 'Oracle ERP Cloud',
+      type: 'erp',
       status: 'connected',
-      description: 'Real-time patient data synchronization with Epic EHR',
-      vendor: 'Epic Systems',
+      description: 'Enterprise resource planning for financial management, procurement, and supply chain',
+      vendor: 'Oracle Corporation',
       lastSync: new Date(),
-      recordsSync: 12847,
+      recordsSync: 45823,
       dataFlow: 'bidirectional',
-      compliance: ['HIPAA', 'HL7 FHIR', 'SMART on FHIR'],
-      features: ['Patient Demographics', 'Clinical Notes', 'Lab Results', 'Medications', 'Allergies']
+      features: ['Financial Data', 'Purchase Orders', 'Inventory Levels', 'Supplier Management', 'Cost Tracking']
     },
     {
       id: '2',
-      name: 'Cerner PowerChart',
-      type: 'ehr',
+      name: 'Rockwell PlantPAx DCS',
+      type: 'dcs',
       status: 'connected',
-      description: 'Integration with Cerner Millennium platform',
-      vendor: 'Oracle Cerner',
+      description: 'Distributed Control System for real-time brewing process automation and monitoring',
+      vendor: 'Rockwell Automation',
       lastSync: new Date(),
-      recordsSync: 8934,
-      dataFlow: 'bidirectional',
-      compliance: ['HIPAA', 'HL7 v2.5', 'CDA'],
-      features: ['ADT Feeds', 'Clinical Documentation', 'CPOE', 'Results Review']
+      recordsSync: 128456,
+      dataFlow: 'inbound',
+      features: ['Temperature Control', 'Fermentation Monitoring', 'Batch Control', 'Equipment Status', 'Alarm Management']
     },
     {
       id: '3',
-      name: 'Florida HIE',
-      type: 'hie',
+      name: 'Workday HCM',
+      type: 'hr',
       status: 'connected',
-      description: 'Statewide health information exchange connectivity',
-      vendor: 'Florida Health Connect',
+      description: 'Human capital management for employee data, training records, and certifications',
+      vendor: 'Workday Inc.',
       lastSync: new Date(),
-      recordsSync: 45623,
+      recordsSync: 1247,
       dataFlow: 'inbound',
-      compliance: ['HIPAA', 'Direct Protocol', 'IHE XDS.b'],
-      features: ['Patient Matching', 'Document Query', 'Admission Alerts', 'Care Summaries']
+      features: ['Employee Records', 'Training Completion', 'Certifications', 'Shift Scheduling', 'Safety Training']
     },
     {
       id: '4',
-      name: 'Surescripts',
-      type: 'pharmacy',
+      name: 'LIMS Quality System',
+      type: 'quality',
       status: 'connected',
-      description: 'E-prescribing and medication history network',
-      vendor: 'Surescripts LLC',
+      description: 'Laboratory Information Management System for quality testing and compliance tracking',
+      vendor: 'LabWare',
       lastSync: new Date(),
-      recordsSync: 3421,
+      recordsSync: 8934,
       dataFlow: 'bidirectional',
-      compliance: ['NCPDP SCRIPT', 'DEA EPCS'],
-      features: ['E-Prescribing', 'Medication History', 'Prior Auth', 'Real-Time Benefits']
+      features: ['Test Results', 'Batch Analysis', 'Compliance Reports', 'Certificate of Analysis', 'Trend Analysis']
     },
     {
       id: '5',
-      name: 'Quest Diagnostics',
-      type: 'lab',
+      name: 'LCBO Retail Link',
+      type: 'distribution',
       status: 'connected',
-      description: 'Laboratory results and order management',
-      vendor: 'Quest Diagnostics',
+      description: 'Integration with Liquor Control Board of Ontario for sales data and inventory',
+      vendor: 'LCBO',
       lastSync: new Date(),
-      recordsSync: 7812,
-      dataFlow: 'bidirectional',
-      compliance: ['CLIA', 'HL7 ORU', 'LOINC'],
-      features: ['Lab Orders', 'Result Delivery', 'Critical Values', 'Trending']
+      recordsSync: 23567,
+      dataFlow: 'inbound',
+      features: ['Sales Data', 'Store Inventory', 'Order Forecasting', 'Promotional Data', 'Returns']
     },
     {
       id: '6',
-      name: 'Humana Claims API',
-      type: 'payer',
-      status: 'pending',
-      description: 'Claims processing and eligibility verification',
-      vendor: 'Humana Inc.',
+      name: 'SAP Transportation',
+      type: 'distribution',
+      status: 'connected',
+      description: 'Transportation management for shipment tracking and logistics optimization',
+      vendor: 'SAP SE',
+      lastSync: new Date(),
+      recordsSync: 5621,
       dataFlow: 'bidirectional',
-      compliance: ['X12 EDI', 'CAQH CORE'],
-      features: ['Eligibility Check', 'Prior Auth', 'Claims Status', 'Remittance']
+      features: ['Shipment Tracking', 'Route Optimization', 'Carrier Management', 'Delivery Scheduling', 'Freight Costs']
     },
     {
       id: '7',
-      name: 'Athenahealth',
-      type: 'ehr',
-      status: 'error',
-      description: 'Cloud-based EHR and practice management',
-      vendor: 'Athenahealth',
-      lastSync: new Date(Date.now() - 86400000),
+      name: 'Power BI Analytics',
+      type: 'analytics',
+      status: 'connected',
+      description: 'Business intelligence and reporting platform for executive dashboards',
+      vendor: 'Microsoft',
+      lastSync: new Date(),
       recordsSync: 0,
+      dataFlow: 'outbound',
+      features: ['Executive Dashboards', 'KPI Tracking', 'Ad-hoc Reports', 'Data Visualization', 'Alerts']
+    },
+    {
+      id: '8',
+      name: 'Sapporo Integration Hub',
+      type: 'erp',
+      status: 'pending',
+      description: 'Parent company integration for consolidated reporting and data sharing',
+      vendor: 'Sapporo Breweries',
       dataFlow: 'bidirectional',
-      compliance: ['HIPAA', 'REST API', 'OAuth 2.0'],
-      features: ['Appointments', 'Clinical Data', 'Billing', 'Patient Portal']
+      features: ['Financial Consolidation', 'Brand Performance', 'Global KPIs', 'Best Practices']
     }
   ]
 
   const dataFlows: DataFlow[] = [
-    { source: 'Epic MyChart', destination: 'Care Coordination', volume: 2847, type: 'Clinical Data', frequency: 'Real-time' },
-    { source: 'Florida HIE', destination: 'Arthur', volume: 8923, type: 'Care Summaries', frequency: 'Daily' },
-    { source: 'Quest Labs', destination: 'Clinical Pathways', volume: 1247, type: 'Lab Results', frequency: 'Hourly' },
-    { source: 'Surescripts', destination: 'Medication Management', volume: 634, type: 'Rx Data', frequency: 'Real-time' }
+    { source: 'PlantPAx DCS', destination: 'BrewMind', volume: 12847, type: 'Production Data', frequency: 'Real-time' },
+    { source: 'Oracle ERP', destination: 'BrewMind', volume: 8923, type: 'Financial Data', frequency: 'Hourly' },
+    { source: 'LIMS', destination: 'Quality Dashboard', volume: 2456, type: 'Test Results', frequency: 'Real-time' },
+    { source: 'LCBO Retail', destination: 'Distribution Analytics', volume: 15634, type: 'Sales Data', frequency: 'Daily' },
+    { source: 'BrewMind', destination: 'Power BI', volume: 5000, type: 'Analytics', frequency: 'Hourly' }
   ]
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'connected': return 'bg-green-100 text-green-700'
-      case 'pending': return 'bg-yellow-100 text-yellow-700'
-      case 'error': return 'bg-red-100 text-red-700'
-      case 'disabled': return 'bg-gray-100 text-gray-700'
-      default: return 'bg-gray-100 text-gray-700'
+      case 'connected': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+      case 'pending': return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300'
+      case 'error': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300'
+      case 'disabled': return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
+      default: return 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
     }
   }
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case 'ehr': return FileText
-      case 'hie': return Globe
-      case 'pharmacy': return Pill
-      case 'lab': return Activity
-      case 'imaging': return Heart
-      case 'payer': return Building2
-      case 'device': return Stethoscope
+      case 'erp': return Building2
+      case 'dcs': return Factory
+      case 'hr': return Users
+      case 'quality': return Beaker
+      case 'distribution': return Truck
+      case 'analytics': return BarChart3
       default: return Server
+    }
+  }
+
+  const getTypeLabel = (type: string) => {
+    switch (type) {
+      case 'erp': return 'ERP System'
+      case 'dcs': return 'Process Control'
+      case 'hr': return 'Human Resources'
+      case 'quality': return 'Quality Management'
+      case 'distribution': return 'Distribution'
+      case 'analytics': return 'Analytics'
+      default: return 'Integration'
     }
   }
 
@@ -160,21 +176,28 @@ export default function IntegrationsPage() {
     selectedCategory === 'all' || integration.type === selectedCategory
   )
 
-  // Calculate statistics
   const stats = {
     totalIntegrations: integrations.length,
     connectedSystems: integrations.filter(i => i.status === 'connected').length,
     totalRecords: integrations.reduce((acc, i) => acc + (i.recordsSync || 0), 0),
-    dataPoints: 2.4 // millions
+    dataPointsPerDay: 156000
+  }
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-CA', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 bg-sleeman-dark min-h-screen p-6">
       <PageHeader
-        title="Healthcare Integrations"
-        description="EHR, HIE, and clinical system connectivity"
+        title="System Integrations"
+        description="Enterprise system connectivity and data synchronization"
         action={
-          <button className="h-12 px-6 bg-arthur-blue text-white rounded-full hover:bg-arthur-blue-dark flex items-center justify-center gap-2 transition-colors">
+          <button type="button" className="h-12 px-6 bg-sleeman-gold text-sleeman-dark rounded-full hover:bg-sleeman-gold-light flex items-center justify-center gap-2 transition-colors font-semibold">
             <Cloud size={20} />
             <span>Add Integration</span>
           </button>
@@ -183,62 +206,63 @@ export default function IntegrationsPage() {
 
       {/* Integration Statistics */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
           <div className="flex items-center justify-between mb-2">
-            <Server className="text-arthur-blue" size={20} />
-            <span className="text-xs text-green-600 font-semibold">Active</span>
+            <Server className="text-sleeman-gold" size={20} />
+            <span className="text-xs text-sleeman-gold font-semibold">Active</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.totalIntegrations}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Total Integrations</p>
+          <p className="text-2xl font-bold text-gray-100">{stats.totalIntegrations}</p>
+          <p className="text-xs text-gray-400 mt-1">Total Integrations</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
           <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="text-green-600" size={20} />
-            <span className="text-xs text-green-600 font-semibold">86%</span>
+            <CheckCircle className="text-green-500" size={20} />
+            <span className="text-xs text-green-500 font-semibold">{Math.round((stats.connectedSystems / stats.totalIntegrations) * 100)}%</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.connectedSystems}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Connected Systems</p>
+          <p className="text-2xl font-bold text-gray-100">{stats.connectedSystems}</p>
+          <p className="text-xs text-gray-400 mt-1">Connected Systems</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
           <div className="flex items-center justify-between mb-2">
-            <Database className="text-purple-600" size={20} />
-            <span className="text-xs text-green-600 font-semibold">+12K/day</span>
+            <Database className="text-purple-500" size={20} />
+            <span className="text-xs text-green-500 font-semibold">+12K/day</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{(stats.totalRecords / 1000).toFixed(0)}K</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Records Synced</p>
+          <p className="text-2xl font-bold text-gray-100">{(stats.totalRecords / 1000).toFixed(0)}K</p>
+          <p className="text-xs text-gray-400 mt-1">Records Synced Today</p>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+        <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
           <div className="flex items-center justify-between mb-2">
-            <Zap className="text-amber-600" size={20} />
-            <span className="text-xs text-green-600 font-semibold">Real-time</span>
+            <Zap className="text-amber-500" size={20} />
+            <span className="text-xs text-green-500 font-semibold">Real-time</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stats.dataPoints}M</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Data Points/Month</p>
+          <p className="text-2xl font-bold text-gray-100">{(stats.dataPointsPerDay / 1000).toFixed(0)}K</p>
+          <p className="text-xs text-gray-400 mt-1">Data Points/Day</p>
         </div>
       </div>
 
       {/* Category Filter */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
+      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-4">
         <div className="flex gap-2 overflow-x-auto">
-          {['all', 'ehr', 'hie', 'pharmacy', 'lab', 'payer'].map((category) => (
+          {['all', 'erp', 'dcs', 'hr', 'quality', 'distribution'].map((category) => (
             <button
+              type="button"
               key={category}
-              onClick={() => setSelectedCategory(category as any)}
+              onClick={() => setSelectedCategory(category as typeof selectedCategory)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                 selectedCategory === category
-                  ? 'bg-arthur-blue text-white'
-                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? 'bg-sleeman-gold text-sleeman-dark'
+                  : 'bg-sleeman-dark text-gray-300 hover:bg-sleeman-dark/80 border border-sleeman-brown'
               }`}
             >
               {category === 'all' ? 'All Systems' :
-               category === 'ehr' ? 'EHR Systems' :
-               category === 'hie' ? 'Health Information Exchange' :
-               category === 'pharmacy' ? 'Pharmacy Networks' :
-               category === 'lab' ? 'Laboratory' :
-               'Payer Systems'}
+               category === 'erp' ? 'ERP Systems' :
+               category === 'dcs' ? 'Process Control' :
+               category === 'hr' ? 'HR Systems' :
+               category === 'quality' ? 'Quality Systems' :
+               'Distribution'}
             </button>
           ))}
         </div>
@@ -250,46 +274,46 @@ export default function IntegrationsPage() {
           const Icon = getTypeIcon(integration.type)
 
           return (
-            <div key={integration.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+            <div key={integration.id} className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-arthur-blue/10 rounded-lg flex items-center justify-center">
-                    <Icon className="text-arthur-blue" size={24} />
+                  <div className="w-12 h-12 bg-sleeman-gold/20 rounded-lg flex items-center justify-center">
+                    <Icon className="text-sleeman-gold" size={24} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{integration.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{integration.vendor}</p>
+                    <h3 className="font-semibold text-gray-100">{integration.name}</h3>
+                    <p className="text-sm text-gray-400">{integration.vendor}</p>
                   </div>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(integration.status)}`}>
-                  {integration.status === 'connected' && <CheckCircle size={12} className="inline mr-1" />}
-                  {integration.status === 'error' && <AlertCircle size={12} className="inline mr-1" />}
-                  {integration.status === 'pending' && <Clock size={12} className="inline mr-1" />}
-                  {integration.status}
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 ${getStatusColor(integration.status)}`}>
+                  {integration.status === 'connected' && <CheckCircle size={12} />}
+                  {integration.status === 'error' && <AlertCircle size={12} />}
+                  {integration.status === 'pending' && <Clock size={12} />}
+                  {integration.status.charAt(0).toUpperCase() + integration.status.slice(1)}
                 </span>
               </div>
 
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{integration.description}</p>
+              <p className="text-sm text-gray-400 mb-4">{integration.description}</p>
 
               {/* Data Flow Indicator */}
               <div className="flex items-center gap-2 mb-4">
-                <span className="text-xs text-gray-500 dark:text-gray-400">Data Flow:</span>
+                <span className="text-xs text-gray-500">Data Flow:</span>
                 <div className="flex items-center gap-1">
                   {integration.dataFlow === 'bidirectional' ? (
                     <>
-                      <ArrowLeft size={14} className="text-arthur-blue" />
-                      <ArrowRight size={14} className="text-arthur-blue" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Bidirectional</span>
+                      <ArrowLeft size={14} className="text-sleeman-gold" />
+                      <ArrowRight size={14} className="text-sleeman-gold" />
+                      <span className="text-xs font-medium text-gray-300">Bidirectional</span>
                     </>
                   ) : integration.dataFlow === 'inbound' ? (
                     <>
-                      <ArrowLeft size={14} className="text-arthur-blue" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Inbound</span>
+                      <ArrowLeft size={14} className="text-sleeman-gold" />
+                      <span className="text-xs font-medium text-gray-300">Inbound</span>
                     </>
                   ) : (
                     <>
-                      <ArrowRight size={14} className="text-arthur-blue" />
-                      <span className="text-xs font-medium text-gray-700 dark:text-gray-300">Outbound</span>
+                      <ArrowRight size={14} className="text-sleeman-gold" />
+                      <span className="text-xs font-medium text-gray-300">Outbound</span>
                     </>
                   )}
                 </div>
@@ -297,24 +321,11 @@ export default function IntegrationsPage() {
 
               {/* Features */}
               <div className="mb-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Supported Features:</p>
+                <p className="text-xs text-gray-500 mb-2">Synced Data:</p>
                 <div className="flex flex-wrap gap-1">
                   {integration.features.map((feature, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs rounded">
+                    <span key={idx} className="px-2 py-1 bg-sleeman-dark text-xs rounded text-gray-400">
                       {feature}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Compliance Standards */}
-              <div className="mb-4">
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Compliance:</p>
-                <div className="flex flex-wrap gap-1">
-                  {integration.compliance.map((standard, idx) => (
-                    <span key={idx} className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 text-xs rounded flex items-center gap-1">
-                      <Shield size={10} />
-                      {standard}
                     </span>
                   ))}
                 </div>
@@ -322,17 +333,17 @@ export default function IntegrationsPage() {
 
               {/* Sync Status */}
               {integration.status === 'connected' && integration.lastSync && (
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="pt-4 border-t border-sleeman-dark">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-4">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        Last sync: {integration.lastSync.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                      <span className="text-gray-500">
+                        Last sync: {formatTime(integration.lastSync)}
                       </span>
-                      <span className="text-gray-500 dark:text-gray-400">
+                      <span className="text-gray-500">
                         {integration.recordsSync?.toLocaleString()} records
                       </span>
                     </div>
-                    <button className="flex items-center gap-1 text-arthur-blue hover:text-arthur-blue-dark">
+                    <button type="button" className="flex items-center gap-1 text-sleeman-gold hover:text-sleeman-gold-light transition-colors">
                       <RefreshCw size={12} />
                       Sync Now
                     </button>
@@ -341,10 +352,10 @@ export default function IntegrationsPage() {
               )}
 
               {integration.status === 'error' && (
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="pt-4 border-t border-sleeman-dark">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-red-600">Connection failed - Authentication error</span>
-                    <button className="text-xs text-arthur-blue hover:text-arthur-blue-dark font-medium">
+                    <span className="text-xs text-red-400">Connection failed - Check credentials</span>
+                    <button type="button" className="text-xs text-sleeman-gold hover:text-sleeman-gold-light font-medium">
                       Reconnect
                     </button>
                   </div>
@@ -352,11 +363,11 @@ export default function IntegrationsPage() {
               )}
 
               {integration.status === 'pending' && (
-                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="pt-4 border-t border-sleeman-dark">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-amber-600">Awaiting vendor approval</span>
-                    <button className="text-xs text-arthur-blue hover:text-arthur-blue-dark font-medium">
-                      Check Status
+                    <span className="text-xs text-amber-400">Configuration in progress</span>
+                    <button type="button" className="text-xs text-sleeman-gold hover:text-sleeman-gold-light font-medium">
+                      Configure
                     </button>
                   </div>
                 </div>
@@ -367,24 +378,24 @@ export default function IntegrationsPage() {
       </div>
 
       {/* Real-time Data Flow */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <TrendingUp size={20} className="text-arthur-blue" />
+      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+          <TrendingUp size={20} className="text-sleeman-gold" />
           Real-time Data Flow
         </h2>
 
         <div className="space-y-3">
           {dataFlows.map((flow, idx) => (
-            <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+            <div key={idx} className="flex items-center justify-between p-3 bg-sleeman-dark rounded-lg">
               <div className="flex items-center gap-3 flex-1">
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{flow.source}</div>
-                <ArrowRight className="text-arthur-blue" size={16} />
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{flow.destination}</div>
+                <div className="text-sm font-medium text-gray-100">{flow.source}</div>
+                <ArrowRight className="text-sleeman-gold" size={16} />
+                <div className="text-sm font-medium text-gray-100">{flow.destination}</div>
               </div>
-              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-4 text-xs text-gray-400">
                 <span>{flow.type}</span>
-                <span className="font-medium text-gray-700 dark:text-gray-300">{flow.volume.toLocaleString()} records</span>
-                <span className="px-2 py-1 bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 rounded">
+                <span className="font-medium text-gray-300">{flow.volume.toLocaleString()} records</span>
+                <span className="px-2 py-1 bg-green-900/30 text-green-400 rounded">
                   {flow.frequency}
                 </span>
               </div>
@@ -393,27 +404,87 @@ export default function IntegrationsPage() {
         </div>
       </div>
 
+      {/* Integration Architecture */}
+      <div className="bg-sleeman-brown rounded-xl shadow-lg shadow-black/20 border border-sleeman-brown p-6">
+        <h2 className="text-lg font-semibold text-gray-100 mb-4 flex items-center gap-2">
+          <Settings size={20} className="text-sleeman-gold" />
+          Integration Architecture
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Source Systems */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Source Systems</h3>
+            <div className="space-y-2">
+              {['Oracle ERP Cloud', 'PlantPAx DCS', 'Workday HCM', 'LIMS Quality'].map((system, idx) => (
+                <div key={idx} className="flex items-center gap-2 p-2 bg-sleeman-dark rounded-lg">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">{system}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* BrewMind Hub */}
+          <div className="flex flex-col items-center justify-center">
+            <div className="w-32 h-32 bg-gradient-to-br from-sleeman-gold/30 to-sleeman-gold/10 rounded-full flex items-center justify-center border-2 border-sleeman-gold/50">
+              <div className="text-center">
+                <Database className="text-sleeman-gold mx-auto mb-1" size={28} />
+                <span className="text-sm font-bold text-sleeman-gold">BrewMind</span>
+                <p className="text-xs text-gray-400">Data Hub</p>
+              </div>
+            </div>
+            <div className="mt-4 text-center">
+              <p className="text-xs text-gray-400">Real-time data aggregation</p>
+              <p className="text-xs text-gray-400">AI-powered analytics</p>
+            </div>
+          </div>
+
+          {/* Destination Systems */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">Destinations</h3>
+            <div className="space-y-2">
+              {['Barley AI Assistant', 'Power BI Dashboards', 'Executive Reports', 'Sapporo Global'].map((system, idx) => (
+                <div key={idx} className="flex items-center gap-2 p-2 bg-sleeman-dark rounded-lg">
+                  <ArrowRight size={14} className="text-sleeman-gold" />
+                  <span className="text-sm text-gray-300">{system}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Integration Security */}
-      <div className="bg-gradient-to-r from-arthur-blue to-blue-600 rounded-xl shadow-sm p-6 text-white">
+      <div className="bg-gradient-to-r from-sleeman-gold/20 to-sleeman-brown rounded-xl shadow-lg shadow-black/20 p-6 border border-sleeman-gold/30">
         <div className="flex items-center gap-2 mb-4">
-          <Lock size={24} />
-          <h2 className="text-xl font-bold">Integration Security & Compliance</h2>
+          <Lock className="text-sleeman-gold" size={24} />
+          <h2 className="text-xl font-bold text-gray-100">Integration Security & Compliance</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2">HIPAA Compliant</h3>
-            <p className="text-sm opacity-90">All integrations meet HIPAA security requirements with end-to-end encryption.</p>
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
+            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
+              <Shield size={18} className="text-sleeman-gold" />
+              SOC 2 Type II
+            </h3>
+            <p className="text-sm text-gray-400">All integrations meet enterprise security standards with comprehensive audit trails.</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2">SOC 2 Type II</h3>
-            <p className="text-sm opacity-90">Annual security audits ensure data protection and system reliability.</p>
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
+            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
+              <Lock size={18} className="text-sleeman-gold" />
+              End-to-End Encryption
+            </h3>
+            <p className="text-sm text-gray-400">TLS 1.3 encryption for all data in transit, AES-256 for data at rest.</p>
           </div>
 
-          <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-            <h3 className="font-semibold mb-2">HITRUST Certified</h3>
-            <p className="text-sm opacity-90">Comprehensive security framework for healthcare information protection.</p>
+          <div className="bg-sleeman-dark/50 backdrop-blur rounded-lg p-4 border border-sleeman-brown">
+            <h3 className="font-semibold text-gray-100 mb-2 flex items-center gap-2">
+              <Activity size={18} className="text-sleeman-gold" />
+              24/7 Monitoring
+            </h3>
+            <p className="text-sm text-gray-400">Real-time health monitoring with automated alerts and failover capabilities.</p>
           </div>
         </div>
       </div>

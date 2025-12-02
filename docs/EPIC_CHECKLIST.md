@@ -179,8 +179,8 @@
 - [ ] **5.1** Main Dashboard with brewery KPI cards
 - [x] **5.2** Quality Control page (`/dashboard/compliance`)
 - [x] **5.3** Distribution page (`/dashboard/distribution`)
-- [ ] **5.4** Reports page (`/dashboard/reports`)
-- [ ] **5.5** Integrations page (`/dashboard/integrations`)
+- [x] **5.4** Reports page (`/dashboard/reports`)
+- [x] **5.5** Integrations page (`/dashboard/integrations`)
 - [x] **5.6** Barley AI Assistant page (`/dashboard/assistant`)
 
 ### Verification Checklist
@@ -208,17 +208,19 @@
 - [x] Delivery metrics show
 - [x] Dark theme applied
 
-#### 5.4 Reports
-- [ ] Page updated with brewery reports
-- [ ] Production report template
-- [ ] Quality report template
-- [ ] Export functionality works
+#### 5.4 Reports ✅
+- [x] Page updated with brewery reports
+- [x] 14 reports across 4 categories (Production, Quality, Distribution, Financial)
+- [x] Scheduled deliveries table
+- [x] Quick generation buttons
+- [x] Dark theme applied
 
-#### 5.5 Integrations
-- [ ] Page updated with brewery integrations
-- [ ] Oracle ERP status displays
-- [ ] PlantPAx integration status
-- [ ] Dark theme applied
+#### 5.5 Integrations ✅
+- [x] Page updated with brewery integrations
+- [x] 8 enterprise systems (Oracle ERP, PlantPAx, Workday, LIMS, LCBO, SAP, Power BI, Sapporo)
+- [x] Data flow visualization
+- [x] Architecture diagram
+- [x] Dark theme applied
 
 #### 5.6 Barley AI ✅
 - [x] SQL chat works end-to-end
@@ -345,14 +347,14 @@
 | 2 | 4 | 0 | 0 | ✅ |
 | 3 | 5 | 0 | 0 | ✅ |
 | 4 | 5 | 0 | 0 | ✅ |
-| 5 | 3 | 0 | 3 | 🔄 |
+| 5 | 5 | 0 | 1 | 🔄 |
 | 6 | 0 | 0 | 4 | ⏳ |
 | 7 | 2 | 0 | 3 | 🔄 |
 | 8 | 1 | 0 | 3 | 🔄 |
 | 9 | 4 | 0 | 2 | 🔄 |
 | 10 | 0 | 0 | 5 | ⏳ |
 
-**Total**: 29 complete, 15 pending
+**Total**: 31 complete, 13 pending
 
 ---
 
