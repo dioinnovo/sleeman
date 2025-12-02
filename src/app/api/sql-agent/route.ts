@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           error: 'Question is required and must be a string',
-          response: 'Please provide a valid question about Ship Sticks data.',
+          response: 'Please provide a valid question about Sleeman Breweries data.',
         },
         { status: 400 }
       );
@@ -153,13 +153,13 @@ export async function POST(request: NextRequest) {
         success: false,
         response: `## ⚠️ Database Not Configured
 
-The SQL analytics feature requires a PostgreSQL database connection. Please contact your administrator to set up the Ship Sticks analytics database.
+The SQL analytics feature requires a PostgreSQL database connection. Please contact your administrator to set up the Sleeman Breweries analytics database.
 
 **What I can still help with:**
-- Shipment tracking and status updates
-- Route optimization suggestions
-- General Ship Sticks information
-- Partner golf course details`,
+- Production batch tracking and status
+- Quality test results and metrics
+- General Sleeman Breweries information
+- Distribution and inventory insights`,
         error: 'Database not configured',
         sqlQuery: null,
         queryResults: null,

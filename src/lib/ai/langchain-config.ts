@@ -3,7 +3,7 @@ import "reflect-metadata";
 
 /**
  * TypeORM DataSource for LangChain SQL Agent
- * Provides database connection for Ship Sticks analytics database
+ * Provides database connection for Sleeman Breweries analytics database
  */
 let dataSource: DataSource | null = null;
 
@@ -35,6 +35,7 @@ export async function getLangChainDataSource(): Promise<DataSource> {
   }
 
   console.log("🔌 Initializing LangChain TypeORM DataSource...");
+  console.log("   DATABASE_URL:", databaseUrl.replace(/:[^:@]+@/, ':***@')); // Mask password in logs
 
   dataSource = new DataSource({
     type: "postgres",
@@ -67,7 +68,7 @@ export async function executeQuery(query: string): Promise<any[]> {
 }
 
 /**
- * Get all table names from the Ship Sticks database
+ * Get all table names from the Sleeman Breweries database
  * @returns Array of table names
  */
 export async function getTableNames(): Promise<string[]> {

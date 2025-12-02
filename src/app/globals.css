@@ -5,47 +5,55 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 24 14% 8%; /* Sleeman dark #1C1812 */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 24 14% 8%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 210 100% 40%; /* Arthur Health Primary Blue #0066CC */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 199 100% 50%; /* Arthur Health Light Blue #00A3FF */
-    --secondary-foreground: 210 40% 98%;
+    --popover-foreground: 24 14% 8%;
+    --primary: 40 55% 56%; /* Sleeman Gold #D4A84B */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 78% 48%; /* Sleeman Blue #1863DC */
+    --secondary-foreground: 0 0% 100%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 100% 95%; /* Light blue for hover states */
-    --accent-foreground: 210 100% 20%;
+    --accent: 40 60% 90%; /* Light gold for hover states */
+    --accent-foreground: 24 14% 8%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 210 100% 40%; /* Arthur Health Primary Blue #0066CC */
+    --ring: 40 55% 56%; /* Sleeman Gold */
     --radius: 0.65rem;
+
+    /* Sleeman Brand Colors */
+    --sleeman-dark: 24 14% 8%; /* #1C1812 */
+    --sleeman-gold: 40 55% 56%; /* #D4A84B */
+    --sleeman-gold-light: 43 70% 66%; /* #E8C76A */
+    --sleeman-gold-dark: 40 75% 31%; /* #8B6914 */
+    --sleeman-blue: 217 78% 48%; /* #1863DC */
+    --sleeman-brown: 30 25% 13%; /* #2C2416 */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 100% 40%; /* Arthur Health Primary Blue #0066CC */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 199 100% 50%; /* Arthur Health Light Blue #00A3FF */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 210 100% 20%; /* Dark blue for hover states in dark mode */
-    --accent-foreground: 210 40% 98%;
+    --background: 24 14% 8%; /* Sleeman dark #1C1812 */
+    --foreground: 0 0% 96%; /* Light text */
+    --card: 30 25% 13%; /* Sleeman brown #2C2416 */
+    --card-foreground: 0 0% 96%;
+    --popover: 30 25% 13%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 40 55% 56%; /* Sleeman Gold #D4A84B */
+    --primary-foreground: 24 14% 8%;
+    --secondary: 217 78% 48%; /* Sleeman Blue #1863DC */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 30 20% 18%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 40 45% 25%; /* Dark gold for hover states in dark mode */
+    --accent-foreground: 0 0% 96%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 210 100% 40%; /* Arthur Health Primary Blue #0066CC */
+    --border: 30 20% 20%;
+    --input: 30 20% 20%;
+    --ring: 40 55% 56%; /* Sleeman Gold */
   }
 }
 
@@ -65,7 +73,7 @@
   .overlay-scroll {
     /* Firefox - thin scrollbar */
     scrollbar-width: thin;
-    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+    scrollbar-color: rgba(212, 168, 75, 0.3) transparent; /* Sleeman gold tint */
     scrollbar-gutter: stable;
     /* Enable smooth scrolling on iOS */
     -webkit-overflow-scrolling: touch;
@@ -78,12 +86,12 @@
   }
 
   .overlay-scroll::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.3);
+    background: rgba(212, 168, 75, 0.3); /* Sleeman gold tint */
     border-radius: 3px;
   }
 
   .overlay-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(148, 163, 184, 0.5);
+    background: rgba(212, 168, 75, 0.5);
   }
 
   .overlay-scroll::-webkit-scrollbar-track {
@@ -101,16 +109,15 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
-  
-  /* Swiper Carousel Custom Styles for Inspection Areas */
+
+  /* Carousel Custom Styles */
   .inspection-carousel .swiper-slide-shadow-left,
   .inspection-carousel .swiper-slide-shadow-right,
   .inspection-carousel .swiper-slide-shadow-coverflow {
-    border-radius: 0.75rem !important; /* Match the rounded-xl of cards */
-    opacity: 0.4; /* Enhance shadow visibility */
+    border-radius: 0.75rem !important;
+    opacity: 0.4;
   }
 
-  /* Enhanced depth overlay for non-active slides */
   .inspection-carousel .swiper-slide:not(.swiper-slide-active) > div > div {
     position: relative;
   }
@@ -125,12 +132,11 @@
       rgba(0, 0, 0, 0.25) 50%,
       rgba(0, 0, 0, 0.3) 100%
     );
-    border-radius: 0.75rem; /* Match the rounded-xl of cards */
+    border-radius: 0.75rem;
     pointer-events: none;
     transition: all 0.3s ease;
   }
 
-  /* Active slide elevation and emphasis */
   .inspection-carousel .swiper-slide-active {
     z-index: 10;
   }
@@ -140,12 +146,10 @@
     transition: box-shadow 0.3s ease;
   }
 
-  /* Smooth transitions for all slides */
   .inspection-carousel .swiper-slide {
     transition: all 0.3s ease;
   }
 
-  /* Enhance depth perception with slight blur on far slides */
   .inspection-carousel .swiper-slide-prev-prev,
   .inspection-carousel .swiper-slide-next-next {
     filter: blur(0.5px);
@@ -180,8 +184,8 @@
   .animate-fadeIn {
     animation: fadeIn 0.4s ease-out;
   }
-  
-  /* Siri Orb Animation */
+
+  /* Siri Orb Animation - Brewery amber/gold theme */
   @keyframes siriOrbRotate {
     0% {
       --angle: 0deg;
@@ -190,11 +194,28 @@
       --angle: 360deg;
     }
   }
-  
+
   @property --angle {
     syntax: '<angle>';
     initial-value: 0deg;
     inherits: false;
+  }
+
+  /* Sleeman Brewery Accent Utilities */
+  .text-sleeman-gold {
+    color: #D4A84B;
+  }
+
+  .bg-sleeman-dark {
+    background-color: #1C1812;
+  }
+
+  .bg-sleeman-gold {
+    background-color: #D4A84B;
+  }
+
+  .border-sleeman-gold {
+    border-color: #D4A84B;
   }
 }
 
@@ -204,73 +225,66 @@
     size: letter;
     margin: 0.75in;
   }
-  
+
   @page :first {
     margin-top: 0.5in;
   }
-  
-  /* Force page breaks */
+
   .print\:page-break-before {
     page-break-before: always;
   }
-  
+
   .print\:page-break-after {
     page-break-after: always;
   }
-  
-  /* Prevent breaks inside elements */
+
   .print\:break-inside-avoid,
   .print\:page-break-inside-avoid {
     page-break-inside: avoid;
     break-inside: avoid;
   }
-  
-  /* Remove colored backgrounds for formal look */
+
   * {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
-  /* Formal typography */
+
   body {
     font-size: 11pt;
     line-height: 1.5;
     color: black !important;
   }
-  
+
   h1 {
     font-size: 18pt;
     margin-bottom: 12pt;
   }
-  
+
   h2 {
     font-size: 14pt;
     margin-bottom: 10pt;
   }
-  
+
   h3 {
     font-size: 12pt;
     margin-bottom: 8pt;
   }
-  
-  /* Remove shadows and effects for clean print */
+
   * {
     box-shadow: none !important;
     text-shadow: none !important;
     filter: none !important;
   }
-  
-  /* Ensure links are black */
+
   a {
     color: black !important;
     text-decoration: none !important;
   }
-  
-  /* Table borders for print */
+
   table {
     border-collapse: collapse !important;
   }
-  
+
   th, td {
     border: 1px solid #666 !important;
     padding: 4pt !important;

@@ -4,36 +4,65 @@ import { HumanMessage, SystemMessage, AIMessage } from "@langchain/core/messages
 import { sqlTools } from "./sql-tools";
 
 /**
- * Ship Sticks Database Schema Context
- * Comprehensive guide for the SQL agent to understand the database structure
+ * Sleeman Breweries Database Schema Context
+ * Comprehensive guide for the SQL agent to understand the brewery database structure
  */
 const DATABASE_SCHEMA_CONTEXT = `
-You are a SQL expert for Ship Sticks, a golf club shipping company. You have access to a PostgreSQL database with the following tables:
+You are a SQL expert for Sleeman Breweries, a Canadian craft brewery. You have access to a PostgreSQL database with the following tables:
 
-CORE BUSINESS TABLES:
-1. customers - Customer profiles (customer_id, email, name, acquisition_channel, lifetime_value, customer_segment)
-2. shipments - Shipment tracking and financials (shipment_id, customer_id, tracking_number, origin/destination, carrier, status, dates, pricing, margins, insurance)
-3. partner_courses - Golf course partnerships (course_id, course_name, partnership_type, location, commission_rate, ratings)
-4. tracking_events - Carrier tracking updates (event_id, shipment_id, event_type, timestamp, location, status_code)
-5. insurance_claims - Claims processing (claim_id, shipment_id, claim_amount, status, resolution_date, payout)
-6. customer_service_tickets - Support tickets (ticket_id, customer_id, type, priority, resolution_time, satisfaction_score)
-7. routes - Route performance (route_id, origin/destination, distance, failure_rate, damage_rate, avg_margin)
-8. marketing_campaigns - Marketing ROI (campaign_id, name, type, spend, conversions, revenue, roi)
-9. customer_sessions - Web behavior (session_id, customer_id, source, quotes, cart_value, abandonment_stage)
-10. nps_surveys - Customer satisfaction (survey_id, nps_score, likelihood_to_recommend, comments)
-11. daily_metrics - Daily KPIs (metric_date, shipments, deliveries, success_rate, revenue, margins, nps)
+PRODUCTION TABLES:
+1. beer_styles - Beer style definitions (id, name, category, target_abv, target_ibu, fermentation_days, description)
+2. production_lines - Production line info (id, name, facility, capacity_hl, line_type, status)
+3. production_batches - Production batch records (id, batch_number, style_id, line_id, start_date, end_date, target_volume_hl, actual_volume_hl, status, efficiency_pct, notes)
+4. quality_tests - Quality test results (id, batch_id, test_type, test_date, expected_value, actual_value, passed, notes)
+5. quality_issues - Quality issue tracking (id, batch_id, issue_type, severity, detected_date, resolved_date, resolution, cost_impact)
 
-ANALYTICS TABLES:
-12. customer_lifetime_stats - Customer behavior aggregations
-13. route_performance_monthly - Monthly route analytics
-14. partner_performance - Monthly partner metrics
-15. carrier_performance - Carrier reliability by route
+INVENTORY TABLES:
+6. suppliers - Supplier information (id, name, material_type, lead_time_days, reliability_score, contact_info)
+7. raw_materials - Raw material inventory (id, name, material_type, unit, current_stock, reorder_level, unit_cost, supplier_id)
+8. material_usage - Material consumption records (id, batch_id, material_id, quantity_used, usage_date)
+
+EQUIPMENT TABLES:
+9. equipment - Equipment registry (id, name, line_id, equipment_type, capacity, installation_date, last_maintenance, status)
+10. equipment_downtime - Downtime events (id, equipment_id, start_time, end_time, reason, cost_impact, maintenance_type)
+
+DISTRIBUTION TABLES:
+11. distributors - Distributor information (id, name, region, distributor_type, commission_rate, contact_info)
+12. shipments - Shipment records (id, distributor_id, product_id, ship_date, quantity, status)
+13. products - Product SKUs (id, style_id, package_type, package_size, price_per_unit)
+14. monthly_revenue - Revenue by product/month (id, product_id, year, month, units_sold, revenue, cost_of_goods)
+
+COMPLIANCE TABLES:
+15. compliance_audits - Audit records (id, audit_date, audit_type, auditor, score, findings, corrective_actions)
 
 KEY RELATIONSHIPS:
-- shipments.customer_id → customers.customer_id
-- shipments.partner_course_id → partner_courses.course_id
-- tracking_events.shipment_id → shipments.shipment_id
-- insurance_claims.shipment_id → shipments.shipment_id
+- production_batches.style_id → beer_styles.id
+- production_batches.line_id → production_lines.id
+- quality_tests.batch_id → production_batches.id
+- quality_issues.batch_id → production_batches.id
+- raw_materials.supplier_id → suppliers.id
+- material_usage.batch_id → production_batches.id
+- material_usage.material_id → raw_materials.id
+- equipment.line_id → production_lines.id
+- equipment_downtime.equipment_id → equipment.id
+- shipments.distributor_id → distributors.id
+- shipments.product_id → products.id
+- products.style_id → beer_styles.id
+- monthly_revenue.product_id → products.id
+
+BEER STYLES IN DATABASE:
+- Sleeman Clear 2.0 (Light Lager)
+- Sleeman Original Draught (Lager)
+- Sleeman Honey Brown (Amber Ale)
+- Sleeman Cream Ale (Cream Ale)
+- Sleeman Silver Creek (Lager)
+- Okanagan Spring Pale Ale (Pale Ale)
+- Wild Rose WRaspberry (Fruit Beer)
+- Sapporo Premium (Lager)
+
+FACILITIES:
+- Guelph Facility (Ontario): 3 production lines
+- Vernon Facility (BC): 2 production lines
 
 IMPORTANT WORKFLOW - FOLLOW THESE STEPS IN ORDER:
 1. ALWAYS start by calling sql_db_list_tables to see available tables
@@ -50,14 +79,15 @@ QUERY BEST PRACTICES:
 - For date calculations: Use (date1 - date2) for days between dates
 - For percentages: Multiply by 100.0 for proper decimal calculation
 - Group by actual column names, not aliases
-- Use descriptive column aliases for clarity (e.g., SELECT customer_id as customer, SUM(revenue) as total_revenue)
+- Use descriptive column aliases for clarity
 - Use CAST or :: for type conversions
 - For date filtering: Use DATE() function or proper timestamp comparison
+- For recent data: Use NOW() - INTERVAL 'X months' for relative date queries
 
 COLUMN NAMING CONVENTIONS:
-- Use snake_case for all identifiers (customer_id, not customerId)
+- Use snake_case for all identifiers
 - Common columns: *_id (primary keys), *_at (timestamps), *_date (dates)
-- Status columns usually use lowercase strings ('delivered', 'in_transit', etc.)
+- Status columns: 'completed', 'in_progress', 'failed', 'active', 'inactive'
 
 REMEMBER: You are the SQL specialist. Your job is to:
 1. Understand the question
@@ -110,7 +140,7 @@ export const sqlAgent = createReactAgent({
 
 /**
  * Run the SQL agent with a user question
- * @param question User's natural language question about Ship Sticks data
+ * @param question User's natural language question about Sleeman Breweries data
  * @returns Object containing SQL query, results, error (if any), and execution trace
  */
 export async function runSqlAgent(question: string): Promise<{

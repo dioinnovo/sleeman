@@ -27,13 +27,11 @@ import SiriOrb from '@/components/ui/siri-orb'
 import SourcesSection from '@/components/ui/sources-section'
 import SimpleMarkdownMessage from '@/components/ui/simple-markdown-message'
 import { generateSimplePolicyPDF } from '@/lib/utils/pdf-generator'
-import { mockShipments, getShipmentData } from '@/lib/ai/mock-shipment-data'
 import { SqlQueryDisplay } from './assistant/SqlQueryDisplay'
 import { ChartDisplay } from './assistant/ChartDisplay'
 import { DataTableDisplay } from './assistant/DataTableDisplay'
 import { ExcelDownloadButton } from './assistant/ExcelDownloadButton'
 import { cn } from '@/lib/utils'
-import ShipmentSelectorModal from './assistant/ShipmentSelectorModal'
 import ChatHistoryPanel from './assistant/ChatHistoryPanel'
 
 // Custom Microphone SVG Component
@@ -125,10 +123,6 @@ export default function MobileChatInterface() {
   const [isRecording, setIsRecording] = useState(false)
   const [showAttachMenu, setShowAttachMenu] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [needsContext, setNeedsContext] = useState(false)
-  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null)
-  const [selectedShipment, setSelectedShipment] = useState<string | null>(null)
-  const [showShipmentSelector, setShowShipmentSelector] = useState(false)
   const [selectedQuestionCategory, setSelectedQuestionCategory] = useState<'gapIdentification' | 'relationshipDiscovery' | 'roiBusinessImpact'>('gapIdentification')
   const [userScrolledUp, setUserScrolledUp] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -164,29 +158,29 @@ export default function MobileChatInterface() {
 
   // Model options with provider indicators
   const modelOptions = [
-    { value: 'quick', label: 'Sticks Quick', description: 'Concise answers & quick data summaries' },
-    { value: 'arthur-pro', label: 'Sticks Pro', description: 'Comprehensive analysis with detailed insights' }
+    { value: 'quick', label: 'Barley Quick', description: 'Concise answers & quick data summaries' },
+    { value: 'arthur-pro', label: 'Barley Pro', description: 'Comprehensive analysis with detailed insights' }
   ]
 
-  // Complex analytical questions for Sticks Pro (comprehensive SQL analysis)
-  const shipSticksProQuestions = {
+  // Complex analytical questions for Barley Pro (comprehensive SQL analysis)
+  const barleyProQuestions = {
     gapIdentification: [
-      "Which routes have the highest failure rates and what is the cost impact?",
-      "Show me the insurance coverage gap by route and estimate potential losses",
-      "What percentage of shipments have tracking delays and which carriers are responsible?",
-      "Which marketing campaigns had the highest ROI and why?"
+      "Which production lines have the highest downtime and what's the cost impact?",
+      "Show me quality control failures by batch and estimate product loss",
+      "What percentage of batches have fermentation delays and which tanks are responsible?",
+      "Which ingredient suppliers had the most quality issues this quarter?"
     ],
     relationshipDiscovery: [
-      "Analyze customer acquisition cost vs lifetime value trends",
-      "Show me NPS scores by customer segment and service tier",
-      "Compare carrier performance by success rate and profit margin",
-      "Analyze our revenue by month and identify seasonal patterns"
+      "Analyze brewing efficiency vs quality score trends",
+      "Show me production yields by tank and fermentation duration",
+      "Compare equipment performance by maintenance frequency and output quality",
+      "Analyze our production volume by month and identify seasonal patterns"
     ],
     roiBusinessImpact: [
-      "What is our customer lifetime value by acquisition channel?",
-      "Compare our profit margins across different service tiers",
-      "Show me conversion rates from quote to booking by customer segment",
-      "Which routes have the highest failure rates and why? Show me a detailed breakdown by carrier, time of year, and estimated annual cost"
+      "What is our cost per hectoliter by product line?",
+      "Compare our profit margins across different beer brands",
+      "Show me production efficiency gains from recent equipment upgrades",
+      "Which production lines have the highest waste rates? Show detailed breakdown by shift, product type, and estimated annual savings potential"
     ]
   }
 
@@ -489,24 +483,6 @@ export default function MobileChatInterface() {
       // Fallback to non-streaming response (for SQL agent or error cases)
       const data = await response.json()
 
-      // Check if context is needed (for Qlik)
-      if (data.needsContext) {
-        setNeedsContext(true)
-        if (data.pendingQuestion) {
-          setPendingQuestion(data.pendingQuestion)
-        }
-        setShowShipmentSelector(true)
-        // Remove placeholder message
-        setMessages(newMessages)
-        setChats(prev => prev.map(chat =>
-          chat.id === currentChatId
-            ? { ...chat, messages: newMessages }
-            : chat
-        ))
-        setIsTyping(false)
-        return
-      }
-
       // Update chat title if generated
       if (data.title && messages.length === 0) {
         setChats(prev => prev.map(chat =>
@@ -657,25 +633,25 @@ export default function MobileChatInterface() {
   )
 
   return (
-    <div className="h-full w-full flex flex-col bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-gradient-to-br from-sleeman-brown to-sleeman-dark overflow-hidden">
       {/* Top Header */}
-      <div className="flex-shrink-0 flex items-center justify-between p-4 min-h-[4rem] bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-700/50">
+      <div className="flex-shrink-0 flex items-center justify-between p-4 min-h-[4rem] bg-sleeman-dark/80 backdrop-blur-md border-b border-sleeman-brown">
         {/* Chat History Button */}
         <button
           onClick={() => setShowHistoryModal(true)}
-          className="p-2 rounded-xl bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 group cursor-pointer"
+          className="p-2 rounded-xl bg-sleeman-brown shadow-sm border border-sleeman-brown hover:shadow-md transition-all duration-200 group cursor-pointer"
           aria-label="Show chat history"
         >
-          <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-scc-red transition-colors" />
+          <Menu className="w-5 h-5 text-gray-400 group-hover:text-sleeman-gold transition-colors" />
         </button>
 
         {/* Current Chat Title */}
         <div className="flex-1 text-center px-2">
-          <h2 className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 flex items-center justify-center">
+          <h2 className="text-sm font-medium text-gray-100 line-clamp-2 flex items-center justify-center">
             <span>{animatedTitle}</span>
             {titleIsAnimating && (
               <motion.span
-                className="inline-block w-0.5 h-4 bg-gray-900 dark:bg-gray-100 ml-0.5"
+                className="inline-block w-0.5 h-4 bg-sleeman-gold ml-0.5"
                 animate={{ opacity: [1, 0] }}
                 transition={{ duration: 0.5, repeat: Infinity, repeatType: "reverse" }}
               />
@@ -702,50 +678,19 @@ export default function MobileChatInterface() {
               </div>
 
               <div className="space-y-1 sm:space-y-2">
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Hi! I'm Sticks
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
+                  Hello! I'm Barley
                 </h1>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-sm px-4 sm:px-0">
-                  Your Ship Sticks AI assistant. I optimize golf equipment shipping with intelligent route planning, real-time tracking, and cost savings insights for every shipment to championship courses worldwide.
+                <p className="text-sm sm:text-base text-gray-400 max-w-sm px-4 sm:px-0">
+                  Your AI brewing analyst. I transform production data into actionable insights, optimizing brewing operations, quality control, and inventory management across all facilities.
                 </p>
               </div>
 
-              {/* Shipment Context Selector */}
-              {selectedShipment ? (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-2 sm:p-3 max-w-sm">
-                  <div className="flex items-center justify-between">
-                    <div className="text-left">
-                      <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">Current Shipment</p>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{selectedShipment}</p>
-                      {(() => {
-                        const shipment = getShipmentData(selectedShipment)
-                        return shipment ? (
-                          <p className="text-xs text-gray-600 dark:text-gray-400">
-                            {shipment.carrier} • {shipment.serviceLevel}
-                          </p>
-                        ) : null
-                      })()}
-                    </div>
-                    <button
-                      onClick={() => setShowShipmentSelector(true)}
-                      className="text-xs px-2 py-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800 rounded"
-                    >
-                      Change
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setShowShipmentSelector(true)}
-                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition-colors"
-                >
-                  Select Shipment Context
-                </button>
-              )}
+              {/* BrewMind connects directly to the analytics database */}
 
-              {/* Context-Aware Quick Questions - Different UI for Sticks Pro */}
+              {/* Context-Aware Quick Questions - Different UI for Barley Pro */}
               {selectedModel === 'arthur-pro' ? (
-                /* Sticks Pro: Three-tab interface for complex analytics */
+                /* Barley Pro: Three-tab interface for complex analytics */
                 <div className="max-w-3xl w-full">
                   {/* Category Tabs - Horizontal grid on all screens */}
                   <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-3">
@@ -753,8 +698,8 @@ export default function MobileChatInterface() {
                       onClick={() => setSelectedQuestionCategory('gapIdentification')}
                       className={`px-2 py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all ${
                         selectedQuestionCategory === 'gapIdentification'
-                          ? 'bg-blue-600 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-sleeman-gold text-sleeman-dark shadow-lg'
+                          : 'bg-sleeman-dark text-gray-300 hover:bg-sleeman-brown'
                       }`}
                     >
                       <span className="block font-bold text-xs sm:text-sm">Gap Analysis</span>
@@ -764,8 +709,8 @@ export default function MobileChatInterface() {
                       onClick={() => setSelectedQuestionCategory('relationshipDiscovery')}
                       className={`px-2 py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all ${
                         selectedQuestionCategory === 'relationshipDiscovery'
-                          ? 'bg-blue-600 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-sleeman-gold text-sleeman-dark shadow-lg'
+                          : 'bg-sleeman-dark text-gray-300 hover:bg-sleeman-brown'
                       }`}
                     >
                       <span className="block font-bold text-xs sm:text-sm">Correlations</span>
@@ -775,37 +720,31 @@ export default function MobileChatInterface() {
                       onClick={() => setSelectedQuestionCategory('roiBusinessImpact')}
                       className={`px-2 py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all ${
                         selectedQuestionCategory === 'roiBusinessImpact'
-                          ? 'bg-green-600 text-white shadow-lg'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-sleeman-gold text-sleeman-dark shadow-lg'
+                          : 'bg-sleeman-dark text-gray-300 hover:bg-sleeman-brown'
                       }`}
                     >
                       <span className="block font-bold text-xs sm:text-sm">ROI Impact</span>
-                      <span className="block text-xs opacity-90 mt-0.5">Revenue optimization</span>
+                      <span className="block text-xs opacity-90 mt-0.5">Cost optimization</span>
                     </button>
                   </div>
 
                   {/* Knowledge Graph Power Indicator */}
                   <div className="text-center mb-3">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {selectedQuestionCategory === 'gapIdentification' ? 'Uncover missed opportunities and inefficiencies in your shipping network' : selectedQuestionCategory === 'relationshipDiscovery' ? 'Reveal hidden correlations between routes, carriers & delivery success' : 'Optimize cost savings and maximize shipment performance'}
+                    <p className="text-xs text-gray-400">
+                      {selectedQuestionCategory === 'gapIdentification' ? 'Uncover production bottlenecks and inefficiencies across brewing operations' : selectedQuestionCategory === 'relationshipDiscovery' ? 'Reveal hidden correlations between equipment, batches & quality scores' : 'Optimize costs and maximize production efficiency'}
                     </p>
                   </div>
 
                   {/* Questions Grid - Readable text size */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[50vh] overflow-y-auto">
-                    {shipSticksProQuestions[selectedQuestionCategory].map((question, idx) => (
+                    {barleyProQuestions[selectedQuestionCategory].map((question, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleSend(question)}
-                        className={`text-left p-3 rounded-lg border transition-all group hover:shadow-md cursor-pointer ${
-                          selectedQuestionCategory === 'gapIdentification'
-                            ? 'border-blue-200 hover:border-blue-400 hover:bg-blue-50'
-                            : selectedQuestionCategory === 'relationshipDiscovery'
-                            ? 'border-blue-200 hover:border-blue-400 hover:bg-blue-50'
-                            : 'border-green-200 hover:border-green-400 hover:bg-green-50'
-                        }`}
+                        className="text-left p-3 rounded-lg border border-sleeman-brown bg-sleeman-dark hover:border-sleeman-gold hover:bg-sleeman-brown transition-all group hover:shadow-md cursor-pointer"
                       >
-                        <p className="text-sm text-gray-900 dark:text-gray-100 font-medium leading-relaxed">
+                        <p className="text-sm text-gray-100 font-medium leading-relaxed">
                           {question}
                         </p>
                       </button>
@@ -813,84 +752,58 @@ export default function MobileChatInterface() {
                   </div>
                 </div>
               ) : (
-                /* Sticks Quick: Route optimization and shipment tracking */
+                /* Barley Quick: Production monitoring and quick insights */
                 <div className="max-w-md">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                    {selectedShipment ? `Shipment tracking & logistics for ${selectedShipment}:` : 'Route optimization & shipment tracking:'}
+                  <p className="text-xs text-gray-400 mb-2">
+                    Brewery analytics & production insights:
                   </p>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {(() => {
-                      // Shipment-specific questions if shipment is selected
-                      if (selectedShipment) {
-                        const questions = [
-                          "Track current shipment location",
-                          "Optimize delivery route for fastest arrival",
-                          "Check weather impact on delivery",
-                          "Estimate arrival time at destination",
-                          "Find alternative carriers if delayed",
-                          "Calculate total shipping cost",
-                          "View shipment handling instructions",
-                          "Contact logistics coordinator",
-                          "Upgrade to expedited delivery",
-                          "Request signature confirmation"
-                        ]
-
-                        return questions.map((question, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleSend(`For shipment ${selectedShipment}: ${question}`)}
-                            className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-500 transition-all"
-                          >
-                            {question}
-                          </button>
-                        ))
-                      }
-
-                      // Default questions when no shipment selected - Executive Analytics
+                      // Executive Analytics questions for brewery operations
                       const generalQuestions = [
-                        "Show me top 10 customers by lifetime value",
-                        "What are the top customer service issues and their resolution times?",
-                        "Identify our top 10 partner courses by volume and revenue",
-                        "Compare carrier on-time delivery performance",
-                        "Show monthly shipment trends by carrier"
+                        "Show me top 10 products by revenue",
+                        "What are the most common quality issues and their resolution times?",
+                        "Identify our top 10 distributors by volume and revenue",
+                        "Compare production line efficiency across facilities",
+                        "Show monthly production trends by product line"
                       ]
 
-                      const shipmentQuestions = [
-                        "Which carriers have lowest damage rates?",
-                        "What's the average delivery time by route?",
-                        "Show revenue breakdown by service tier",
-                        "Analyze seasonal shipping patterns",
-                        "Which routes are most profitable?"
+                      const productionQuestions = [
+                        "Which batches have the highest quality scores?",
+                        "What's the average fermentation time by beer style?",
+                        "Show revenue breakdown by product category",
+                        "Analyze seasonal demand patterns",
+                        "Which product lines are most profitable?"
                       ]
 
                       return (
                         <>
-                          {/* Quick Quote - Always First */}
+                          {/* Production Summary - Always First */}
                           <button
-                            key="quick-quote"
-                            onClick={() => handleSend("Get shipping quote for golf equipment")}
-                            className="px-3 py-1.5 bg-blue-600 text-white border border-blue-600 rounded-full text-sm font-medium hover:bg-blue-700 transition-all"
+                            key="production-summary"
+                            onClick={() => handleSend("Show today's production summary")}
+                            className="px-3 py-1.5 bg-sleeman-gold text-sleeman-dark border border-sleeman-gold rounded-full text-sm font-medium hover:bg-sleeman-gold-light transition-all"
                           >
-                            Get shipping quote
+                            Production summary
                           </button>
 
-                          {/* General Questions - No shipment context needed */}
+                          {/* General Questions - No production context needed */}
                           {generalQuestions.map((question, idx) => (
                             <button
                               key={`general-${idx}`}
                               onClick={() => handleSend(question)}
-                              className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:border-green-500 hover:text-green-600 transition-all"
+                              className="px-3 py-1.5 bg-sleeman-dark border border-sleeman-brown rounded-full text-sm text-gray-300 hover:border-sleeman-gold hover:text-sleeman-gold transition-all"
                             >
                               {question}
                             </button>
                           ))}
 
-                          {/* Shipment-Specific Questions - Can work with or without context */}
-                          {shipmentQuestions.map((question, idx) => (
+                          {/* Production-Specific Questions - Can work with or without context */}
+                          {productionQuestions.map((question, idx) => (
                             <button
-                              key={`shipment-${idx}`}
+                              key={`production-${idx}`}
                               onClick={() => handleSend(question)}
-                              className="px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm text-gray-700 dark:text-gray-300 hover:border-blue-500 hover:text-blue-500 transition-all"
+                              className="px-3 py-1.5 bg-sleeman-dark border border-sleeman-brown rounded-full text-sm text-gray-300 hover:border-sleeman-gold-light hover:text-sleeman-gold-light transition-all"
                             >
                               {question}
                             </button>
@@ -926,8 +839,8 @@ export default function MobileChatInterface() {
                       <div className={`max-w-[90%] ${message.role === 'user' ? 'order-last' : ''}`}>
                         <div className={`rounded-2xl px-4 py-3 ${
                           message.role === 'user'
-                            ? 'bg-scc-red text-white'
-                            : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 shadow-sm'
+                            ? 'bg-sleeman-gold text-sleeman-dark'
+                            : 'bg-sleeman-dark border border-sleeman-brown text-gray-200 shadow-sm'
                         }`}>
                           {message.role === 'user' ? (
                             <p className="whitespace-pre-wrap text-sm">{message.content}</p>
@@ -988,7 +901,7 @@ export default function MobileChatInterface() {
                               URL.revokeObjectURL(url)
                             }
                           }}
-                          className="mt-3 flex items-center gap-2 px-4 py-2 bg-scc-red text-white rounded-lg hover:bg-scc-red-dark transition-colors text-sm font-medium"
+                          className="mt-3 flex items-center gap-2 px-4 py-2 bg-sleeman-gold text-sleeman-dark rounded-lg hover:bg-sleeman-gold-light transition-colors text-sm font-medium"
                         >
                           <Download size={16} />
                           <span>Download PDF Report</span>
@@ -1001,7 +914,7 @@ export default function MobileChatInterface() {
                             <button
                               key={idx}
                               onClick={() => handleSend(suggestion)}
-                              className="text-sm px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full hover:border-scc-red hover:text-scc-red transition"
+                              className="text-sm px-3 py-1.5 bg-sleeman-dark border border-sleeman-brown rounded-full text-gray-300 hover:border-sleeman-gold hover:text-sleeman-gold transition"
                             >
                               {suggestion}
                             </button>
@@ -1037,26 +950,26 @@ export default function MobileChatInterface() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex justify-start"
                 >
-                  <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 shadow-sm">
+                  <div className="bg-sleeman-dark border border-sleeman-brown rounded-2xl px-4 py-3 shadow-sm">
                     <div className="flex items-center gap-2">
                       <div className="flex space-x-1">
                         <motion.div
-                          className="w-2 h-2 bg-scc-red rounded-full"
+                          className="w-2 h-2 bg-sleeman-gold rounded-full"
                           animate={{ opacity: [0.4, 1, 0.4] }}
                           transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
                         />
                         <motion.div
-                          className="w-2 h-2 bg-scc-red rounded-full"
+                          className="w-2 h-2 bg-sleeman-gold rounded-full"
                           animate={{ opacity: [0.4, 1, 0.4] }}
                           transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }}
                         />
                         <motion.div
-                          className="w-2 h-2 bg-scc-red rounded-full"
+                          className="w-2 h-2 bg-sleeman-gold rounded-full"
                           animate={{ opacity: [0.4, 1, 0.4] }}
                           transition={{ duration: 1.2, repeat: Infinity, delay: 0.8 }}
                         />
                       </div>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">Analyzing shipment...</span>
+                      <span className="text-sm text-gray-400">Analyzing production data...</span>
                     </div>
                   </div>
                 </motion.div>
@@ -1070,11 +983,11 @@ export default function MobileChatInterface() {
                   className="flex justify-start"
                 >
                   <div className="max-w-[90%]">
-                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 shadow-sm rounded-2xl px-4 py-3">
+                    <div className="bg-sleeman-dark border border-sleeman-brown text-gray-200 shadow-sm rounded-2xl px-4 py-3">
                       <div className="flex gap-1">
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                        <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        <span className="w-2 h-2 bg-sleeman-gold rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                        <span className="w-2 h-2 bg-sleeman-gold rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                        <span className="w-2 h-2 bg-sleeman-gold rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
                       </div>
                     </div>
                   </div>
@@ -1085,10 +998,10 @@ export default function MobileChatInterface() {
           )}
       </div>
 
-      {/* Input Area - Microsoft Copilot Style */}
+      {/* Input Area - BrewMind Style */}
       <div className="flex-shrink-0 p-4 !pb-[16px] sm:pb-4">
         {/* Glassmorphism container with border */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl backdrop-saturate-150 border-2 border-white/30 dark:border-gray-700/30 rounded-2xl p-2 shadow-lg shadow-black/10 ring-2 ring-white dark:ring-gray-700">
+        <div className="bg-sleeman-dark/70 backdrop-blur-xl backdrop-saturate-150 border-2 border-sleeman-brown/50 rounded-2xl p-2 shadow-lg shadow-black/20 ring-2 ring-sleeman-brown/30">
             {/* Text Input Area */}
             <textarea
               ref={textareaRef}
@@ -1102,9 +1015,9 @@ export default function MobileChatInterface() {
                   handleSend()
                 }
               }}
-              placeholder="Ask about shipments, routes, or tracking..."
+              placeholder="Ask about production, quality, or inventory..."
               disabled={isTyping}
-              className="w-full px-2 py-1.5 bg-transparent text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none resize-none transition-all disabled:opacity-50"
+              className="w-full px-2 py-1.5 bg-transparent text-sm text-gray-100 placeholder-gray-500 focus:outline-none resize-none transition-all disabled:opacity-50"
               style={{
                 minHeight: '32px',
                 maxHeight: '120px',
@@ -1118,7 +1031,7 @@ export default function MobileChatInterface() {
                 <div className="relative">
                   <button
                     onClick={() => setShowModelDropdown(!showModelDropdown)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors"
+                    className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-300 hover:bg-sleeman-brown/50 rounded-xl transition-colors"
                   >
                     <span>{modelOptions.find(m => m.value === selectedModel)?.label}</span>
                     <ChevronDown className="w-4 h-4" />
@@ -1126,7 +1039,7 @@ export default function MobileChatInterface() {
                   
                   {/* Dropdown Menu */}
                   {showModelDropdown && (
-                    <div className="absolute bottom-full left-0 mb-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden z-10">
+                    <div className="absolute bottom-full left-0 mb-2 w-48 bg-sleeman-dark rounded-xl shadow-lg border border-sleeman-brown overflow-hidden z-10">
                       {modelOptions.map((model) => (
                         <button
                           key={model.value}
@@ -1134,10 +1047,10 @@ export default function MobileChatInterface() {
                             setSelectedModel(model.value)
                             setShowModelDropdown(false)
                           }}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          className="w-full text-left px-4 py-2 hover:bg-sleeman-brown/50 transition-colors"
                         >
-                          <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{model.label}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">{model.description}</div>
+                          <div className="font-medium text-sm text-gray-100">{model.label}</div>
+                          <div className="text-xs text-gray-400">{model.description}</div>
                         </button>
                       ))}
                     </div>
@@ -1165,7 +1078,7 @@ export default function MobileChatInterface() {
                           animate={{ opacity: 1, scale: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95, y: 10 }}
                           transition={{ duration: 0.15 }}
-                          className="absolute bottom-full right-0 mb-2 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-2 min-w-[200px] z-50"
+                          className="absolute bottom-full right-0 mb-2 bg-sleeman-dark rounded-2xl shadow-xl border border-sleeman-brown p-2 min-w-[200px] z-50"
                         >
                           <div className="space-y-1">
                             <button
@@ -1173,10 +1086,10 @@ export default function MobileChatInterface() {
                                 fileInputRef.current?.click()
                                 setShowAttachMenu(false)
                               }}
-                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-sleeman-brown/50 rounded-xl transition-colors"
                             >
-                              <FileText className="w-5 h-5 text-blue-500" />
-                              <span>Upload Shipping Details</span>
+                              <FileText className="w-5 h-5 text-sleeman-gold" />
+                              <span>Upload Production Data</span>
                             </button>
 
                             <button
@@ -1184,10 +1097,10 @@ export default function MobileChatInterface() {
                                 photoInputRef.current?.click()
                                 setShowAttachMenu(false)
                               }}
-                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-sleeman-brown/50 rounded-xl transition-colors"
                             >
-                              <Image className="w-5 h-5 text-green-500" />
-                              <span>Upload Equipment Photos</span>
+                              <Image className="w-5 h-5 text-sleeman-gold-light" />
+                              <span>Upload Quality Photos</span>
                             </button>
 
                             <button
@@ -1206,26 +1119,26 @@ export default function MobileChatInterface() {
                                 input.click()
                                 setShowAttachMenu(false)
                               }}
-                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-sleeman-brown/50 rounded-xl transition-colors"
                             >
-                              <Camera className="w-5 h-5 text-purple-500" />
+                              <Camera className="w-5 h-5 text-amber-400" />
                               <span>Take Photo</span>
                             </button>
 
-                            <div className="border-t border-gray-100 my-1" />
+                            <div className="border-t border-sleeman-brown my-1" />
 
                             <button
                               onClick={() => {
-                                const trackingNumber = prompt('Enter Tracking Number to link from database:')
-                                if (trackingNumber) {
-                                  handleSend(`Link existing shipment: ${trackingNumber}`)
+                                const batchId = prompt('Enter Batch ID to link from database:')
+                                if (batchId) {
+                                  handleSend(`Link existing batch: ${batchId}`)
                                 }
                                 setShowAttachMenu(false)
                               }}
-                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl transition-colors"
+                              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-sleeman-brown/50 rounded-xl transition-colors"
                             >
-                              <Link className="w-5 h-5 text-indigo-500" />
-                              <span>Link Tracking Number</span>
+                              <Link className="w-5 h-5 text-amber-500" />
+                              <span>Link Batch ID</span>
                             </button>
                           </div>
                         </motion.div>
@@ -1319,19 +1232,6 @@ export default function MobileChatInterface() {
         />
       </AnimatePresence>
 
-      {/* Context Gathering Modal for Shipment Selection */}
-      <AnimatePresence>
-
-        {/* Shipment Selector Modal */}
-        <ShipmentSelectorModal
-          showShipmentSelector={showShipmentSelector}
-          setShowShipmentSelector={setShowShipmentSelector}
-          setSelectedShipment={setSelectedShipment}
-          handleSend={handleSend}
-          pendingQuestion={pendingQuestion}
-          setPendingQuestion={setPendingQuestion}
-        />
-      </AnimatePresence>
     </div>
   )
 }

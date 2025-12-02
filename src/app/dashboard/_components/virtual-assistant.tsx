@@ -25,7 +25,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
   apiEndpoint = process.env.NEXT_PUBLIC_AI_API_ENDPOINT || "/api/scotty-leads/chat",
   apiKey = process.env.NEXT_PUBLIC_AI_API_KEY,
   model = process.env.NEXT_PUBLIC_AI_MODEL || "gpt-4o-mini",
-  systemPrompt = "You are Sticks, the friendly and knowledgeable travel assistant for Ship Sticks - the leading golf equipment and luggage shipping service. Your PRIMARY mission is to help golfers ship their clubs hassle-free to any golf course or resort worldwide. Always focus on: 1) Providing quick shipping quotes, 2) Recommending partner golf courses and resorts, 3) Tracking shipment status and delivery timelines, 4) Optimizing travel planning and cost savings. You're upbeat, golf-savvy, and make shipping equipment effortless. Use golf terminology naturally and help golfers focus on their game, not logistics.",
+  systemPrompt = "You are Barley, the friendly and knowledgeable AI data analyst for Sleeman Breweries - one of Canada's oldest independent breweries. Your PRIMARY mission is to help brewery operations teams optimize production, quality control, and inventory management. Always focus on: 1) Providing production analytics and insights, 2) Monitoring quality control metrics, 3) Tracking inventory and supply chain, 4) Optimizing brewing operations efficiency. You're enthusiastic, brewery-savvy, and make data analysis effortless. Use brewing terminology naturally and help teams focus on crafting great beer, not spreadsheets.",
   useCallbackAgent = false
 }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -178,7 +178,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
         setTimeout(() => {
           setShowTypingIndicator(false)
           setMessages([{
-            text: "Hey there! I'm Sticks, your Ship Sticks travel assistant. I help golfers ship their clubs and gear to courses and resorts worldwide - so you can fly hassle-free and focus on your game. Planning a golf trip? Need a shipping quote? Want to track your clubs? I've got you covered!",
+            text: "Hey there! I'm Barley, your BrewMind AI analyst. I help Sleeman's brewing teams optimize production, track quality metrics, and manage inventory - so you can focus on crafting exceptional beer. Need production insights? Want to check batch quality? Looking at inventory levels? I've got you covered!",
             isUser: false,
             timestamp: new Date()
           }])
@@ -700,7 +700,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
             />
             <div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Sticks
+                Barley
               </h3>
               <div className="flex items-center gap-2">
                 <div className="relative flex items-center">
@@ -767,24 +767,24 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
               const actions = [];
               
               // Check for common patterns and suggest relevant actions
-              if (text.includes('ship') || text.includes('quote')) {
-                actions.push('Get Shipping Quote', 'Track Shipment', 'View Pricing');
+              if (text.includes('production') || text.includes('batch')) {
+                actions.push('View Production', 'Check Batch Status', 'View Metrics');
               }
-              if (text.includes('course') || text.includes('resort')) {
-                actions.push('Find Golf Courses', 'View Partner Resorts', 'Plan Trip');
+              if (text.includes('quality') || text.includes('test')) {
+                actions.push('Quality Reports', 'View Test Results', 'Check Standards');
               }
               if (text.includes('help') || text.includes('assist')) {
-                actions.push('Get Shipping Quote', 'Track My Clubs', 'Learn More');
+                actions.push('Production Overview', 'Quality Dashboard', 'Learn More');
               }
               if (text.includes('contact') || text.includes('reach')) {
                 actions.push('Call Support', 'Live Chat', 'Email Us');
               }
-              if (text.includes('track') || text.includes('delivery')) {
-                actions.push('Track Shipment', 'Delivery Status', 'Contact Support');
+              if (text.includes('inventory') || text.includes('stock')) {
+                actions.push('Check Inventory', 'View Materials', 'Stock Report');
               }
               if (index === 0 || (index === 1 && messages[0].isUser)) {
                 // First assistant message - show general options
-                actions.push('Get Quote', 'Track Clubs', 'Find Courses');
+                actions.push('Production', 'Quality', 'Inventory');
               }
               
               return actions.slice(0, 3); // Limit to 3 suggestions
@@ -973,7 +973,7 @@ const VirtualAssistant: React.FC<VirtualAssistantConfig> = ({
                     }
                   }
                 }}
-                placeholder={isLoading ? "Processing your request..." : (hasEngaged ? "Ask about your shipment..." : "Where are you teeing off? Let's ship your clubs!")}
+                placeholder={isLoading ? "Processing your request..." : (hasEngaged ? "Ask about production, quality, or inventory..." : "What brewing insights can I help you with today?")}
                 disabled={isLoading}
                 rows={1}
                 className="w-full pl-5 pr-14 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300 disabled:opacity-50 focus:bg-white dark:focus:bg-gray-700 focus:border-scc-red dark:focus:border-scc-red focus:outline-none focus:ring-1 focus:ring-scc-red/20 resize-none overflow-hidden"

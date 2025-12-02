@@ -4,23 +4,67 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Ship Sticks Intelligence Platform is a Next.js 15.5.2 application for AI-powered golf equipment and luggage shipping logistics. It demonstrates how AI can help golfers optimize their travel experience, track shipments, manage bookings, and coordinate with partner golf courses and resorts worldwide through the Ship Sticks Travel Assistant.
+Sleeman BrewMind is a Next.js 15.5.2 application for AI-powered brewery analytics and operations intelligence. It demonstrates how AI can help Sleeman Breweries optimize production, quality control, inventory management, and distribution through natural language SQL queries and business insights.
+
+**Target Demo**: Brian Cappellaro, Director IT & PMO at Sleeman Breweries
+
+## CRITICAL: Database Management
+
+**READ THIS FIRST** when encountering database issues. See [docs/DATABASE_MANAGEMENT.md](docs/DATABASE_MANAGEMENT.md) for full details.
+
+### Current Database Configuration
+- **Container**: `sleeman-brewmind-db` (Docker)
+- **Port**: `5433` (NOT 5432!)
+- **Database**: `brewmind`
+- **Connection**: `postgresql://brewmind:brewmind_demo_2024@localhost:5433/brewmind`
+
+### Common Issue: Wrong Database Connection
+
+If you see errors like `relation "table_name" does not exist`:
+
+1. **Check for orphaned PostgreSQL on port 5432:**
+   ```bash
+   lsof -i :5432  # Should be empty
+   brew services stop postgresql@14
+   ```
+
+2. **Check for shell environment override:**
+   ```bash
+   echo $DATABASE_URL  # Should be empty
+   unset DATABASE_URL
+   ```
+
+3. **Restart Next.js:**
+   ```bash
+   pkill -f "next dev"
+   pnpm run dev
+   ```
+
+### Demo Lifecycle Scripts
+
+```bash
+# Start demo environment (cleans up conflicts automatically)
+./scripts/start-demo.sh
+
+# Stop demo environment (frees all resources)
+./scripts/cleanup-demo.sh
+```
 
 ## Development Commands
 
 ### Running the Application
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run development server
-npm run dev
+pnpm run dev
 
 # Build for production
-npm run build
+pnpm run build
 
 # Start production server
-npm start
+pnpm start
 ```
 
 ## Architecture Overview
@@ -28,124 +72,108 @@ npm start
 ### Technology Stack
 - **Framework**: Next.js 15.5.2 with App Router
 - **UI**: React 18.2, Tailwind CSS 3.3, shadcn/ui components
-- **State Management**: React hooks, Zustand (to be added)
+- **State Management**: React hooks
 - **Animations**: Framer Motion 11.0
-- **AI Integration**: AI SDK (Vercel), ChromaDB for vectors
-- **PDF Generation**: @pdfme/generator
+- **AI Integration**: LangChain, Azure OpenAI (GPT-4o-mini)
+- **Database**: PostgreSQL 16 (Docker), TypeORM
 - **Data Visualization**: Recharts
-- **Shipping APIs**: FedEx, UPS, DHL integration via Ship Sticks platform
 
 ### Project Structure
 ```
-shipsticks/
+sleeman/
 ├── app/                     # Next.js App Router
-│   ├── (auth)/             # Authentication routes
 │   ├── dashboard/          # Protected dashboard routes
-│   │   ├── assistant/      # Travel AI Assistant interface
-│   │   ├── care-sessions/  # Shipment tracking & management
-│   │   ├── compliance/     # Shipping compliance monitoring
-│   │   ├── referrals/      # Partner golf course network
-│   │   └── reports/        # Analytics and insights
-│   ├── api/                # API routes
-│   ├── demo/               # Interactive demo page
+│   │   └── _components/    # SQL Analytics Chat interface
+│   ├── api/
+│   │   └── sql-agent/      # Text-to-SQL API endpoint
 │   ├── layout.tsx          # Root layout
-│   ├── page.tsx           # Landing page
-│   └── globals.css        # Global styles
+│   └── page.tsx           # Landing page
 ├── components/
 │   ├── ui/                # shadcn/ui components
-│   ├── policy/            # Shipping policy components
-│   ├── dashboard/         # Dashboard components
-│   └── layout/            # Layout components
+│   └── dashboard/         # Dashboard components
 ├── lib/
-│   ├── ai/                # AI service integrations
-│   ├── arthur/            # Ship Sticks API integration
-│   ├── db/                # Database utilities
-│   ├── utils/             # Helper functions
-│   └── hooks/             # Custom React hooks
-├── public/
-│   └── images/            # Static images
+│   └── ai/                # AI service integrations
+│       ├── sql-agent.ts         # LangChain ReAct SQL Agent
+│       ├── sql-agent-fast.ts    # Fast path for simple queries
+│       ├── sql-tools.ts         # SQL tools for the agent
+│       ├── langchain-config.ts  # TypeORM DataSource
+│       ├── query-classifier.ts  # Query complexity classifier
+│       ├── insights-generator.ts # Business insights LLM
+│       └── chart-generator.ts   # Chart data generator
+├── scripts/
+│   ├── start-demo.sh      # Start demo environment
+│   └── cleanup-demo.sh    # Stop all demo processes
+├── docs/
+│   └── DATABASE_MANAGEMENT.md  # Database troubleshooting guide
 └── .env.local             # Environment variables
 ```
 
 ### Key Features
 
-1. **Landing Page** (`app/page.tsx`)
-   - Hero section with Ship Sticks value proposition
-   - Golfer and travel benefits showcase
-   - AI-powered shipping optimization
-   - Partner network highlights (3,500+ golf courses)
+1. **SQL Analytics Chat** (`app/dashboard/_components/sql-analytics-chat.tsx`)
+   - Natural language to SQL queries
+   - Quick mode (concise) and Pro mode (comprehensive analysis)
+   - Interactive data tables with export to Excel
+   - Chart visualizations for numeric data
 
-2. **Travel Assistant Dashboard** (`app/dashboard/assistant/page.tsx`)
-   - Real-time shipping quotes
-   - Golf course recommendations
-   - Travel planning assistance
-   - Shipment cost optimization
+2. **Text-to-SQL Agent** (`lib/ai/sql-agent.ts`)
+   - LangChain ReAct agent with Azure OpenAI
+   - Schema-aware SQL generation
+   - Automatic query validation and safety checks
+   - Fast path routing for simple queries
 
-3. **Shipment Coordination** (`app/dashboard/care-sessions/page.tsx`)
-   - Intelligent shipment tracking
-   - Partner course network
-   - Delivery timeline management
-   - Performance analytics
-
-4. **Interactive Demo** (`app/demo/page.tsx`)
-   - Shipping quote calculator
-   - Simulated AI travel planning
-   - Real-time delivery tracking
-   - Cost savings calculator
-
-5. **AI Integration**
-   - Sticks - AI Assistant for shipping queries
-   - NLP for travel planning
-   - Predictive analytics for delivery times
-   - Real-time golf course partner network insights
+3. **Database Schema** (15 tables)
+   - Production: beer_styles, production_lines, production_batches
+   - Quality: quality_tests, quality_issues
+   - Inventory: suppliers, raw_materials, material_usage
+   - Equipment: equipment, equipment_downtime
+   - Distribution: distributors, shipments, products, monthly_revenue
+   - Compliance: compliance_audits
 
 ### Environment Variables
 
 Key environment variables in `.env.local`:
-- `ANTHROPIC_API_KEY` - Claude API access for Travel AI
-- `OPENAI_API_KEY` - OpenAI API for embeddings
-- `SHIPSTICKS_API_ENDPOINT` - Ship Sticks API endpoint
-- `SHIPSTICKS_API_KEY` - Ship Sticks API authentication
-- `FEDEX_API_KEY` - FedEx shipping integration
-- `UPS_API_KEY` - UPS shipping integration
-- `NEXT_PUBLIC_DEMO_MODE` - Enable demo mode
-- `DATABASE_URL` - PostgreSQL connection string
+- `DATABASE_URL` - PostgreSQL connection (must use port 5433)
+- `AZURE_OPENAI_KEY` - Azure OpenAI API key
+- `AZURE_OPENAI_ENDPOINT` - Azure OpenAI endpoint
+- `AZURE_OPENAI_DEPLOYMENT` - Deployment name (gpt-4o-mini)
+- `AZURE_OPENAI_VERSION` - API version
 
 ### Design System
 
 - **Colors**:
-  - Primary: Ship Sticks Green (#5fd063)
-  - Secondary: Accent Green (#4fab55)
-  - Dark: Navy (#231f20)
-- **Components**: Using shadcn/ui with golf/travel-focused customizations
-- **Animations**: Framer Motion for smooth, professional transitions
-- **Accessibility**: WCAG 2.1 AA compliant
+  - Primary: Sleeman Green (#22c55e)
+  - Secondary: Amber (#f59e0b)
+  - Dark: Slate (#1e293b)
+- **Components**: Using shadcn/ui with brewery-focused customizations
+- **Animations**: Framer Motion for smooth transitions
 
-### Demo Mode
+### AI Agent Architecture
 
-The application includes a demo mode (`NEXT_PUBLIC_DEMO_MODE=true`) that:
-- Uses mock shipping and customer data
-- Simulates Travel AI analysis
-- Shows sample golf course partner networks
-- Demonstrates shipping cost optimization
-- Highlights shipment tracking workflows
+The SQL agent uses a two-path architecture:
 
-### Security & Compliance
+1. **Fast Path** (simple queries, ~5 seconds)
+   - Single LLM call to generate SQL
+   - Used for: aggregations, top N, simple comparisons
+   - Implemented in `sql-agent-fast.ts`
 
-- **PCI Compliance**: Payment data handling follows PCI-DSS standards
-- **Data Encryption**: End-to-end encryption for customer data
-- **Audit Logging**: Comprehensive audit trail for all transactions
-- **Access Control**: Role-based access control (RBAC)
-- **Security**: SOC 2 Type II compliance ready
+2. **Full Agent** (complex queries, ~30-60 seconds)
+   - LangChain ReAct agent with tool calls
+   - Used for: multi-table joins, complex analytics
+   - Implemented in `sql-agent.ts`
 
-### Next Steps
+Query classification (`query-classifier.ts`) routes requests automatically.
 
-To complete the full implementation:
-1. Integrate FedEx, UPS, DHL shipping APIs
-2. Implement secure payment gateway
-3. Set up real-time shipment tracking engine
-4. Add golf course partner network integration
-5. Implement automated booking workflows
-6. Set up shipment coordination dashboards
-7. Add shipping compliance monitoring tools
-8. Deploy on secure cloud infrastructure
+### Beer Styles in Database
+- Sleeman Clear 2.0 (Light Lager)
+- Sleeman Original Draught (Lager)
+- Sleeman Honey Brown (Amber Ale)
+- Sleeman Cream Ale (Cream Ale)
+- Sleeman Silver Creek (Lager)
+- Okanagan Spring Pale Ale (Pale Ale)
+- Wild Rose WRaspberry (Fruit Beer)
+- Sapporo Premium (Lager)
+
+### Facilities
+- Guelph Facility (Ontario): 3 production lines
+- Vernon Facility (BC): 2 production lines

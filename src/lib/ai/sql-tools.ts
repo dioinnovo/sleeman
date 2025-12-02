@@ -17,7 +17,7 @@ type QueryInput = z.infer<typeof querySchema>;
 
 /**
  * SQL Safety Validation Patterns
- * Prevents destructive operations on the Ship Sticks database
+ * Prevents destructive operations on the Sleeman Breweries database
  */
 const DENY_RE = /\b(INSERT|UPDATE|DELETE|ALTER|DROP|CREATE|REPLACE|TRUNCATE|GRANT|REVOKE)\b/i;
 const HAS_LIMIT_RE = /\bLIMIT\b\s+\d+/i;
@@ -68,7 +68,7 @@ export function sanitizeSqlQuery(query: string): string {
 }
 
 /**
- * Tool 1: List all available tables in the Ship Sticks database
+ * Tool 1: List all available tables in the Sleeman Breweries database
  * This should be the FIRST tool the agent calls to understand available data
  * Now uses cached table names for faster performance
  */
@@ -81,33 +81,33 @@ export const listTablesTool = tool(
         !['conversations', 'messages'].includes(t)
       );
 
-      return `Available tables in Ship Sticks database: ${filteredTables.join(', ')}
+      return `Available tables in Sleeman Breweries database: ${filteredTables.join(', ')}
 
-Ship Sticks Business Data:
-- customers: Customer profiles and acquisition data
-- shipments: Golf equipment shipments with pricing and status
-- tracking_events: Real-time shipment tracking updates
-- partner_courses: Golf course partnerships worldwide
-- routes: Shipping route performance and metrics
-- insurance_claims: Claims processing and payouts
-- customer_service_tickets: Support tickets and resolution
-- marketing_campaigns: Campaign performance and ROI
-- customer_sessions: Web behavior and conversion funnels
-- nps_surveys: Customer satisfaction scores
-- daily_metrics: Aggregated daily KPIs
-- customer_lifetime_stats: Long-term customer value
-- route_performance_monthly: Time-series route analytics
-- partner_performance: Monthly partner metrics
-- carrier_performance: Carrier reliability by route
+Sleeman Breweries Business Data:
+- beer_styles: Beer style definitions (8 styles including Sleeman Clear, Honey Brown, Cream Ale)
+- production_lines: Production line info (5 lines across Guelph and Vernon facilities)
+- production_batches: Production batch records with volume and efficiency tracking
+- quality_tests: Quality test results (ABV, IBU, pH, clarity, taste, carbonation)
+- quality_issues: Quality issue tracking with severity and resolution
+- suppliers: Supplier information (10 suppliers for malt, hops, yeast, packaging)
+- raw_materials: Raw material inventory with reorder levels
+- material_usage: Material consumption records per batch
+- equipment: Equipment registry (fermenters, tanks, bottling/kegging lines)
+- equipment_downtime: Downtime events with cost impact
+- distributors: Distributor information (LCBO, BC Liquor, regional distributors)
+- shipments: Shipment records to distributors
+- products: Product SKUs (15 products in various package formats)
+- monthly_revenue: Revenue by product/month with cost of goods
+- compliance_audits: Audit records for food safety and quality
 
-Total: ${filteredTables.length} tables with 65,000+ records`;
+Total: ${filteredTables.length} tables with 12 months of brewery data`;
     } catch (error: any) {
       return `Error listing tables: ${error.message}`;
     }
   },
   {
     name: "sql_db_list_tables",
-    description: "List all available tables in the Ship Sticks database. Use this FIRST to see what data is available before generating queries. Returns table names with brief descriptions.",
+    description: "List all available tables in the Sleeman Breweries database. Use this FIRST to see what data is available before generating queries. Returns table names with brief descriptions.",
   }
 );
 
@@ -221,7 +221,7 @@ export const executeSqlTool = tool(
   },
   {
     name: "sql_db_query",
-    description: "Execute a SQL query against the Ship Sticks database. Only SELECT queries are allowed. The query will be automatically limited to 100 rows if no LIMIT is specified. Always use sql_db_query_checker before executing to validate the query. This is the FINAL step after listing tables and getting schemas.",
+    description: "Execute a SQL query against the Sleeman Breweries database. Only SELECT queries are allowed. The query will be automatically limited to 100 rows if no LIMIT is specified. Always use sql_db_query_checker before executing to validate the query. This is the FINAL step after listing tables and getting schemas.",
     schema: querySchema,
   }
 );

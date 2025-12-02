@@ -22,12 +22,13 @@ const SiriOrb: React.FC<SiriOrbProps> = ({
   animationDuration = 20,
   isActive = true,
 }) => {
+  // Sleeman Brewery amber/gold theme
   const defaultColors = {
     bg: "transparent",
-    c1: "#2d5016",  // Deep Forest Green (premium & sophisticated)
-    c2: "#3d6b2e",  // Rich Grass Green (natural & trustworthy)
-    c3: "#4a7c3a",  // Fairway Green (professional & elegant)
-    c4: "#2e5c1f",  // Dark Grass Green (mature & grounded)
+    c1: "#D4A84B",  // Sleeman Gold (primary amber)
+    c2: "#E8C76A",  // Light Gold (warm highlight)
+    c3: "#8B6914",  // Deep Amber (rich undertone)
+    c4: "#C49A3F",  // Muted Gold (sophisticated accent)
   }
 
   const finalColors = { ...defaultColors, ...colors }

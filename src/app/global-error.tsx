@@ -8,19 +8,37 @@ export default function GlobalError({
   reset: () => void
 }) {
   return (
-    <html>
-      <body>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-3">
+    <html lang="en">
+      <head>
+        <title>Error - Sleeman BrewMind</title>
+      </head>
+      <body style={{ margin: 0, fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f9fafb',
+          padding: '16px'
+        }}>
+          <div style={{ maxWidth: '448px', width: '100%', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827', marginBottom: '12px' }}>
               Something went wrong!
             </h1>
-            <p className="text-gray-600 mb-8">
-              {error.message || 'An unexpected error occurred'}
+            <p style={{ color: '#6b7280', marginBottom: '32px' }}>
+              {error?.message || 'An unexpected error occurred'}
             </p>
             <button
               onClick={reset}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              style={{
+                padding: '12px 24px',
+                backgroundColor: '#C8A960',
+                color: '#1a1a1a',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 500
+              }}
             >
               Try again
             </button>

@@ -20,13 +20,13 @@ async function getFastSqlSystemPrompt(): Promise<string> {
   // Get the cached schema from the database
   const schemaContext = await getCachedSchema();
 
-  return `You are a SQL expert for Ship Sticks, a golf club shipping company.
+  return `You are a SQL expert for Sleeman Breweries, a Canadian craft brewery known for brands like Sleeman Original Draught, Honey Brown, and Cream Ale.
 
 DATABASE SCHEMA:
 ${schemaContext}
 
 YOUR TASK:
-You are a SQL generation specialist. Generate a single, optimized PostgreSQL query to answer the user's question.
+You are a SQL generation specialist. Generate a single, optimized PostgreSQL query to answer the user's question about brewery operations, production, quality, inventory, or distribution.
 
 RESPONSE FORMAT:
 Return ONLY the SQL query, nothing else. No explanations, no markdown, no additional text.

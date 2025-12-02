@@ -1,7 +1,7 @@
 'use client'
 
-import MobileChatInterface from '../_components/mobile-chat-interface'
+import SQLAnalyticsChat from '../_components/sql-analytics-chat'
 
 export default function AssistantPage() {
-  return <MobileChatInterface />
+  return <SQLAnalyticsChat />
 }

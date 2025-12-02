@@ -1,23 +1,22 @@
 import { BrandConfig } from '../types/brand'
-import { SHIPSTICKS_PRIMARY, SHIPSTICKS_PRIMARY_HOVER, SHIPSTICKS_SECONDARY, ARTHUR_SUCCESS } from './colors'
+import { SLEEMAN_PRIMARY, SLEEMAN_SECONDARY, SLEEMAN_ACCENT, SLEEMAN_SUCCESS } from './colors'
 
-export const SHIPSTICKS_BRAND: BrandConfig = {
-  name: 'Ship Sticks',
-  logo: '/shipsticks-logo-blue.png',
+export const SLEEMAN_BRAND: BrandConfig = {
+  name: 'Sleeman Breweries',
+  logo: '/sleeman-logo.png',
   colors: {
-    primary: SHIPSTICKS_PRIMARY, // #5fd063 - Primary green for CTAs and key elements
-    secondary: SHIPSTICKS_SECONDARY, // #7FE083 - Light green for secondary elements
-    accent: SHIPSTICKS_PRIMARY_HOVER, // #4fab55 - Darker green for interactive states (hover, active, navigation)
-    success: ARTHUR_SUCCESS // #5fd063 - Green for positive outcomes
+    primary: SLEEMAN_PRIMARY, // #1C1812 - Dark brewery background
+    secondary: SLEEMAN_SECONDARY, // #D4A84B - Amber/gold accent
+    accent: SLEEMAN_ACCENT, // #1863DC - Blue for interactive elements
+    success: SLEEMAN_SUCCESS // #10B981 - Green for positive outcomes
   },
   ai: {
-    name: 'Sticks',
-    persona: 'Sticks is your intelligent Ship Sticks AI assistant specializing in worldwide golf equipment shipping, travel logistics, partner course network, and shipment optimization. Leverages real-time tracking and route optimization to deliver exceptional service for golfers worldwide.'
+    name: 'Barley',
+    persona: 'Barley is your AI data analyst for Sleeman Breweries, specializing in brewery operations intelligence. Expert at querying production data, quality metrics, equipment health, and compliance reporting across all four facilities: Guelph, Chambly, Vernon, and Calgary. Transforms complex data questions into instant insights using natural language SQL queries.'
   }
 }
 
-// Legacy Arthur Health brand (deprecated - use SHIPSTICKS_BRAND)
-export const ARTHUR_BRAND: BrandConfig = SHIPSTICKS_BRAND
-
-// Legacy compatibility export
-export const SCC_BRAND = ARTHUR_BRAND
+// Legacy exports for backwards compatibility during migration
+export const SHIPSTICKS_BRAND: BrandConfig = SLEEMAN_BRAND
+export const ARTHUR_BRAND: BrandConfig = SLEEMAN_BRAND
+export const SCC_BRAND: BrandConfig = SLEEMAN_BRAND

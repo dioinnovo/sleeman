@@ -5,76 +5,76 @@ import {
   TrendingUp, DollarSign, Users, FileText, Clock, AlertTriangle,
   Calendar, BarChart3, Activity, Zap, Target, Shield,
   ArrowUp, ArrowDown, Building2, Home, Droplets, Flame,
-  CloudRain, Palette, Briefcase, Brain
+  CloudRain, Palette, Briefcase, Brain, Beer, Factory, Beaker, Truck
 } from 'lucide-react'
 import Link from 'next/link'
 import { PageHeader } from '@/components/ui/page-header'
 
 export default function DashboardPage() {
   const [stats, setStats] = useState({
-    activeShipments: 1247,
-    shippingValueDelivered: 8750000,
-    avgCostSavings: 3500,
-    deliveryScore: 94,
-    avgDeliveryTime: 2.1,
-    customerSatisfaction: 96
+    activeBatches: 24,
+    monthlyProduction: 45000,
+    qualityScore: 97.2,
+    efficiencyRate: 94,
+    avgFermentationDays: 14,
+    distributorCount: 18
   })
 
   const [recentActivity, setRecentActivity] = useState([
-    { id: 1, type: 'case_created', title: `New Shipment - Callaway Golf Set to Pebble Beach`, time: '5 minutes ago', status: 'new' },
-    { id: 2, type: 'care_plan_approved', title: `Bulk Order Approved - $3,500 Monthly Savings`, time: '1 hour ago', status: 'success' },
-    { id: 3, type: 'assessment_complete', title: `Delivery Confirmation - Shipment #1247`, time: '2 hours ago', status: 'info' },
-    { id: 4, type: 'alert_triggered', title: `Weather Delay Alert - High Priority`, time: '3 hours ago', status: 'warning' },
-    { id: 5, type: 'document_uploaded', title: '12 Golf Bag Photos Added - Order #892', time: '4 hours ago', status: 'info' }
+    { id: 1, type: 'case_created', title: `New Batch Started - Honey Brown Lager #2024-1247`, time: '5 minutes ago', status: 'new' },
+    { id: 2, type: 'care_plan_approved', title: `Quality Test Passed - Cream Ale Batch #2024-1189`, time: '1 hour ago', status: 'success' },
+    { id: 3, type: 'assessment_complete', title: `Fermentation Complete - Sleeman Clear #2024-1156`, time: '2 hours ago', status: 'info' },
+    { id: 4, type: 'alert_triggered', title: `Temperature Alert - Fermenter Tank 3`, time: '3 hours ago', status: 'warning' },
+    { id: 5, type: 'document_uploaded', title: 'Monthly Compliance Report Uploaded', time: '4 hours ago', status: 'info' }
   ])
 
-  const scheduledShipments = [
-    { id: 1, property: 'Golf Clubs to St. Andrews - J. Smith', time: 'Today 2:00 PM', type: 'Express Delivery', status: 'confirmed' },
-    { id: 2, property: 'Ski Equipment to Aspen - M. Johnson', time: 'Today 3:30 PM', type: 'Standard Shipping', status: 'confirmed' },
-    { id: 3, property: 'Luggage to Pinehurst - K. Williams', time: 'Tomorrow 10:00 AM', type: 'Resort Delivery', status: 'pending' },
-    { id: 4, property: 'Golf Bag Set to Augusta - R. Davis', time: 'Tomorrow 2:00 PM', type: 'VIP Service', status: 'confirmed' }
+  const scheduledBatches = [
+    { id: 1, property: 'Sleeman Original Draught - Line 1', time: 'Today 2:00 PM', type: 'Primary Fermentation', status: 'confirmed' },
+    { id: 2, property: 'Honey Brown Lager - Line 2', time: 'Today 3:30 PM', type: 'Quality Testing', status: 'confirmed' },
+    { id: 3, property: 'Cream Ale - Line 3', time: 'Tomorrow 10:00 AM', type: 'Bottling', status: 'pending' },
+    { id: 4, property: 'Sleeman Clear 2.0 - Line 1', time: 'Tomorrow 2:00 PM', type: 'Kegging', status: 'confirmed' }
   ]
 
   const kpiCards = [
     {
-      title: 'Active Shipments',
-      value: stats.activeShipments.toLocaleString(),
-      change: '+12%',
+      title: 'Active Batches',
+      value: stats.activeBatches.toLocaleString(),
+      change: '+8%',
       trend: 'up',
-      icon: Users,
-      color: 'bg-purple-500',
-      lightColor: 'bg-purple-50',
-      textColor: 'text-purple-600'
+      icon: Beer,
+      color: 'bg-amber-500',
+      lightColor: 'bg-amber-50',
+      textColor: 'text-amber-600'
     },
     {
-      title: 'Cost-per-Shipment',
-      value: `$${Math.round(stats.shippingValueDelivered / stats.activeShipments).toLocaleString()}`,
-      change: '-12%',
-      trend: 'down',
-      icon: TrendingUp,
+      title: 'Monthly Production (HL)',
+      value: stats.monthlyProduction.toLocaleString(),
+      change: '+12%',
+      trend: 'up',
+      icon: Factory,
+      color: 'bg-blue-500',
+      lightColor: 'bg-blue-50',
+      textColor: 'text-blue-600'
+    },
+    {
+      title: 'Quality Score',
+      value: `${stats.qualityScore}%`,
+      change: '+2.1%',
+      trend: 'up',
+      icon: Target,
       color: 'bg-green-500',
       lightColor: 'bg-green-50',
       textColor: 'text-green-600'
     },
     {
-      title: 'Avg Cost Savings',
-      value: `$${(stats.avgCostSavings).toLocaleString()}`,
-      change: '+18%',
+      title: 'Efficiency Rate',
+      value: `${stats.efficiencyRate}%`,
+      change: '+5%',
       trend: 'up',
-      icon: DollarSign,
-      color: 'bg-emerald-500',
-      lightColor: 'bg-emerald-50',
-      textColor: 'text-emerald-600'
-    },
-    {
-      title: 'Delivery Score',
-      value: `${stats.deliveryScore}%`,
-      change: '+7%',
-      trend: 'up',
-      icon: Target,
-      color: 'bg-amber-500',
-      lightColor: 'bg-amber-50',
-      textColor: 'text-amber-600'
+      icon: Zap,
+      color: 'bg-purple-500',
+      lightColor: 'bg-purple-50',
+      textColor: 'text-purple-600'
     }
   ]
 
@@ -82,8 +82,8 @@ export default function DashboardPage() {
     <div className="space-y-4 sm:space-y-6 w-full">
       {/* Header */}
       <PageHeader
-        title="Ship Sticks Dashboard"
-        description="Welcome to Ship Sticks! Here's your shipping management overview."
+        title="Sleeman BrewMind Dashboard"
+        description="Welcome to BrewMind! Here's your brewery operations overview."
       />
 
       {/* KPI Cards */}
@@ -120,36 +120,36 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Scheduled Shipments */}
+      {/* Scheduled Batches */}
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">Scheduled Shipments</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">Scheduled Production</h2>
           <Link href="/dashboard/care-sessions" className="text-arthur-blue text-sm hover:underline">
             View All
           </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-4">
-          {scheduledShipments.map((shipment) => (
-            <div key={shipment.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-arthur-blue transition bg-white dark:bg-gray-800 hover:shadow-md">
+          {scheduledBatches.map((batch) => (
+            <div key={batch.id} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-arthur-blue transition bg-white dark:bg-gray-800 hover:shadow-md">
               <div className="space-y-3">
                 <div>
-                  <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 leading-tight mb-1">{shipment.property}</h3>
+                  <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100 leading-tight mb-1">{batch.property}</h3>
                   <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
-                    shipment.status === 'confirmed' ? 'bg-green-100 text-green-600' :
+                    batch.status === 'confirmed' ? 'bg-green-100 text-green-600' :
                     'bg-yellow-100 text-yellow-600'
                   }`}>
-                    {shipment.status}
+                    {batch.status}
                   </span>
                 </div>
                 <div className="space-y-2 pt-2 border-t border-gray-100 dark:border-gray-800">
                   <div className="flex items-center gap-2">
                     <Calendar size={14} className="text-gray-400 flex-shrink-0" />
-                    <span className="text-xs text-gray-600 dark:text-gray-400">{shipment.time}</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">{batch.time}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3.5 h-3.5 rounded-full bg-gray-400 flex-shrink-0" />
-                    <span className="text-xs text-gray-700 dark:text-gray-300 font-medium">{shipment.type}</span>
+                    <div className="w-3.5 h-3.5 rounded-full bg-amber-400 flex-shrink-0" />
+                    <span className="text-xs text-gray-700 dark:text-gray-300 font-medium">{batch.type}</span>
                   </div>
                 </div>
               </div>
@@ -191,91 +191,103 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Shipping Categories */}
+      {/* Beer Styles & Production */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Shipping Categories</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Beer Style Production</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Activity className="text-indigo-500 w-8 h-8 mb-2" />
+            <div className="flex flex-col items-center p-4 bg-amber-50 dark:bg-gray-700 rounded-lg hover:bg-amber-100 dark:hover:bg-gray-800 transition">
+              <Beer className="text-amber-600 w-8 h-8 mb-2" />
               <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">845</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Golf Clubs</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Original Draught</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Zap className="text-yellow-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">389</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Golf Bags</span>
+            <div className="flex flex-col items-center p-4 bg-yellow-50 dark:bg-gray-700 rounded-lg hover:bg-yellow-100 dark:hover:bg-gray-800 transition">
+              <Droplets className="text-yellow-600 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">623</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Honey Brown</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Shield className="text-green-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">256</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Ski Equipment</span>
+            <div className="flex flex-col items-center p-4 bg-orange-50 dark:bg-gray-700 rounded-lg hover:bg-orange-100 dark:hover:bg-gray-800 transition">
+              <Beer className="text-orange-500 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">512</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Cream Ale</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Brain className="text-purple-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">198</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Luggage</span>
+            <div className="flex flex-col items-center p-4 bg-sky-50 dark:bg-gray-700 rounded-lg hover:bg-sky-100 dark:hover:bg-gray-800 transition">
+              <Droplets className="text-sky-500 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">398</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Sleeman Clear</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Home className="text-teal-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">434</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Resort Direct</span>
+            <div className="flex flex-col items-center p-4 bg-red-50 dark:bg-gray-700 rounded-lg hover:bg-red-100 dark:hover:bg-gray-800 transition">
+              <Beer className="text-red-600 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">287</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">India Pale Ale</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Users className="text-cyan-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">167</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Bulk Orders</span>
+            <div className="flex flex-col items-center p-4 bg-stone-50 dark:bg-gray-700 rounded-lg hover:bg-stone-100 dark:hover:bg-gray-800 transition">
+              <Beer className="text-stone-600 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">234</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Silver Creek</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <FileText className="text-orange-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">289</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">International</span>
+            <div className="flex flex-col items-center p-4 bg-emerald-50 dark:bg-gray-700 rounded-lg hover:bg-emerald-100 dark:hover:bg-gray-800 transition">
+              <Beaker className="text-emerald-600 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">156</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Fine Porter</span>
             </div>
-            <div className="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
-              <Target className="text-indigo-500 w-8 h-8 mb-2" />
-              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">176</span>
-              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Express</span>
+            <div className="flex flex-col items-center p-4 bg-purple-50 dark:bg-gray-700 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-800 transition">
+              <Beer className="text-purple-600 w-8 h-8 mb-2" />
+              <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">89</span>
+              <span className="text-xs text-gray-600 dark:text-gray-400 text-center mt-1">Seasonal</span>
             </div>
           </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-slate-200 p-4 sm:p-6">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Customer Segments</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">Distribution Channels</h2>
           <div className="space-y-4">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <Users className="text-purple-500 w-5 h-5" />
-                  <span className="font-medium text-sm sm:text-base">Individual Golfers</span>
+                  <Building2 className="text-purple-500 w-5 h-5" />
+                  <span className="font-medium text-sm sm:text-base">LCBO (Ontario)</span>
                 </div>
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">55%</span>
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">45%</span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-purple-500 h-2 rounded-full" style={{ width: '55%' }}></div>
+                <div className="bg-purple-500 h-2 rounded-full" style={{ width: '45%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <Building2 className="text-cyan-500 w-5 h-5" />
-                  <span className="font-medium text-sm sm:text-base">Golf Resorts</span>
+                  <Truck className="text-cyan-500 w-5 h-5" />
+                  <span className="font-medium text-sm sm:text-base">BC Liquor Stores</span>
                 </div>
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">30%</span>
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">25%</span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-cyan-500 h-2 rounded-full" style={{ width: '30%' }}></div>
+                <div className="bg-cyan-500 h-2 rounded-full" style={{ width: '25%' }}></div>
               </div>
             </div>
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <Shield className="text-green-500 w-5 h-5" />
-                  <span className="font-medium text-sm sm:text-base">Travel Agencies</span>
+                  <Home className="text-green-500 w-5 h-5" />
+                  <span className="font-medium text-sm sm:text-base">Regional Distributors</span>
                 </div>
-                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">15%</span>
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">20%</span>
               </div>
               <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div className="bg-green-500 h-2 rounded-full" style={{ width: '15%' }}></div>
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '20%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1 sm:gap-2">
+                  <Beer className="text-amber-500 w-5 h-5" />
+                  <span className="font-medium text-sm sm:text-base">Brewery Direct</span>
+                </div>
+                <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">10%</span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="bg-amber-500 h-2 rounded-full" style={{ width: '10%' }}></div>
               </div>
             </div>
           </div>

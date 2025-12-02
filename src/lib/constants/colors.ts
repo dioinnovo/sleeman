@@ -1,109 +1,135 @@
-// Ship Sticks Brand Colors
-export const SHIPSTICKS_PRIMARY = '#5fd063' // Primary Green - main CTAs and headers
-export const SHIPSTICKS_PRIMARY_HOVER = '#4fab55' // Darker Green for hover states and active navigation
-export const SHIPSTICKS_SECONDARY = '#7FE083' // Light Green - secondary elements
-export const SHIPSTICKS_TERTIARY = '#E6F9E7' // Very Light Green - backgrounds
+// Sleeman Breweries Brand Colors (Dark Brewery Theme)
+export const SLEEMAN_PRIMARY = '#1C1812' // Dark background - signature brewery dark
+export const SLEEMAN_SECONDARY = '#D4A84B' // Amber/gold - craft beer inspired
+export const SLEEMAN_ACCENT = '#1863DC' // Blue accent - professional, trustworthy
+export const SLEEMAN_TERTIARY = '#2C2416' // Dark brown - secondary dark surfaces
 
-// Legacy Arthur Health Brand Colors (deprecated - use Ship Sticks colors above)
-export const ARTHUR_PRIMARY = '#5fd063' // Mapped to Ship Sticks Primary Green
-export const ARTHUR_PRIMARY_HOVER = '#4fab55' // Mapped to Ship Sticks Accent Green
-export const ARTHUR_SECONDARY = '#7FE083' // Mapped to Ship Sticks Secondary
-export const ARTHUR_TERTIARY = '#E6F9E7' // Mapped to Ship Sticks Tertiary
+// Light Variants
+export const SLEEMAN_GOLD_LIGHT = '#E8C76A' // Light gold for hover states
+export const SLEEMAN_GOLD_DARK = '#8B6914' // Deep amber for emphasis
 
-// UI Foundation Colors (Primary Usage)
-export const ARTHUR_UI_PRIMARY = '#5fd063' // Primary Green - main buttons, headers
-export const ARTHUR_UI_SECONDARY = '#4fab55' // Accent Green - interactive states, active navigation
-export const ARTHUR_TEXT_PRIMARY = '#2B2B2B' // Dark Gray Text
-export const ARTHUR_TEXT_SECONDARY = '#707070' // Gray Text
-export const ARTHUR_BACKGROUND = '#F5F5F5' // Light Gray Background
-export const ARTHUR_SURFACE = '#FFFFFF' // White for cards
-export const ARTHUR_BORDER = '#E0E0E0' // Light Gray borders
+// UI Foundation Colors
+export const SLEEMAN_UI_PRIMARY = '#D4A84B' // Gold for primary actions
+export const SLEEMAN_UI_SECONDARY = '#1863DC' // Blue for secondary actions
+export const SLEEMAN_TEXT_PRIMARY = '#1C1812' // Dark text on light backgrounds
+export const SLEEMAN_TEXT_LIGHT = '#F5F5F5' // Light text on dark backgrounds
+export const SLEEMAN_TEXT_SECONDARY = '#6B7280' // Gray text for secondary content
+export const SLEEMAN_BACKGROUND = '#F9FAFB' // Light background
+export const SLEEMAN_BACKGROUND_DARK = '#1C1812' // Dark mode background
+export const SLEEMAN_SURFACE = '#FFFFFF' // White for cards (light mode)
+export const SLEEMAN_SURFACE_DARK = '#2C2416' // Dark brown for cards (dark mode)
+export const SLEEMAN_BORDER = '#E5E7EB' // Light gray borders
+export const SLEEMAN_BORDER_DARK = '#3D352A' // Dark borders
 
 // Gray Scale for UI Foundation
-export const ARTHUR_GRAY_900 = '#1A1A1A' // Darkest
-export const ARTHUR_GRAY_800 = '#2B2B2B'
-export const ARTHUR_GRAY_700 = '#404040'
-export const ARTHUR_GRAY_600 = '#525252'
-export const ARTHUR_GRAY_500 = '#707070'
-export const ARTHUR_GRAY_400 = '#A0A0A0'
-export const ARTHUR_GRAY_300 = '#D0D0D0'
-export const ARTHUR_GRAY_200 = '#E0E0E0'
-export const ARTHUR_GRAY_100 = '#F5F5F5'
-export const ARTHUR_GRAY_50 = '#F9FAFB' // Lightest
+export const SLEEMAN_GRAY_900 = '#111827' // Darkest
+export const SLEEMAN_GRAY_800 = '#1F2937'
+export const SLEEMAN_GRAY_700 = '#374151'
+export const SLEEMAN_GRAY_600 = '#4B5563'
+export const SLEEMAN_GRAY_500 = '#6B7280'
+export const SLEEMAN_GRAY_400 = '#9CA3AF'
+export const SLEEMAN_GRAY_300 = '#D1D5DB'
+export const SLEEMAN_GRAY_200 = '#E5E7EB'
+export const SLEEMAN_GRAY_100 = '#F3F4F6'
+export const SLEEMAN_GRAY_50 = '#F9FAFB' // Lightest
 
-// Ship Sticks Semantic Colors
-export const ARTHUR_SUCCESS = '#5fd063' // Green for successful deliveries
-export const ARTHUR_WARNING = '#F59E0B' // Amber for shipping alerts
-export const ARTHUR_ERROR = '#DC2626' // Red for delivery issues
-export const ARTHUR_INFO = '#5fd063' // Green for information
-export const ARTHUR_CARE = '#4fab55' // Accent green for quality service
-export const ARTHUR_RISK = '#FF9800' // Orange for priority indicators
+// Sleeman Semantic Colors
+export const SLEEMAN_SUCCESS = '#10B981' // Emerald green for positive outcomes
+export const SLEEMAN_WARNING = '#F59E0B' // Amber for alerts (matches brand gold)
+export const SLEEMAN_ERROR = '#DC2626' // Red for issues
+export const SLEEMAN_INFO = '#1863DC' // Blue for information (matches accent)
+
+// Brewery-Specific Semantic Colors
+export const SLEEMAN_PRODUCTION = '#10B981' // Green for production metrics
+export const SLEEMAN_QUALITY = '#8B5CF6' // Purple for quality scores
+export const SLEEMAN_EQUIPMENT = '#F97316' // Orange for equipment health
+export const SLEEMAN_COMPLIANCE = '#1863DC' // Blue for compliance/excise
 
 // Exported color object for easier access
-export const ARTHUR_COLORS = {
+export const SLEEMAN_COLORS = {
   // Brand Colors
   brand: {
-    primary: ARTHUR_PRIMARY,
-    primaryHover: ARTHUR_PRIMARY_HOVER,
-    secondary: ARTHUR_SECONDARY,
-    tertiary: ARTHUR_TERTIARY
+    primary: SLEEMAN_PRIMARY,
+    secondary: SLEEMAN_SECONDARY,
+    accent: SLEEMAN_ACCENT,
+    tertiary: SLEEMAN_TERTIARY,
+    goldLight: SLEEMAN_GOLD_LIGHT,
+    goldDark: SLEEMAN_GOLD_DARK
   },
   // UI Foundation
   ui: {
-    primary: ARTHUR_UI_PRIMARY,
-    secondary: ARTHUR_UI_SECONDARY,
-    textPrimary: ARTHUR_TEXT_PRIMARY,
-    textSecondary: ARTHUR_TEXT_SECONDARY,
-    background: ARTHUR_BACKGROUND,
-    surface: ARTHUR_SURFACE,
-    border: ARTHUR_BORDER
+    primary: SLEEMAN_UI_PRIMARY,
+    secondary: SLEEMAN_UI_SECONDARY,
+    textPrimary: SLEEMAN_TEXT_PRIMARY,
+    textLight: SLEEMAN_TEXT_LIGHT,
+    textSecondary: SLEEMAN_TEXT_SECONDARY,
+    background: SLEEMAN_BACKGROUND,
+    backgroundDark: SLEEMAN_BACKGROUND_DARK,
+    surface: SLEEMAN_SURFACE,
+    surfaceDark: SLEEMAN_SURFACE_DARK,
+    border: SLEEMAN_BORDER,
+    borderDark: SLEEMAN_BORDER_DARK
   },
   // Gray Scale
   gray: {
-    900: ARTHUR_GRAY_900,
-    800: ARTHUR_GRAY_800,
-    700: ARTHUR_GRAY_700,
-    600: ARTHUR_GRAY_600,
-    500: ARTHUR_GRAY_500,
-    400: ARTHUR_GRAY_400,
-    300: ARTHUR_GRAY_300,
-    200: ARTHUR_GRAY_200,
-    100: ARTHUR_GRAY_100,
-    50: ARTHUR_GRAY_50
+    900: SLEEMAN_GRAY_900,
+    800: SLEEMAN_GRAY_800,
+    700: SLEEMAN_GRAY_700,
+    600: SLEEMAN_GRAY_600,
+    500: SLEEMAN_GRAY_500,
+    400: SLEEMAN_GRAY_400,
+    300: SLEEMAN_GRAY_300,
+    200: SLEEMAN_GRAY_200,
+    100: SLEEMAN_GRAY_100,
+    50: SLEEMAN_GRAY_50
   },
-  // Healthcare Semantic
+  // Semantic Colors
   semantic: {
-    success: ARTHUR_SUCCESS,
-    warning: ARTHUR_WARNING,
-    error: ARTHUR_ERROR,
-    info: ARTHUR_INFO,
-    care: ARTHUR_CARE,
-    risk: ARTHUR_RISK
+    success: SLEEMAN_SUCCESS,
+    warning: SLEEMAN_WARNING,
+    error: SLEEMAN_ERROR,
+    info: SLEEMAN_INFO
+  },
+  // Brewery-Specific
+  brewery: {
+    production: SLEEMAN_PRODUCTION,
+    quality: SLEEMAN_QUALITY,
+    equipment: SLEEMAN_EQUIPMENT,
+    compliance: SLEEMAN_COMPLIANCE
   }
 }
 
-// Legacy exports for compatibility
-export const SCC_BRAND_RED = ARTHUR_PRIMARY
-export const SCC_BRAND_RED_HOVER = ARTHUR_PRIMARY_HOVER
-export const SCC_UI_PRIMARY = ARTHUR_UI_PRIMARY
-export const SCC_SECONDARY = ARTHUR_UI_SECONDARY
-export const SCC_TEXT_PRIMARY = ARTHUR_TEXT_PRIMARY
-export const SCC_TEXT_SECONDARY = ARTHUR_TEXT_SECONDARY
-export const SCC_BACKGROUND = ARTHUR_BACKGROUND
-export const SCC_SURFACE = ARTHUR_SURFACE
-export const SCC_BORDER = ARTHUR_BORDER
-export const SCC_GRAY_900 = ARTHUR_GRAY_900
-export const SCC_GRAY_800 = ARTHUR_GRAY_800
-export const SCC_GRAY_700 = ARTHUR_GRAY_700
-export const SCC_GRAY_600 = ARTHUR_GRAY_600
-export const SCC_GRAY_500 = ARTHUR_GRAY_500
-export const SCC_GRAY_400 = ARTHUR_GRAY_400
-export const SCC_GRAY_300 = ARTHUR_GRAY_300
-export const SCC_GRAY_200 = ARTHUR_GRAY_200
-export const SCC_GRAY_100 = ARTHUR_GRAY_100
-export const SCC_GRAY_50 = ARTHUR_GRAY_50
-export const SCC_SUCCESS = ARTHUR_SUCCESS
-export const SCC_WARNING = ARTHUR_WARNING
-export const SCC_ERROR = ARTHUR_ERROR
-export const SCC_INFO = ARTHUR_INFO
-export const SCC_COLORS = ARTHUR_COLORS
+// Legacy compatibility exports (mapped to Sleeman equivalents)
+// These maintain backwards compatibility during migration
+export const SHIPSTICKS_PRIMARY = SLEEMAN_SECONDARY
+export const SHIPSTICKS_PRIMARY_HOVER = SLEEMAN_GOLD_DARK
+export const SHIPSTICKS_SECONDARY = SLEEMAN_GOLD_LIGHT
+export const SHIPSTICKS_TERTIARY = SLEEMAN_TERTIARY
+export const ARTHUR_PRIMARY = SLEEMAN_SECONDARY
+export const ARTHUR_PRIMARY_HOVER = SLEEMAN_GOLD_DARK
+export const ARTHUR_SECONDARY = SLEEMAN_GOLD_LIGHT
+export const ARTHUR_TERTIARY = SLEEMAN_TERTIARY
+export const ARTHUR_UI_PRIMARY = SLEEMAN_UI_PRIMARY
+export const ARTHUR_UI_SECONDARY = SLEEMAN_UI_SECONDARY
+export const ARTHUR_TEXT_PRIMARY = SLEEMAN_TEXT_PRIMARY
+export const ARTHUR_TEXT_SECONDARY = SLEEMAN_TEXT_SECONDARY
+export const ARTHUR_BACKGROUND = SLEEMAN_BACKGROUND
+export const ARTHUR_SURFACE = SLEEMAN_SURFACE
+export const ARTHUR_BORDER = SLEEMAN_BORDER
+export const ARTHUR_GRAY_900 = SLEEMAN_GRAY_900
+export const ARTHUR_GRAY_800 = SLEEMAN_GRAY_800
+export const ARTHUR_GRAY_700 = SLEEMAN_GRAY_700
+export const ARTHUR_GRAY_600 = SLEEMAN_GRAY_600
+export const ARTHUR_GRAY_500 = SLEEMAN_GRAY_500
+export const ARTHUR_GRAY_400 = SLEEMAN_GRAY_400
+export const ARTHUR_GRAY_300 = SLEEMAN_GRAY_300
+export const ARTHUR_GRAY_200 = SLEEMAN_GRAY_200
+export const ARTHUR_GRAY_100 = SLEEMAN_GRAY_100
+export const ARTHUR_GRAY_50 = SLEEMAN_GRAY_50
+export const ARTHUR_SUCCESS = SLEEMAN_SUCCESS
+export const ARTHUR_WARNING = SLEEMAN_WARNING
+export const ARTHUR_ERROR = SLEEMAN_ERROR
+export const ARTHUR_INFO = SLEEMAN_INFO
+export const ARTHUR_CARE = SLEEMAN_SECONDARY
+export const ARTHUR_RISK = SLEEMAN_WARNING
+export const ARTHUR_COLORS = SLEEMAN_COLORS

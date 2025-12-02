@@ -25,10 +25,10 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Ship Sticks - Golf Equipment Shipping',
-  description: 'Ship your golf clubs anywhere with ease - Trusted golf equipment shipping for travelers worldwide',
-  keywords: 'golf shipping, golf clubs, golf equipment, travel, golf vacation, ship golf clubs, golf logistics',
-  authors: [{ name: 'Ship Sticks' }],
+  title: 'Sleeman BrewMind - AI-Powered Brewery Analytics',
+  description: 'AI-powered analytics and operations intelligence for Sleeman Breweries - Production, quality, inventory, and distribution insights',
+  keywords: 'brewery analytics, beer production, quality control, inventory management, Sleeman, craft beer, AI analytics',
+  authors: [{ name: 'Sleeman Breweries' }],
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '32x32', type: 'image/x-icon' },
@@ -39,11 +39,11 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
   },
   openGraph: {
-    title: 'Ship Sticks - Golf Equipment Shipping',
-    description: 'Ship your golf clubs anywhere with ease - Trusted by golfers worldwide for hassle-free equipment shipping',
+    title: 'Sleeman BrewMind - AI-Powered Brewery Analytics',
+    description: 'AI-powered analytics platform for Sleeman Breweries - Transform brewery operations with natural language data insights',
     type: 'website',
     locale: 'en_US',
-    siteName: 'Ship Sticks',
+    siteName: 'Sleeman BrewMind',
   },
 }
 

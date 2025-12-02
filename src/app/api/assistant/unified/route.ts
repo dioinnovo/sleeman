@@ -42,22 +42,22 @@ function detectSqlQuestion(message: string): 'quick' | 'pro' | null {
     'analyze', 'identify', 'which', 'what percentage', 'get', 'find', 'display'
   ];
 
-  // Ship Sticks business entities (tables with data)
+  // Sleeman Breweries business entities (tables with data)
   const businessEntities = [
-    // Customers
-    'customer', 'customers', 'lifetime value', 'ltv', 'acquisition', 'channel', 'channels', 'segment', 'segments',
-    // Shipments & Routes
-    'shipment', 'shipments', 'route', 'routes', 'delivery', 'deliveries', 'tracking', 'delay', 'delays',
-    // Carriers & Performance
-    'carrier', 'carriers', 'fedex', 'ups', 'dhl', 'usps', 'performance', 'on-time', 'success rate',
+    // Production
+    'batch', 'batches', 'production', 'efficiency', 'volume', 'fermentation', 'brewing',
+    // Beer Styles
+    'beer', 'style', 'styles', 'lager', 'ale', 'ipa', 'porter', 'honey brown', 'cream ale', 'sleeman',
+    // Quality
+    'quality', 'test', 'tests', 'abv', 'ibu', 'ph', 'clarity', 'taste', 'carbonation',
     // Financial Metrics
     'revenue', 'profit', 'margin', 'margins', 'cost', 'price', 'pricing', 'roi', 'financial',
-    // Partners & Destinations
-    'partner', 'partners', 'course', 'courses', 'golf', 'destination', 'destinations',
-    // Operations & Quality
-    'failure', 'failures', 'damage', 'claim', 'claims', 'insurance', 'coverage',
-    // Marketing & Sales
-    'campaign', 'campaigns', 'marketing', 'conversion', 'conversions', 'quote', 'quotes', 'booking', 'bookings',
+    // Distribution
+    'distributor', 'distributors', 'lcbo', 'shipment', 'shipments', 'delivery', 'deliveries',
+    // Inventory & Suppliers
+    'inventory', 'stock', 'material', 'materials', 'supplier', 'suppliers', 'reorder',
+    // Equipment & Operations
+    'equipment', 'downtime', 'maintenance', 'line', 'lines', 'tank', 'fermenter',
     // Customer Service
     'service', 'ticket', 'tickets', 'nps', 'satisfaction', 'rating', 'ratings', 'issue', 'issues',
     // Time-based metrics
@@ -500,7 +500,7 @@ I've completed a thorough analysis of your client's policy and identified **sign
           queryResults: sqlData.queryResults,
           chartData: sqlData.chartData,
           sources: sqlData.queryResults ? [{
-            name: 'Ship Sticks Database',
+            name: 'Sleeman Breweries Database',
             snippet: `Query returned ${sqlData.queryResults.rows.length} results`,
             metadata: {
               tables: extractTablesFromSql(sqlData.sqlQuery || ''),
@@ -695,15 +695,15 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * Generate contextual suggestions for SQL query results
+ * Generate contextual suggestions for SQL query results - Brewery Domain
  */
 function generateSqlSuggestions(sqlQuery: string | null, queryResults: any): string[] {
   if (!queryResults || !queryResults.rows || queryResults.rows.length === 0) {
     return [
-      'Show me the top customers by revenue',
-      'What are the most profitable routes?',
-      'Analyze shipment failure rates by carrier',
-      'Customer acquisition channel performance'
+      'Show me production volumes by brand',
+      'What are the top-selling beer styles?',
+      'Analyze fermentation batch efficiency',
+      'Production capacity utilization by brewery'
     ];
   }
 
@@ -711,45 +711,58 @@ function generateSqlSuggestions(sqlQuery: string | null, queryResults: any): str
   const suggestions: string[] = [];
   const queryLower = sqlQuery?.toLowerCase() || '';
 
-  if (queryLower.includes('customer')) {
+  // Production & Brewing queries
+  if (queryLower.includes('production') || queryLower.includes('batch') || queryLower.includes('brew')) {
     suggestions.push(
-      'Show customer lifetime value by channel',
-      'Analyze customer retention trends',
-      'Top customers by shipment volume'
+      'Compare batch yields across breweries',
+      'Analyze fermentation cycle times',
+      'Show production efficiency trends'
     );
   }
 
-  if (queryLower.includes('route') || queryLower.includes('shipment')) {
+  // Brand & Product queries
+  if (queryLower.includes('brand') || queryLower.includes('product') || queryLower.includes('beer')) {
     suggestions.push(
-      'Show route failure rates',
-      'Analyze delivery times by carrier',
-      'Revenue breakdown by route'
+      'Top-selling brands by volume',
+      'Seasonal product performance',
+      'Brand profitability analysis'
     );
   }
 
-  if (queryLower.includes('revenue') || queryLower.includes('margin')) {
+  // Sales & Revenue queries
+  if (queryLower.includes('sales') || queryLower.includes('revenue') || queryLower.includes('margin')) {
     suggestions.push(
-      'Show profit margins by carrier',
-      'Analyze revenue trends over time',
-      'Top revenue-generating customers'
+      'Sales trends by region',
+      'Revenue breakdown by channel',
+      'Compare quarterly performance'
     );
   }
 
-  if (queryLower.includes('channel') || queryLower.includes('campaign')) {
+  // Inventory & Supply queries
+  if (queryLower.includes('inventory') || queryLower.includes('raw') || queryLower.includes('ingredient')) {
     suggestions.push(
-      'Marketing ROI by channel',
-      'Campaign performance analysis',
-      'Customer acquisition cost breakdown'
+      'Ingredient usage by brand',
+      'Inventory turnover rates',
+      'Raw material cost analysis'
+    );
+  }
+
+  // Quality & Testing queries
+  if (queryLower.includes('quality') || queryLower.includes('test') || queryLower.includes('defect')) {
+    suggestions.push(
+      'Quality metrics by batch',
+      'Defect rates by production line',
+      'Compliance testing results'
     );
   }
 
   // Default suggestions if no specific ones matched
   if (suggestions.length === 0) {
     return [
-      'Show me more details',
-      'Analyze this data by month',
+      'Break this down by brand',
+      'Show trends over time',
       'Compare with previous period',
-      'Break down by category'
+      'Analyze by brewery location'
     ];
   }
 
@@ -783,92 +796,96 @@ function extractTablesFromSql(sql: string): string[] {
 }
 
 /**
- * Generate contextual suggestions based on the model and conversation
+ * Generate contextual suggestions based on the model and conversation - Brewery Domain
  */
 function generateSuggestions(model: ModelType, response: string, messages: any[]): string[] {
-  const lastUserMessage = messages.filter(m => m.role === 'user').pop()?.content || '';
   const responseLower = response.toLowerCase();
 
   if (model === 'quick') {
-    // Check if we have context (insured name) established
+    // Check if we have brewery context established
     const hasContext = messages.some(m =>
-      m.content.toLowerCase().includes('policy of') ||
-      m.content.toLowerCase().includes('insured:') ||
-      m.content.toLowerCase().includes('policyholder:')
+      m.content.toLowerCase().includes('production') ||
+      m.content.toLowerCase().includes('brand') ||
+      m.content.toLowerCase().includes('brewery')
     );
 
     if (!hasContext) {
       // Initial suggestions to establish context
       return [
-        'Perform comprehensive policy review',
-        'Analyze coverage limits and deductibles',
-        'Review exclusions and endorsements',
-        'Check claim-specific provisions',
+        'Show production overview dashboard',
+        'Analyze top-selling brands',
+        'Review quality metrics summary',
+        'Check inventory status',
       ];
     }
 
-    // Context-aware comprehensive suggestions
-    if (responseLower.includes('policy') || responseLower.includes('coverage')) {
-      return getQuickQuestionSuggestions().slice(0, 4);
-    }
-
-    if (responseLower.includes('claim') || responseLower.includes('appraisal')) {
+    // Context-aware brewery suggestions
+    if (responseLower.includes('production') || responseLower.includes('batch')) {
       return [
-        'Check claim-specific provisions',
-        'Analyze water, wind, and mold coverage',
-        'Review exclusions and endorsements',
-        'Verify compliance requirements',
+        'Analyze batch efficiency trends',
+        'Compare production by brewery',
+        'Show fermentation metrics',
+        'Review capacity utilization',
       ];
     }
 
-    if (responseLower.includes('water') || responseLower.includes('wind') || responseLower.includes('mold')) {
+    if (responseLower.includes('sales') || responseLower.includes('revenue')) {
       return [
-        'Analyze water, wind, and mold coverage',
-        'Review exclusions and endorsements',
-        'Check claim-specific provisions',
-        'Perform comprehensive policy review',
+        'Break down sales by region',
+        'Top performing brands',
+        'Revenue trends over time',
+        'Channel performance analysis',
       ];
     }
 
-    // Default comprehensive suggestions
+    if (responseLower.includes('quality') || responseLower.includes('defect')) {
+      return [
+        'Quality trends by brand',
+        'Defect rate analysis',
+        'Compliance test results',
+        'QA metrics dashboard',
+      ];
+    }
+
+    // Default brewery suggestions
     return getQuickQuestionSuggestions().slice(0, 4);
   }
 
-  // Scotty Pro suggestions (expert analysis)
+  // BrewMind Pro suggestions (expert analysis)
   if (model === 'scotty-pro') {
-    if (!messages.some(m => m.content.toLowerCase().includes('policy'))) {
+    if (!messages.some(m => m.content.toLowerCase().includes('data'))) {
       return [
-        'Upload my insurance policy',
-        'Perform comprehensive policy review',
-        'Find coverage opportunities',
-        'Check compliance requirements',
+        'Connect to brewery database',
+        'Show production analytics',
+        'Analyze brand performance',
+        'Review operations dashboard',
       ];
     }
 
-    if (responseLower.includes('coverage') || responseLower.includes('analysis')) {
+    if (responseLower.includes('production') || responseLower.includes('analysis')) {
       return [
-        'Perform 13-point policy review',
-        'Identify hidden coverages',
-        'Calculate maximum settlement',
-        'Review exclusions and endorsements',
+        'Deep dive production metrics',
+        'Identify efficiency opportunities',
+        'Calculate yield optimization',
+        'Review equipment utilization',
       ];
     }
 
-    if (responseLower.includes('settlement') || responseLower.includes('maximize')) {
+    if (responseLower.includes('forecast') || responseLower.includes('predict')) {
       return [
-        'Generate settlement strategy',
-        'Identify bad faith indicators',
-        'Review appraisal provisions',
-        'Calculate code upgrade benefits',
+        'Generate demand forecast',
+        'Predict inventory needs',
+        'Seasonal trend analysis',
+        'Capacity planning report',
       ];
     }
 
-    // Default Scotty Pro suggestions
+    // Default BrewMind Pro suggestions
     return [
-      'Analyze coverage gaps',
-      'Review deductibles',
-      'Check state requirements',
-      'Generate documentation checklist',
+      'Analyze production gaps',
+      'Review cost metrics',
+      'Check compliance status',
+      'Generate performance report',
     ];
   }
 

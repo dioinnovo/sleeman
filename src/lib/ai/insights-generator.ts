@@ -33,12 +33,13 @@ const insightsLLM = new ChatOpenAI({
 
 /**
  * System prompt for the insights generator
- * Defines the AI's role as a business analyst for Ship Sticks
+ * Defines the AI's role as a business analyst for Sleeman Breweries
  */
-const INSIGHTS_SYSTEM_PROMPT = `You are a business analyst for Ship Sticks, a golf club shipping company.
+const INSIGHTS_SYSTEM_PROMPT = `You are a business analyst for Sleeman Breweries, a Canadian craft brewery known for brands like Sleeman Original Draught, Honey Brown, and Cream Ale.
 Your role is to analyze SQL query results and provide clear, actionable business insights with specific numbers and recommendations.
 Use markdown formatting for emphasis (**bold** for key metrics, bullet points for lists).
-Focus on practical business impact and next steps that executives can act on immediately.`;
+Focus on practical business impact and next steps that brewery executives can act on immediately.
+Consider brewery-specific metrics: production efficiency, batch quality, fermentation times, inventory levels, distributor performance, and compliance.`;
 
 /**
  * Generate business insights from SQL query results
@@ -239,18 +240,19 @@ ${error.substring(0, 200)}
   if (error.includes('does not exist') || error.includes('relation')) {
     return `## ⚠️ Table or Column Not Found
 
-The query referenced a table or column that doesn't exist in the Ship Sticks database.
+The query referenced a table or column that doesn't exist in the Sleeman Breweries database.
 
 **Available data areas:**
-- **Shipments** - Delivery tracking, routes, carriers, pricing
-- **Customers** - Profiles, lifetime value, acquisition channels
-- **Partners** - Golf course partnerships and performance
-- **Claims** - Insurance claims and payouts
-- **Routes** - Route performance and failure rates
-- **Marketing** - Campaign performance and ROI
-- **Support** - Customer service tickets and NPS scores
+- **Production** - Batch records, production lines, efficiency metrics
+- **Quality** - Test results, quality issues, batch failure rates
+- **Beer Styles** - 8 Sleeman styles with fermentation details
+- **Inventory** - Raw materials, suppliers, reorder levels
+- **Equipment** - Equipment registry, downtime events
+- **Distribution** - Distributors, shipments, products
+- **Revenue** - Monthly revenue by product
+- **Compliance** - Audit records and scores
 
-**Try asking about:** "Show me top 10 routes by volume" or "Customer lifetime value by channel"`;
+**Try asking about:** "Show me production volume by beer style" or "What's our batch failure rate?"`;
   }
 
   if (error.includes('permission denied') || error.includes('read-only')) {
@@ -259,7 +261,7 @@ The query referenced a table or column that doesn't exist in the Ship Sticks dat
 This database is read-only. Only SELECT queries are allowed for data analysis.
 
 **What you can do:**
-- Query and analyze any Ship Sticks data
+- Query and analyze any Sleeman Breweries data
 - Generate reports and insights
 - Export data to Excel
 
@@ -276,12 +278,12 @@ The SQL analytics database is not configured. Please contact your administrator.
 
 **What's needed:**
 - PostgreSQL database connection (DATABASE_URL)
-- Ship Sticks analytics data restored
+- Sleeman Breweries analytics data restored
 
 In the meantime, I can still help with:
-- Shipment tracking questions
-- Route optimization
-- General Ship Sticks information`;
+- Brewery production questions
+- Quality metrics analysis
+- General Sleeman Breweries information`;
   }
 
   // Generic error message
@@ -300,8 +302,8 @@ ${error.substring(0, 200)}
 - Using simpler criteria or filters
 
 **Examples of questions I can answer:**
-- "Show me top customers by revenue"
-- "What's the average delivery time by carrier?"
-- "Which routes have the highest failure rates?"
-- "Customer lifetime value by acquisition channel"`;
+- "Show me production volume by beer style"
+- "What's our fermentation efficiency by line?"
+- "Which batches have quality issues?"
+- "Top distributors by revenue"`;
 }

@@ -5,23 +5,15 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
-  Home,
-  FileSearch,
-  MessageSquare,
-  FileText,
-  DollarSign,
-  Users,
-  CalendarDays,
-  Settings,
   ChevronLeft,
   ChevronRight,
   Brain,
-  Camera,
-  History,
-  FileCheck,
   Sun,
   Moon,
-  Shield
+  FileText,
+  Settings,
+  ShieldCheck,
+  Truck
 } from 'lucide-react'
 import Image from 'next/image'
 import { useTheme } from 'next-themes'
@@ -39,55 +31,61 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
   useEffect(() => {
     setMounted(true)
   }, [])
-  
+
   const menuItems = [
     {
       title: 'Dashboard',
       icon: LayoutDashboard,
       href: '/dashboard',
-      description: 'Analytics & Insights'
+      description: 'Brewery Overview'
     },
     {
-      title: 'Sticks',
+      title: 'Barley',
       icon: Brain,
       href: '/dashboard/assistant',
-      description: 'AI Assistant'
+      description: 'AI Data Analyst'
     },
     {
-      title: 'Customers',
+      title: 'Quality Control',
+      icon: ShieldCheck,
+      href: '/dashboard/compliance',
+      description: 'Brewing Standards'
+    },
+    {
+      title: 'Distribution',
+      icon: Truck,
+      href: '/dashboard/distribution',
+      description: 'Shipments & Logistics'
+    },
+    {
+      title: 'Reports',
       icon: FileText,
-      href: '/dashboard/claims',
-      description: 'Customer Orders'
+      href: '/dashboard/reports',
+      description: 'Brewery Reports'
     },
     {
-      title: 'Shipments',
-      icon: CalendarDays,
-      href: '/dashboard/care-sessions',
-      description: 'Active Shipments'
-    },
-    {
-      title: 'Partners',
-      icon: Users,
-      href: '/dashboard/referrals',
-      description: 'Golf Course & Resort Network'
+      title: 'Integrations',
+      icon: Settings,
+      href: '/dashboard/integrations',
+      description: 'System Connections'
     }
   ]
 
   return (
     <aside
       className={`
-        bg-slate-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 h-full transition-all duration-300 flex flex-col rounded-2xl shadow-lg shadow-gray-400/30 dark:shadow-gray-800/30 ring-2 ring-white dark:ring-gray-800
+        bg-sleeman-dark text-gray-200 h-full transition-all duration-300 flex flex-col rounded-2xl shadow-lg shadow-black/30 ring-1 ring-sleeman-brown
         ${isCollapsed ? 'w-20' : 'w-64'}
       `}
     >
       {/* Logo Section */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-2xl">
+      <div className="p-4 border-b border-sleeman-brown bg-sleeman-dark rounded-t-2xl">
         <div className="flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3">
             {isCollapsed ? (
               <Image
-                src={theme === 'dark' ? "/shipsticks-icon-white.png" : "/shipsticks-icon-blue.png"}
-                alt="Ship Sticks"
+                src="/sleeman-icon-light.png"
+                alt="Sleeman Breweries"
                 width={32}
                 height={32}
                 className="object-contain"
@@ -96,9 +94,9 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
               />
             ) : (
               <Image
-                src={theme === 'dark' ? "/shipsticks-logo-white.png" : "/shipsticks-logo-blue.png"}
-                alt="Ship Sticks"
-                width={246}
+                src="/sleeman-logo-light.png"
+                alt="Sleeman Breweries"
+                width={180}
                 height={50}
                 className="object-contain"
                 style={{ height: 'auto' }}
@@ -109,7 +107,7 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
           {onToggle && (
             <button
               onClick={onToggle}
-              className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              className="p-1.5 hover:bg-sleeman-brown rounded-lg transition cursor-pointer text-gray-400 hover:text-sleeman-gold"
               aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
               {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
@@ -122,11 +120,11 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       <nav className="flex-1 p-4 overflow-y-auto">
         <ul className="space-y-2">
           {menuItems.map((item) => {
-            const isActive = item.href === '/dashboard' 
+            const isActive = item.href === '/dashboard'
               ? pathname === '/dashboard'
               : pathname === item.href || pathname.startsWith(item.href + '/')
             const Icon = item.icon
-            
+
             return (
               <li key={item.href}>
                 <Link
@@ -134,8 +132,8 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
                   className={`
                     flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all
                     ${isActive
-                      ? 'bg-gray-100 dark:bg-gray-800 text-green-600 dark:text-green-500 border-l-4 border-green-600 pl-2'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                      ? 'bg-sleeman-brown text-sleeman-gold border-l-4 border-sleeman-gold pl-2'
+                      : 'hover:bg-sleeman-brown text-gray-300 hover:text-sleeman-gold-light'
                     }
                   `}
                   title={isCollapsed ? item.title : undefined}
@@ -157,13 +155,13 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-t border-sleeman-brown">
         {/* Theme Toggle */}
         {mounted && (
           <div className={`mb-3 ${isCollapsed ? 'flex justify-center' : ''}`}>
             <button
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sleeman-brown transition-colors text-gray-400 hover:text-sleeman-gold"
               title={isCollapsed ? `Switch to ${theme === 'light' ? 'dark' : 'light'} mode` : undefined}
             >
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
@@ -178,13 +176,13 @@ export default function Sidebar({ isCollapsed = false, onToggle }: SidebarProps)
 
         {/* Company Info */}
         {!isCollapsed ? (
-          <div className="text-xs text-gray-500 dark:text-gray-400">
-            <p className="font-semibold mb-1">Making Golf Travel Simpler</p>
-            <p>Door-to-Door Golf Equipment & Luggage Shipping</p>
-            <p className="mt-2">© 2025 Ship Sticks</p>
+          <div className="text-xs text-gray-400">
+            <p className="font-semibold mb-1 text-sleeman-gold">BrewMind AI</p>
+            <p>Intelligent Brewery Analytics</p>
+            <p className="mt-2">© 2025 Sleeman Breweries</p>
           </div>
         ) : (
-          <div className="text-center text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-center text-xs text-gray-500">
             <p>© '25</p>
           </div>
         )}
