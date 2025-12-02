@@ -224,8 +224,82 @@ export default function SQLAnalyticsChat() {
     return results.slice(0, 10) // Limit to first 10 rows for cleaner charts
   }
 
-  const renderChart = (data: any[]) => {
-    if (!data || data.length === 0) return null
+  const renderChart = (chartData: any) => {
+    if (!chartData) return null
+
+    // Check if chartData is in Chart.js format (from API) or array-of-objects format (local)
+    const isChartJsFormat = chartData.type && chartData.labels && chartData.datasets
+
+    if (isChartJsFormat) {
+      // Convert Chart.js format to Recharts format
+      const { labels, datasets, type } = chartData
+      if (!labels || labels.length === 0 || !datasets || datasets.length === 0) return null
+
+      // Transform to array of objects for Recharts
+      const rechartsData = labels.map((label: string, index: number) => {
+        const dataPoint: any = { label }
+        datasets.forEach((dataset: any) => {
+          dataPoint[dataset.label] = dataset.data[index]
+        })
+        return dataPoint
+      })
+
+      const primaryDataset = datasets[0]
+      if (!primaryDataset) return null
+
+      // Use line chart for time-series, bar chart otherwise
+      if (type === 'line') {
+        return (
+          <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={rechartsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
+                <YAxis fontSize={12} />
+                <Tooltip />
+                <Legend />
+                {datasets.map((dataset: any, idx: number) => (
+                  <Line
+                    key={idx}
+                    type="monotone"
+                    dataKey={dataset.label}
+                    stroke={idx === 0 ? "#5fd063" : "#f59e0b"}
+                    strokeWidth={2}
+                    dot={{ fill: idx === 0 ? "#5fd063" : "#f59e0b" }}
+                  />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )
+      }
+
+      // Default to bar chart
+      return (
+        <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={rechartsData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
+              <YAxis fontSize={12} />
+              <Tooltip />
+              <Legend />
+              {datasets.map((dataset: any, idx: number) => (
+                <Bar
+                  key={idx}
+                  dataKey={dataset.label}
+                  fill={idx === 0 ? "#5fd063" : "#f59e0b"}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )
+    }
+
+    // Handle array-of-objects format (local prepareChartData)
+    const data = chartData as any[]
+    if (!Array.isArray(data) || data.length === 0) return null
 
     const firstRow = data[0]
     if (!firstRow || typeof firstRow !== 'object') return null

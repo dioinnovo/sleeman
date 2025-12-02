@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { runSqlAgent } from '@/lib/ai/sql-agent';
 import { runFastSqlAgent } from '@/lib/ai/sql-agent-fast';
 import { classifyQueryComplexity } from '@/lib/ai/query-classifier';
-import { generateInsights, generateErrorInsights, type ResponseMode } from '@/lib/ai/insights-generator';
+import { generateInsights, generateErrorInsights, generateFollowUpQuestions, type ResponseMode } from '@/lib/ai/insights-generator';
 import { generateChartData, isChartable } from '@/lib/ai/chart-generator';
 
 /**
@@ -22,6 +22,7 @@ import { generateChartData, isChartable } from '@/lib/ai/chart-generator';
  *   sqlQuery: string | null       // Generated SQL query
  *   queryResults: {...} | null    // Query results with columns and rows
  *   chartData: {...} | null       // Chart.js-compatible chart data
+ *   followUpQuestions: string[]   // AI-generated contextual follow-up questions
  *   error: string | null          // Error message if any
  * }
  */
@@ -124,13 +125,24 @@ export async function POST(request: NextRequest) {
       console.log(`   ⚠️  Unexpected state: No results and no error`);
     }
 
-    // Step 5: Return the complete response with performance metadata
+    // Step 5: Generate follow-up questions (AI SDK best practice: generate AFTER the main response)
+    // Pass the full context: original question, SQL query, results, and insights
+    const followUpQuestions = await generateFollowUpQuestions(
+      question,
+      sqlQuery,
+      queryResults,
+      response
+    );
+    console.log(`   💡 Follow-ups: ${followUpQuestions.length} questions generated`);
+
+    // Step 6: Return the complete response with performance metadata
     return NextResponse.json({
       success: !agentError,
       response,
       sqlQuery,
       queryResults,
       chartData,
+      followUpQuestions, // AI-generated contextual follow-up questions
       error: agentError,
       // Performance and routing metadata
       metadata: {
