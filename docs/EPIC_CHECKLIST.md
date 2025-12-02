@@ -170,13 +170,13 @@
 
 ## Epic 5: Dashboard Pages (Must-Have)
 
-**Status**: 🔄 IN PROGRESS
+**Status**: ✅ COMPLETE
 **Documentation**: [epic-5-dashboards.md](./epic-5-dashboards.md)
-**Target**: December 2024
+**Completed**: December 2, 2024
 
 ### Stories Checklist
 
-- [ ] **5.1** Main Dashboard with brewery KPI cards
+- [x] **5.1** Main Dashboard with brewery KPI cards
 - [x] **5.2** Quality Control page (`/dashboard/compliance`)
 - [x] **5.3** Distribution page (`/dashboard/distribution`)
 - [x] **5.4** Reports page (`/dashboard/reports`)
@@ -185,13 +185,14 @@
 
 ### Verification Checklist
 
-#### 5.1 Main Dashboard
-- [ ] Production Volume KPI card displays
-- [ ] Quality Pass Rate KPI card displays
-- [ ] Equipment Utilization KPI card displays
-- [ ] Revenue MTD KPI card displays
-- [ ] Production trend chart renders
-- [ ] Dark theme applied
+#### 5.1 Main Dashboard ✅
+- [x] 6 KPI cards (Production Volume, Quality Pass Rate, Equipment Utilization, Revenue MTD, Active Lines, Pending Issues)
+- [x] Production volume bar chart (12 months)
+- [x] Quality metrics trend line chart
+- [x] Beer style distribution pie chart
+- [x] Top products by revenue horizontal bar chart
+- [x] Dark theme applied with Sleeman colors
+- [x] Responsive on mobile (2-col grid)
 
 #### 5.2 Quality Control ✅
 - [x] Page loads without errors
@@ -347,14 +348,14 @@
 | 2 | 4 | 0 | 0 | ✅ |
 | 3 | 5 | 0 | 0 | ✅ |
 | 4 | 5 | 0 | 0 | ✅ |
-| 5 | 5 | 0 | 1 | 🔄 |
+| 5 | 6 | 0 | 0 | ✅ |
 | 6 | 0 | 0 | 4 | ⏳ |
 | 7 | 2 | 0 | 3 | 🔄 |
 | 8 | 1 | 0 | 3 | 🔄 |
 | 9 | 4 | 0 | 2 | 🔄 |
 | 10 | 0 | 0 | 5 | ⏳ |
 
-**Total**: 31 complete, 13 pending
+**Total**: 32 complete, 12 pending
 
 ---
 
