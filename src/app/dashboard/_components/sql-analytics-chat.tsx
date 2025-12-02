@@ -591,15 +591,15 @@ export default function SQLAnalyticsChat() {
                 <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
                 <YAxis fontSize={12} tickFormatter={formatAxisTick} />
                 <RechartsTooltip formatter={formatTooltipValue} />
-                <Legend />
+                <Legend wrapperStyle={{ paddingTop: '20px' }} />
                 {datasets.map((dataset: any, idx: number) => (
                   <Line
                     key={idx}
                     type="monotone"
                     dataKey={dataset.label}
-                    stroke={idx === 0 ? "#5fd063" : "#f59e0b"}
+                    stroke={idx === 0 ? "#1863DC" : "#3B82F6"}
                     strokeWidth={2}
-                    dot={{ fill: idx === 0 ? "#5fd063" : "#f59e0b" }}
+                    dot={{ fill: idx === 0 ? "#1863DC" : "#3B82F6" }}
                   />
                 ))}
               </LineChart>
@@ -616,12 +616,13 @@ export default function SQLAnalyticsChat() {
               <XAxis dataKey="label" angle={-45} textAnchor="end" height={100} fontSize={12} />
               <YAxis fontSize={12} tickFormatter={formatAxisTick} />
               <RechartsTooltip formatter={formatTooltipValue} />
-              <Legend />
+              <Legend wrapperStyle={{ paddingTop: '20px' }} />
               {datasets.map((dataset: any, idx: number) => (
                 <Bar
                   key={idx}
                   dataKey={dataset.label}
-                  fill={idx === 0 ? "#5fd063" : "#f59e0b"}
+                  fill={idx === 0 ? "#1863DC" : "#3B82F6"}
+                  radius={[4, 4, 0, 0]}
                 />
               ))}
             </BarChart>
@@ -665,8 +666,8 @@ export default function SQLAnalyticsChat() {
             <XAxis dataKey={labelKey} angle={-45} textAnchor="end" height={100} fontSize={12} />
             <YAxis fontSize={12} tickFormatter={formatAxisTick} />
             <RechartsTooltip formatter={formatTooltipValue} />
-            <Legend formatter={(value) => getFriendlyColumnName(value)} />
-            <Bar dataKey={primaryMetric} fill="#5fd063" name={getFriendlyColumnName(primaryMetric)} />
+            <Legend formatter={(value) => getFriendlyColumnName(value)} wrapperStyle={{ paddingTop: '20px' }} />
+            <Bar dataKey={primaryMetric} fill="#1863DC" name={getFriendlyColumnName(primaryMetric)} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -1007,7 +1008,7 @@ export default function SQLAnalyticsChat() {
 
       {/* Input Area */}
       <div className="flex-shrink-0 p-4 !pb-[16px] sm:pb-4">
-        <div className="bg-card/70 backdrop-blur-xl backdrop-saturate-150 border-2 border-border/50 rounded-2xl p-2 shadow-lg shadow-black/5 dark:shadow-black/20 ring-2 ring-border/30">
+        <div className="bg-card/70 backdrop-blur-xl backdrop-saturate-150 border-2 border-border/50 rounded-2xl p-2 shadow-lg shadow-black/5 dark:shadow-black/20">
           <textarea
             ref={textareaRef}
             value={inputValue}
