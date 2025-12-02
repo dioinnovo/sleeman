@@ -275,22 +275,27 @@
 
 ## Epic 8: Marketing & Demo Pages
 
-**Status**: 🔄 PARTIAL
-**Documentation**: -
-**Target**: TBD
+**Status**: ✅ COMPLETE
+**Documentation**: [DEMO_SCRIPT.md](./DEMO_SCRIPT.md)
+**Completed**: December 2, 2024
 
 ### Stories Checklist
 
-- [ ] **8.1** Update landing page with Sleeman branding
-- [ ] **8.2** Create demo page (`/demo`)
+- [x] **8.1** Update landing page with Sleeman branding
+- [x] **8.2** Create demo page (`/demo`)
 - [x] **8.3** Update favicon and meta tags
-- [ ] **8.4** Create demo script documentation
+- [x] **8.4** Create demo script documentation
 
 ### Verification Checklist
-- [ ] Landing page shows Sleeman branding
+- [x] Landing page shows Sleeman branding
 - [ ] Meta tags updated
 - [x] Favicon is Sleeman logo
-- [ ] Demo script ready
+- [x] Demo script ready
+
+### Files Modified
+- `src/app/(marketing)/page.tsx` - Full landing page with hero, features, stats, CTA
+- `src/app/demo/page.tsx` - Interactive 5-step demo walkthrough
+- `docs/DEMO_SCRIPT.md` - Comprehensive demo walkthrough script
 
 ---
 
@@ -351,11 +356,11 @@
 | 5 | 6 | 0 | 0 | ✅ |
 | 6 | 0 | 0 | 4 | ⏳ |
 | 7 | 2 | 0 | 3 | 🔄 |
-| 8 | 1 | 0 | 3 | 🔄 |
+| 8 | 4 | 0 | 0 | ✅ |
 | 9 | 4 | 0 | 2 | 🔄 |
 | 10 | 0 | 0 | 5 | ⏳ |
 
-**Total**: 32 complete, 12 pending
+**Total**: 35 complete, 9 pending
 
 ---
 
